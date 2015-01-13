@@ -1,0 +1,15 @@
+{
+	"id": "ubuntu-dockerfile",
+	"script": ["FROM chef/ubuntu-14.04\n",
+		"ADD chef/ /etc/chef/\n",
+		"RUN chef-init --bootstrap\n",
+		"RUN rm -rf /etc/chef/secure/*\n",
+		"RUN apt-get -qq update\n",
+		"RUN apt-get install python-django\n",
+		"RUN apt-get clean\n",
+		"RUN django-admin.py startproject test_app\n",
+		"RUN cd test_app\n",
+		"EXPOSE 8000\n",
+		"ENTRYPOINT [\"chef-init\", \"--onboot\"]\n",
+		"CMD [\"python\", \"manage.py\", \"runserver\", \"0.0.0.0:8000\"]"]
+}

@@ -1,0 +1,8 @@
+current_hostname="chef-server2"
+fqdn="chef-server3.test.net"
+user="abby"
+fullname="Abby Hahn"
+email="ahahn@systemsbiology.net"
+pass="p@s5w0rD"
+orgshort="isb"
+orglong="Institute for Systems Biology"

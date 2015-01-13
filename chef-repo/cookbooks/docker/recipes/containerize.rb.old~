@@ -1,0 +1,26 @@
+dockerfile = data_bag_item('dockerfiles', 'ubuntu-dockerfile')["script"].join()
+
+bash "rvm_setup" do
+	flags "--login"
+	code <<-EOH
+	whoami
+	curl -sSL https://rvm.io/mpapis.asc | gpg --import -
+	curl -sSL https://get.rvm.io | sudo bash -s stable
+	export rvm_path=/usr/local/rvm
+	$rvm_path/bin/rvm requirements
+	$rvm_path/bin/rvm install 2.2.0
+	$rvm_path/bin/rvm use 2.2.0
+	gem install knife-container
+	EOH
+end
+
+execute "knife container docker init ubuntu:latest --force"
+
+file "/dockerfiles/ubuntu:latest/Dockerfile" do
+	content	dockerfile
+	action	:create
+end
+
+execute "knife container docker build ubuntu:latest"
+
+execute "knife container docker run -d -v /etc/chef:/etc/chef/secure:ro ubuntu:latest"

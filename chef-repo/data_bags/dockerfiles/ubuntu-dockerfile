@@ -1,0 +1,27 @@
+FROM ubuntu:latest
+#ADD chef/ /etc/chef/
+RUN chef-init --bootstrap
+RUN rm -rf /etc/chef/secure/*
+RUN curl -sSL https://rvm.io/mpapis.asc | gpg --import -
+RUN curl -sSL https://get.rvm.io | bash -s stable
+RUN /bin/bash -c -l 'rvm requirements'
+RUN /bin/bash -c -l 'rvm install 2.2.0'
+RUN /bin/bash -c -l 'rvm use 2.2.0'
+RUN /bin/bash -c -l 'gem install bundler'
+RUN /bin/bash -c -l 'gem install rails'
+RUN /bin/bash -c -l 'bundle config path "$HOME/rails_app"'
+
+# Set up basic Rails app
+RUN /bin/bash -c -l 'mkdir $HOME/rails_app'
+WORKDIR $HOME/rails_app
+RUN /bin/bash -c -l 'rails new isb_demo'
+WORKDIR isb_demo
+RUN /bin/bash -c -l 'bundle install'
+
+# Start the Rails Server
+EXPOSE 80
+CMD /bin/bash -c -l 'ruby script/rails server -p 80'
+
+
+#ENTRYPOINT ["chef-init"]
+#CMD ["--onboot"]
