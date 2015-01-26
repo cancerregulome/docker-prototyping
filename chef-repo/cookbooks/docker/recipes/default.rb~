@@ -21,29 +21,28 @@ apt_package 'docker.io' do
 	action :install
 end
 
+# Install Ruby 2.0
+apt_package 'ruby2.0' do
+	action :install
+end
+
+# Install ruby-dev package
+apt_package 'ruby-dev' do
+	action :install
+end
+
 # Install Ruby (2.2.0), RubyGems, and the knife-container gem
 
-bash "ruby_setup" do
-	code <<-EOH
-	rubytmp=`mktemp -d`
-	cd $rubytmp
-	wget http://cache.ruby-lang.org/pub/ruby/2.2/ruby-2.2.0.tar.gz
-	wget http://production.cf.rubygems.org/rubygems/rubygems-2.4.5.tgz	
-	tar -xf ruby-2.2.0.tar.gz
-	tar -xf rubygems-2.4.5.tgz
-	cd ruby-2.2.0
-	./configure
-	make
-	make install
-	cd $rubytmp/rubygems-2.4.5
-	ruby setup.rb
-	cd ~
-	rm -r $rubytmp
-	gem install knife-container
-	gem install berkshelf
-	EOH
+gem_package 'knife-container' do
+	action :install
 end
 
 # Get rid of any files that aren't needed
-execute "apt-get clean"
+execute 'apt-get clean'
+
+# Testing the container setup/bootstrap procedure
+execute 'knife container docker init test/django -c /etc/chef/client.rb'
+
+execute 'knife container docker build test/django --no-berks'
+
 
