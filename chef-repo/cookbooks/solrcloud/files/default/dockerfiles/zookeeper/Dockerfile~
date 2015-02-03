@@ -1,0 +1,13 @@
+# BASE chef/ubuntu-12.04:latest
+# Apache Zookeeper Container
+FROM chef/ubuntu-14.04
+ADD chef/ /etc/chef/
+RUN chef-init --bootstrap
+RUN rm -rf /etc/chef/secure/*
+ADD install/zookeeper-3.4.6.tar.gz /usr/local/
+RUN apt-get -qq update && apt-get -qq install openjdk-7-jdk openjdk-7-jre && apt-get -qq clean
+EXPOSE 2181
+EXPOSE 2888
+EXPOSE 3888
+ENTRYPOINT ["chef-init"]
+CMD ["--onboot"]

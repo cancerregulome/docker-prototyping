@@ -9,13 +9,23 @@
 
 # Install necessary packages
 
-execute "yum update && yum -y groupinstall \"Development Tools\" \"Development Libraries\""
+execute "yum -y update && yum -y install epel-release docker-io && yum clean all"
 
-# Install Ruby and dependencies
+# Install additional cookbook files from Chef Server (docker contexts and installation files for solr, tomcat and zookeeper)
 
-# Install knife-container gem
+remote_directory "/dockerfiles" do
+	source "dockerfiles"
+	action :create
+end
 
-# Install Docker
+group "docker" do
+	action :create
+	members 'chef'
+end
+
+
+
+
 
 
 
