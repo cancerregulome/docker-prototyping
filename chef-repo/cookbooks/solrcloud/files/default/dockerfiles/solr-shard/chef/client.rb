@@ -1,7 +1,7 @@
 require 'chef-init'
 
 node_name                   ChefInit.node_name
-chef_server_url             'https://chef-server-centos.test.net/organizations/isb'
+chef_server_url             'https://chef-server-centos.com/organizations/isb'
 validation_client_name      'isb-validator'
 validation_key              '/etc/chef/secure/validation.pem'
 client_key                  '/etc/chef/secure/client.pem'
