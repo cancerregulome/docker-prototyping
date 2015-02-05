@@ -18,11 +18,18 @@ remote_directory "/dockerfiles" do
 	action :create
 end
 
+# Create a file containing the node number that was passed in through the command line using knife.  This will be the zookeeper container's ID within the ensemble.
+file "/dockerfiles/zookeeper/config/myid" do
+	content "#{node['zookeeper_id']}"
+	action :create
+end
+
 group "docker" do
 	action :create
 	members 'chef'
 end
 
+execute "service docker start"
 
 
 

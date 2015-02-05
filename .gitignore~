@@ -1,4 +1,3 @@
 /chef-repo/.chef/**
 /chef-repo/cookbooks/solrcloud/files/default/dockerfiles/zookeeper/install/**
 /chef-repo/cookbooks/solrcloud/files/default/dockerfiles/solr-shard/install/**
-/chef-repo/dockerfiles/**

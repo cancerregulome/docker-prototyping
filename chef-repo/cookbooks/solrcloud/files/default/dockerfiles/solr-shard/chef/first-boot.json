@@ -1,5 +1,10 @@
 {
   "run_list": [
 
-  ]
+  ], 
+  "container_service" : {
+    "solr-shard" : {
+      "command" : "/usr/local/solr-4.10.3/bin/solr -e cloud -noprompt"
+    }
+  }
 }

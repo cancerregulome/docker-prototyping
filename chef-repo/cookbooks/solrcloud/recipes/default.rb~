@@ -18,6 +18,13 @@ remote_directory "/dockerfiles" do
 	action :create
 end
 
+group "docker" do
+	action :create
+	members 'chef'
+end
+
+execute "service docker start"
+
 
 
 

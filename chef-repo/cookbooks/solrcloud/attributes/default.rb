@@ -1,6 +1,6 @@
 # chef server details
-default['chef-server']['hostname'] = 'chef-server-centos'
-default['chef-server']['ipaddress'] = '192.168.76.3'
+default['chef-server']['fqdn'] = 'chef-server-centos.com'
+default['chef-server']['ipaddress'] = '192.168.56.105'
 
 # container listening ports
 default['ports']['zookeeper'] = ['2181', '2888', '3888']

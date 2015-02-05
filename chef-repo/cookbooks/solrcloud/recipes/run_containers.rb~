@@ -11,5 +11,5 @@ Dir.glob("/dockerfiles/**").each do |docker_context|
 	node.default['ports']["#{container_name}"].each do |port|
 		port_string << "-p #{port} "
 	end	
-	execute "docker run -d #{port_string}--add-host=#{chef_server_host}:#{chef_server_ip} -v /etc/chef/secure:/etc/chef/secure #{container_name}"
+	execute "docker run -d #{port_string}--add-host=#{chef_server_host}:#{chef_server_ip} -v #{docker_context}/chef/secure:/etc/chef/secure #{container_name}"
 end
