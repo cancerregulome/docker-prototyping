@@ -6,10 +6,8 @@ Before running the setup scripts, please do the following:
 4) Edit the file "solr_cluster_nodes", putting each node's fqdn on one line.
 5) Modify the values in the file "chef_dev_env.sh" according to your workstation and chef server configuration. 
 6) Add all hosts (chef server and nodes) to /etc/hosts.
-7) 'source' the file "chef_dev_env.sh" in your .bashrc, and start a new shell.
 
 Run the setup scripts in the following order to configure the workstation and bootstrap a solr cluster with chef:
 
-restore_untracked.sh 
-bootstrap_solr_cluster.sh 
-
+restore_untracked.sh
+bootstrap_solr_cluster.sh

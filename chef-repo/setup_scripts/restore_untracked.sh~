@@ -20,9 +20,9 @@ cp $chef_repo/trusted_certs/* $chef_repo/cookbooks/solrcloud/files/default/docke
 cp $chef_repo/trusted_certs/* $chef_repo/cookbooks/solrcloud/files/default/dockerfiles/solr-shard/chef/secure/trusted_certs
 
 # Download archive files for software installation on docker containers
-#cd ../cookbooks/solrcloud/files/default/dockerfiles/solr-shard/install
-#wget http://mirror.nexcess.net/apache/lucene/solr/4.10.3/solr-4.10.3.tar
+cd ../cookbooks/solrcloud/files/default/dockerfiles/solr-shard/install
+wget http://mirror.nexcess.net/apache/lucene/solr/4.10.3/solr-4.10.3.tar
 
-#cd ../../zookeeper/install
-#wget http://mirror.reverse.net/pub/apache/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz
+cd ../../zookeeper/install
+wget http://mirror.reverse.net/pub/apache/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz
 
