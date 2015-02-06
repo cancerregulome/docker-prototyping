@@ -2,7 +2,7 @@ Before running the setup scripts, please do the following:
 
 1) Set up and configure the chef server.  
 2) Set up one or more nodes to function as members of a solr cluster.
-3) Configure passwordless ssh between the workstation and the chef server as the chef user.
+3) Configure passwordless ssh between the workstation and the chef cluster (server and nodes) as the chef user.
 4) Edit the file "solr_cluster_nodes", putting each node's fqdn on one line.
 5) Modify the values in the file "chef_dev_env.sh" according to your workstation and chef server configuration. 
 6) Add all hosts (chef server and nodes) to /etc/hosts.

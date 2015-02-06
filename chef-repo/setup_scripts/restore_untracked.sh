@@ -16,13 +16,13 @@ knife ssl fetch
 
 # Copy the certificate to the dockerfile contexts for bootstrapping the containers with chef
 cp $chef_repo/.chef/trusted_certs/* $chef_repo/cookbooks/solrcloud/files/default/dockerfiles/zookeeper/chef/secure/trusted_certs
-cp $chef_repo/trusted_certs/* $chef_repo/cookbooks/solrcloud/files/default/dockerfiles/tomcat/chef/secure/trusted_certs
-cp $chef_repo/trusted_certs/* $chef_repo/cookbooks/solrcloud/files/default/dockerfiles/solr-shard/chef/secure/trusted_certs
+cp $chef_repo/.chef/trusted_certs/* $chef_repo/cookbooks/solrcloud/files/default/dockerfiles/tomcat/chef/secure/trusted_certs
+cp $chef_repo/.chef/trusted_certs/* $chef_repo/cookbooks/solrcloud/files/default/dockerfiles/solr-shard/chef/secure/trusted_certs
 
 # Download archive files for software installation on docker containers
-#cd ../cookbooks/solrcloud/files/default/dockerfiles/solr-shard/install
-#wget http://mirror.nexcess.net/apache/lucene/solr/4.10.3/solr-4.10.3.tar
+cd $chef_repo/cookbooks/solrcloud/files/default/dockerfiles/solr-shard/install
+wget http://mirror.nexcess.net/apache/lucene/solr/4.10.3/solr-4.10.3.tar
 
-#cd ../../zookeeper/install
-#wget http://mirror.reverse.net/pub/apache/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz
+cd $chef_repo/cookbooks/solrcloud/files/default/dockerfiles/zookeeper/install
+wget http://mirror.reverse.net/pub/apache/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz
 

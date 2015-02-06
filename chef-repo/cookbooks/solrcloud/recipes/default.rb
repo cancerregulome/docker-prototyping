@@ -29,7 +29,9 @@ group "docker" do
 	members 'chef'
 end
 
-execute "service docker start"
+service "docker" do
+	action :start
+end
 
 
 

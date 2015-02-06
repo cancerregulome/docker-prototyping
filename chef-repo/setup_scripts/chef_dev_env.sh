@@ -16,4 +16,4 @@
 #export validator=isb-validator
 
 # The absolute path to the chef-repo directory on this machine
-#export chef-repo=/home/abby/docker-prototyping/chef-repo
+#export chef_repo=/home/abby/docker-prototyping/chef-repo
