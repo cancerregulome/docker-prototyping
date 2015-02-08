@@ -1,7 +1,7 @@
 chef-repo/.chef/*.pem
 chef-repo/.chef/trusted_certs/**
 chef-repo/.chef/syntax_check_cache/**
-#chef-repo/setup_scripts/chef_dev_env.sh
+chef-repo/setup_scripts/chef_dev_env.sh
 chef-repo/cookbooks/solrcloud/files/default/dockerfiles/zookeeper/install/**
 chef-repo/cookbooks/solrcloud/files/default/dockerfiles/solr-shard/install/**
 chef-repo/cookbooks/solrcloud/files/default/dockerfiles/solr-shard/chef/secure/*.pem
