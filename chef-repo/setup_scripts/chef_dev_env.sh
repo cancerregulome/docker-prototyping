@@ -3,6 +3,9 @@
 # This file contains environent variables needed to run the dev workstation setup scripts.  
 # Uncomment and fill in the values for each of the variables as necessary for your system.
 
+# The chef server user
+#export chef_user=chef
+
 # The chef server FQDN
 #export chef_server=chef-server-centos.com
 
