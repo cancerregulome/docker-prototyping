@@ -24,12 +24,9 @@ file "/dockerfiles/zookeeper/config/myid" do
 	action :create
 end
 
-group "docker" do
-	action :create
-	members 'chef'
+service "docker" do
+	action :start
 end
-
-execute "service docker start"
 
 
 

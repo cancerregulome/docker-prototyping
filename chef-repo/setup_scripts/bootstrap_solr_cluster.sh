@@ -12,7 +12,6 @@ done <$chef_repo/setup_scripts/zookeeper_quorum
 node_num=1
 
 while read host; do
-	./bootstrap_cmd.sh $chef_user $node_num $host $password
-	#knife bootstrap --sudo --ssh-user $chef_user --no-host-key-verify -r "recipe[solrcloud], recipe[solrcloud::build_containers], recipe[solrcloud::run_containers]" -j "{\"node_id\":\"$node_num\"}" $host
+	knife bootstrap --sudo --ssh-user $chef_user --use-sudo-password -P $password --no-host-key-verify -r "recipe[solrcloud], recipe[solrcloud::build_containers], recipe[solrcloud::run_containers]" -j "{\"node_id\":\"$node_num\"}" $host
 	(( node_num += 1 ))
 done <$chef_repo/setup_scripts/solr_cluster_nodes

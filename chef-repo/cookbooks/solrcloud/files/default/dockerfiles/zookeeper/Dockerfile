@@ -1,7 +1,7 @@
 # BASE chef/ubuntu-12.04:latest
 # Apache Zookeeper Container
 FROM chef/ubuntu-14.04
-ADD install/zookeeper-3.4.6.tar.gz /
+ADD install/zookeeper-3.4.6 /zookeeper-3.4.6
 ENV ZOOKEEPER_HOME /zookeeper-3.4.6
 RUN apt-get -qq update && apt-get -qq install openjdk-7-jdk openjdk-7-jre && apt-get -qq clean
 RUN mkdir -p /var/zookeeper
