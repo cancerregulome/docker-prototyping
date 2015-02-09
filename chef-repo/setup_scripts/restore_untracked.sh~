@@ -1,10 +1,5 @@
 #!/bin/bash
 
-# Remake some directories
-mkdir -p $chef_repo/cookbooks/solrcloud/files/default/dockerfiles/zookeeper/chef/secure/trusted_certs
-mkdir -p $chef_repo/cookbooks/solrcloud/files/default/dockerfiles/tomcat/chef/secure/trusted_certs
-mkdir -p $chef_repo/cookbooks/solrcloud/files/default/dockerfiles/solr-shard/chef/secure/trusted_certs
-
 # Restore the key files to .chef and dockerfile contexts
 scp -o stricthostkeychecking=no $chef_user@$chef_server:$pem_path/$admin_client.pem .
 scp -o stricthostkeychecking=no $chef_user@$chef_server:$pem_path/$validator.pem .
@@ -20,6 +15,9 @@ rm *.pem
 knife ssl fetch
 
 # Copy the certificate to the dockerfile contexts for bootstrapping the containers with chef
+mkdir -p $chef_repo/cookbooks/solrcloud/files/default/dockerfiles/zookeeper/chef/secure/trusted_certs
+mkdir -p $chef_repo/cookbooks/solrcloud/files/default/dockerfiles/tomcat/chef/secure/trusted_certs
+mkdir -p $chef_repo/cookbooks/solrcloud/files/default/dockerfiles/solr-shard/chef/secure/trusted_certs
 
 cp $chef_repo/.chef/trusted_certs/* $chef_repo/cookbooks/solrcloud/files/default/dockerfiles/zookeeper/chef/secure/trusted_certs
 cp $chef_repo/.chef/trusted_certs/* $chef_repo/cookbooks/solrcloud/files/default/dockerfiles/tomcat/chef/secure/trusted_certs
