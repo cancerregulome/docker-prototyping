@@ -1,6 +1,6 @@
 #!/bin/bash
 chef_server=chef-server-centos.com
-user=chef
+user=abby
 fullname="Abby Hahn"
 email=ahahn@systemsbiology.net
 pass=p@s5w0rD

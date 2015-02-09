@@ -8,3 +8,7 @@ read -s -p "Enter the root password for the chef server: " $password
 # Run the setup script on the Chef server and reboot
 ./chef-server-ssh.sh $password $user $fullname $email $orgshort $orglong $chef_server $fqdn $pass
 
+#ssh root@$hostname "bash -s" -- < ./chef-server-setup.sh $hostname $fqdn
+
+# Run the configuration script on the Chef server
+#ssh root@$hostname "bash -s" -- < ./chef-server-config.sh $user $fullname $email $pass $orgshort $orglong
