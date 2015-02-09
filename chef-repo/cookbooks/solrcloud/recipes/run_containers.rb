@@ -4,6 +4,8 @@ require 'pathname'
 chef_server_host = node.default['chef-server']['fqdn']
 chef_server_ip = node.default['chef-server']['ipaddress']
 
+node_id = node.default['node_id']
+
 # Run each container
 Dir.glob("/dockerfiles/**").each do |docker_context|
 	container_name = Pathname.new(docker_context).basename
@@ -11,5 +13,5 @@ Dir.glob("/dockerfiles/**").each do |docker_context|
 	node.default['ports']["#{container_name}"].each do |port|
 		port_string << "-p #{port} "
 	end	
-	execute "docker run -d #{port_string}--add-host=#{chef_server_host}:#{chef_server_ip} -v #{docker_context}/chef:/etc/chef #{container_name}"
+	execute "docker run -d #{port_string}--add-host=#{chef_server_host}:#{chef_server_ip} -v #{docker_context}/chef:/etc/chef -h #{container_name}#{node_id} #{container_name}"
 end

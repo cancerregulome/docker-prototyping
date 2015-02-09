@@ -7,11 +7,12 @@ node_num=1
 while read host; do
 	echo "server.$node_num=$host:2888:3888" >> $chef_repo/cookbooks/solrcloud/files/default/dockerfiles/zookeeper/config/zoo.cfg
 	(( node_num += 1))
-done <$chef_repo/setup_scripts/solr_cluster_nodes
+done <$chef_repo/setup_scripts/zookeeper_quorum
 
 node_num=1
 
 while read host; do
-	knife bootstrap -i $HOME/.ssh/id_rsa --sudo --ssh-user chef --use-sudo-password $password --no-host-key-verify -r "recipe[solrcloud], recipe[solrcloud::build_containers], recipe[solrcloud::run_containers]" -j "{\"zookeeper_id\":\"$node_num\"}" $host
+	./bootstrap_cmd.sh $chef_user $node_num $host $password
+	#knife bootstrap --sudo --ssh-user $chef_user --no-host-key-verify -r "recipe[solrcloud], recipe[solrcloud::build_containers], recipe[solrcloud::run_containers]" -j "{\"node_id\":\"$node_num\"}" $host
 	(( node_num += 1 ))
 done <$chef_repo/setup_scripts/solr_cluster_nodes
