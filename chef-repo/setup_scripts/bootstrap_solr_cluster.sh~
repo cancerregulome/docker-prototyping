@@ -4,8 +4,6 @@ read -s -p "Enter the chef user's password for the chef cluster: " password
 
 node_num=1
 
-cp $chef_repo/cookbooks/solrcloud/files/default/dockerfiles/zookeeper/config/zoo.cfg.template $chef_repo/cookbooks/solrcloud/files/default/dockerfiles/zookeeper/config/zoo.cfg
-
 while read host; do
 	echo "server.$node_num=$host:2888:3888" >> $chef_repo/cookbooks/solrcloud/files/default/dockerfiles/zookeeper/config/zoo.cfg
 	(( node_num += 1))

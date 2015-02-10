@@ -4,7 +4,7 @@ require 'pathname'
 chef_server_host = node.default['chef-server']['fqdn']
 chef_server_ip = node.default['chef-server']['ipaddress']
 
-node_id = node.default['node_id']
+node_id = node['node_id']
 
 # Run each container
 Dir.glob("/dockerfiles/**").each do |docker_context|

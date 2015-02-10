@@ -32,17 +32,10 @@ if [[ ! -e solr-4.10.3.tar ]]; then
 	wget http://mirror.nexcess.net/apache/lucene/solr/4.10.3/solr-4.10.3.tar
 fi
 
-if [[ ! -d solr-4.10.3 ]]; then
-	tar -xf solr-4.10.3.tar
-fi
-
 cd $chef_repo/cookbooks/solrcloud/files/default/dockerfiles/zookeeper/install
 
 if [[ ! -e zookeeper-3.4.6.tar.gz ]]; then
 	wget http://mirror.reverse.net/pub/apache/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz
 fi
 
-if [[ ! -d zookeeper-3.4.6 ]]; then
-	tar -xf zookeeper-3.4.6.tar.gz
-fi
 

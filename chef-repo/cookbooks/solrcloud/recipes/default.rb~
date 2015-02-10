@@ -9,9 +9,7 @@
 
 # Install necessary packages
 
-node_num = node.default['node_id']
-
-execute "yum -y update"
+node_num = node['node_id']
 
 package "epel-release" do
 	action :install
@@ -21,7 +19,7 @@ package "docker-io" do
 	action :install
 end
 
-execute "yum -y clean all"
+execute "yum -y update && yum -y clean all"
 
 # Install additional cookbook files from Chef Server (docker contexts and installation files for solr, tomcat and zookeeper)
 
@@ -36,9 +34,6 @@ file "/dockerfiles/zookeeper/config/myid" do
 	action :create
 end
 
-service "docker" do
-	action :start
-end
 
 
 

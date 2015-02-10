@@ -9,7 +9,7 @@
 
 # Install necessary packages
 
-node_num = node.default['node_id']
+node_num = node['node_id']
 
 package "epel-release" do
 	action :install
@@ -34,9 +34,11 @@ file "/dockerfiles/zookeeper/config/myid" do
 	action :create
 end
 
+# Start the docker service
 service "docker" do
 	action :start
 end
+
 
 
 

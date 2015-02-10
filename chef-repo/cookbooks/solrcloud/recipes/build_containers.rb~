@@ -1,7 +1,9 @@
 require 'pathname'
 
-# Start the docker daemon
-#execute "service docker start"
+# Start the docker service
+#service "docker" do
+	#action :start
+#end
 
 # Build the containers (3 steps)
 Dir.glob("/dockerfiles/**").each do |docker_context|
