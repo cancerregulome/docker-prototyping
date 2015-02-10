@@ -1,70 +1,45 @@
 #!/bin/bash
 
+# Before running this script:
+# 1) Do bare bones installation of server (connected to the two necessary network interfaces).
+# 2) Log in, run "yum update && yum install dkms", and configure networking; logout.
+# 3) Install guest additions CD-ROM drive for base image in VirtualBox
+# 4) Log in again, and in the directory where the cd rom drive is mounted run "./VBoxLinuxAdditions.run"; logout.
+
+
 # First, set up the environment
 
 source vbox_env.sh
 
-# Import the cluster base image for the chef server and nodes
+
+# Import the cluster base image for the chef server and nodes, add a shared folder containing server setup scripts, and configure the servers
 VBoxManage import $iso_dir/Cluster_Base.ova --vsys 0 --vmname "Chef Server Centos"
+VBoxManage sharedfolder add "Chef Server Centos" --name "vm_setup_scripts" --hostpath $vbox_share --transient --automount
+VBoxManage startvm "Chef Server Centos" --type headless
+VBoxManage guestcontrol execute --image /media/sf_vm_setup_scripts/fix_networking.sh
+VBoxManage guestcontrol execute --image /media/sf_vm_setup_scripts/chef_server.sh
+# May need to wait before the poweroff?
+VBoxManage controlvm "Chef Server Centos" poweroff
 
 VBoxManage import $iso_dir/Cluster_Base.ova --vsys 0 --vmname "SolrCloud 1"
+VBoxManage sharedfolder add "SolrCloud1" --name "vm_setup_scripts" --hostpath $vbox_share --transient --automount
+VBoxManage startvm "SolrCloud1" --type headless
+VBoxManage guestcontrol execute --image /media/sf_vm_setup_scripts/fix_networking.sh
+VBoxManage controlvm "SolrCloud1" poweroff
 
 VBoxManage import $iso_dir/Cluster_Base.ova --vsys 0 --vmname "SolrCloud 2"
+VBoxManage sharedfolder add "SolrCloud2" --name "vm_setup_scripts" --hostpath $vbox_share --transient --automount
+VBoxManage startvm "SolrCloud2" --type headless
+VBoxManage guestcontrol execute --image /media/sf_vm_setup_scripts/fix_networking.sh
+VBoxManage controlvm "SolrCloud2" poweroff
 
 VBoxManage import $iso_dir/Culster_Base.ova --vsys 0 --vmname "SolrCloud 3"
+VBoxManage sharedfolder add "SolrCloud3" --name "vm_setup_scripts" --hostpath $vbox_share --transient --automount
+VBoxManage startvm "SolrCloud3" --type headless
+VBoxManage guestcontrol execute --image /media/sf_vm_setup_scripts/fix_networking.sh
+VBoxManage controlvm "SolrCloud3" poweroff
 
-# Network Setup
-## Copy setup scripts to guest
 
-## Run the setup scripts
-
-
-###########################################################################################
-# Create a VM for the chef server
-VBoxManage createvm --name "Chef Server Centos" --ostype "RedHat_64" --register
-## Add network interfaces and memory
-VBoxManage modifyvm "Chef Server Centos" --memory 2048 --nic1 natnetwork --nat-network1 NatNetwork1 --nic2 hostonly --hostonlyadapter1 vboxnet0 
-## Create a hard drive
-VBoxManage createhd --filename "Chef Server Centos.vdi" --size 20000
-## Create and attach storage devices
-VBoxManage storagectl "Chef Server Centos" --name IDE --add ide 
-VBoxManage storageattach "Chef Server Centos" --storagectl IDE --port 0 --device 0 --type dvddrive --medium $iso_dir/CentOS-6.6-x86_64-minimal.iso
-VBoxManage storagectl "Chef Server Centos" --name SATA --add sata 
-VBoxManage storageattach "Chef Server Centos" --storagectl SATA --port 0 --device 0 --type hdd --medium "$vbox_dir/Chef Server Centos/Chef Server Centos.vdi"
-
-# Create VMs for the chef nodes
-## SolrCloud_1
-VBoxManage createvm --name "SolrCloud_1" --ostype "RedHat_64" --register
-VBoxManage modifyvm "SolrCloud_1" --memory 2048 --nic1 natnetwork --nat-network1 NatNetwork1 --nic2 hostonly --hostonlyadapter1 vboxnet0 
-## Create a hard drive
-VBoxManage createhd --filename "SolrCloud_1.vdi" --size 20000
-## Create and attach storage devices
-VBoxManage storagectl "SolrCloud_1" --name IDE --add ide 
-VBoxManage storageattach "SolrCloud_1" --storagectl IDE --port 0 --device 0 --type dvddrive --medium $iso_dir/CentOS-6.6-x86_64-minimal.iso
-VBoxManage storagectl "SolrCloud_1" --name SATA --add sata 
-VBoxManage storageattach "SolrCloud_1" --storagectl SATA --port 0 --device 0 --type hdd --medium $vbox_dir/SolrCloud_1/SolrCloud_1.vdi
-
-## SolrCloud_2
-VBoxManage createvm --name "SolrCloud_2" --ostype "RedHat_64" --register
-VBoxManage modifyvm "SolrCloud_2" --memory 2048 --nic1 natnetwork --nat-network1 NatNetwork1 --nic2 hostonly --hostonlyadapter1 vboxnet0
-## Create a hard drive
-VBoxManage createhd --filename "SolrCloud_2.vdi" --size 20000
-## Create and attach storage devices
-VBoxManage storagectl "SolrCloud_2" --name IDE --add ide 
-VBoxManage storageattach "SolrCloud_2" --storagectl IDE --port 0 --device 0 --type dvddrive --medium $iso_dir/CentOS-6.6-x86_64-minimal.iso
-VBoxManage storagectl "SolrCloud_2" --name SATA --add sata 
-VBoxManage storageattach "SolrCloud_2" --storagectl SATA --port 0 --device 0 --type hdd --medium "$vbox_dir/SolrCloud_2/SolrCloud_2.vdi"
-
-## SolrCloud_3
-VBoxManage createvm --name "SolrCloud_3" --ostype "RedHat_64" --register
-VBoxManage modifyvm "SolrCloud_3" --memory 2048 --nic1 natnetwork --nat-network1 NatNetwork1 --nic2 hostonly --hostonlyadapter1 vboxnet0
-## Create a hard drive
-VBoxManage createhd --filename "SolrCloud_3.vdi" --size 20000
-## Create and attach storage devices
-VBoxManage storagectl "SolrCloud_3" --name IDE --add ide 
-VBoxManage storageattach "SolrCloud_3" --storagectl IDE --port 0 --device 0 --type dvddrive --medium $iso_dir/CentOS-6.6-x86_64-minimal.iso
-VBoxManage storagectl "SolrCloud_3" --name SATA --add sata 
-VBoxManage storageattach "SolrCloud_3" --storagectl SATA --port 0 --device 0 --type hdd --medium "$vbox_dir/SolrCloud_3/SolrCloud_3.vdi"
 
 
 
