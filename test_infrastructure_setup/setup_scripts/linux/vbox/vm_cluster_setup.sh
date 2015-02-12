@@ -1,0 +1,151 @@
+#!/bin/bash
+
+# Before running this script:
+# 1) Do bare bones installation of server (connected to the two necessary network interfaces).
+# 2) Log in, run "yum update && yum install dkms", and configure networking; logout.
+# 3) Install guest additions CD-ROM drive for base image in VirtualBox
+# 4) Log in again, and in the directory where the cd rom drive is mounted run "./VBoxLinuxAdditions.run"; logout.
+
+install_virtualbox () {
+	# Change to verify_vbox
+}
+
+install_apache () {
+	# Change to verify_apache
+	# ping webserver on expected port
+}
+
+base_image_select () {
+	# Ask the user which base image they want to create
+	read -p "Which base image would you like to create? \n\t[1] Centos6.6\n\nEnter a number: " base_image
+	
+	while true; do
+		if [[ -z "$base_image" ]]; then # this condition isn't very robust -- fix later
+			read -p "Please choose a base image to create:\n\t[1] Centos6.6\n\nEnter a number: " base_image
+		else
+			break
+		fi
+	done
+
+	case $base_image in
+		1)
+			centos6_base_create;;
+		*)
+	esac
+}
+
+centos6_base_create () {
+	if [[ ! -d $vbox_tftp_dir/images/RHEL/x86_64/6.6 ]]; then
+		mkdir -p $vbox_tftp_dir/images/RHEL/x86_64/6.6
+	fi
+
+	cp $setup_dir/centos6_boot_files/initrd.img $setup_dir/centos6_boot_files/vmlinuz $vbox_tftp_dir/images/RHEL/x86_64/6.6
+
+	if [[ ! -d $vbox_tftp_dir/pxelinux.cfg ]]; then
+		mkdir $vbox_tftp_dir/pxelinux.cfg
+	fi
+	
+	touch $vbox_tftp_dir/pxelinux.cfg/default
+
+	echo "LABEL centos6.6\n  KERNEL images/RHEL/x86_64/6.6/vmlinuz\n  APPEND initrd=images/RHEL/x86_64/6.6/initrd.img ks=http://$host_ip/$setup_dir/centos6_boot_files/anaconda-ks.cfg" >> $vbox_tftp_dir/pxelinux.cfg/default
+	
+}
+
+vbox_network_create () {
+	# Create the network
+	VBoxManage natnetwork add --netname NatNetwork1 --enable --dhcp on
+	VBoxManage hostonlyif --dhcp create vboxnet0 
+	VBoxManage dhcpserver add --ip 192.168.56.100 --netmask 255.255.255.0 --lowerip 192.168.56.101 --upperip 192.168.56.254 --enable
+}
+
+chef_server_create () {
+	# Import the cluster base image for the chef server and nodes, add a shared folder containing server setup scripts, and configure the servers
+	VBoxManage import $iso_dir/Cluster_Base.ova --vsys 0 --vmname "Chef Server Centos"
+	VBoxManage sharedfolder add "Chef Server Centos" --name "vm_setup_scripts" --hostpath $vbox_share --transient --automount
+	VBoxManage startvm "Chef Server Centos" --type headless
+	VBoxManage guestcontrol execute --image /media/sf_vm_setup_scripts/fix_networking.sh
+	VBoxManage guestcontrol execute --image /media/sf_vm_setup_scripts/chef_server.sh
+	# May need to wait before the poweroff?
+	VBoxManage controlvm "Chef Server Centos" poweroff
+}
+
+chef_node_create () {
+	node_name=ChefNode$1
+	VBoxManage import $iso_dir/$cluster_base --vsys 0 --vmname $node_name
+	VBoxManage sharedfolder add $node_name --name "vm_setup_scripts" --hostpath $vbox_share --transient --automount
+	VBoxManage startvm $node_name --type headless
+	VBoxManage guestcontrol $node_name execute --image /media/sf_vm_setup_scripts/fix_networking.sh
+	VBoxManage guestcontrol $node_name execute --image /media/sf_vm_setup_scripts/fix_hosts_file.sh
+	VBoxManage controlvm $node_name poweroff
+}
+
+
+# If VirtualBox isn't installed, install it
+
+
+# If Apache isn't installed, install it
+
+
+# Setup the environment
+
+source ../vbox_env.sh
+
+# Configure and start the Apache webserver to serve boot files during the PXE boot process in VirtualBox
+
+
+# Ask the user if they want to create a new base image to clone from
+read -p "Would you like to create a new VirtualBox base image to clone from? [Y|N] " yn
+while true; do
+	case $yn in 
+		Y|y)
+			base_image_select;;
+		N|n)
+			break;;
+		*)
+	esac
+done
+
+# Ask the user if they want to create a new network for the VMs
+read -p "Would you like to create a new local network for your Virtualbox cluster? [Y/N] " yn
+while true; do
+	case $yn in
+		Y|y)
+			network_create;;
+		N|n)
+			break;;
+		*)
+	esac
+done
+
+# Ask the user if they want to create a new chef server
+read -p "Would you like to create a new chef server? [Y/N] " yn
+
+while true; do
+	case $yn in
+		Y|y)
+			chef_server_create;;
+		N|n)
+			break;;
+		*)
+	esac
+done
+
+read -p "How many chef nodes would you like to create? " node_num
+
+if [[ -z "$node_num" ]]; then
+	read -p "Please enter a number of nodes greater or equal to zero: " node_num
+else
+	count=0
+
+	while [[ $count < $node_num ]]; do
+		chef_node_create $node_num
+		((count += 1))
+	done
+fi
+
+
+
+
+
+
+
