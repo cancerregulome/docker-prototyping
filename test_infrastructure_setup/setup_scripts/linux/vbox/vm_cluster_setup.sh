@@ -6,22 +6,27 @@
 # 3) Install guest additions CD-ROM drive for base image in VirtualBox
 # 4) Log in again, and in the directory where the cd rom drive is mounted run "./VBoxLinuxAdditions.run"; logout.
 
-install_virtualbox () {
-	# Change to verify_vbox
-}
+#verify_virtualbox () {
+	# Determine if the correct version of VirtualBox is installed
+	
+#}
 
-install_apache () {
+#verify_apache () {
 	# Change to verify_apache
 	# ping webserver on expected port
-}
+#}
 
 base_image_select () {
 	# Ask the user which base image they want to create
-	read -p "Which base image would you like to create? \n\t[1] Centos6.6\n\nEnter a number: " base_image
+	echo "Which base image would you like to create?"
+	echo "	[1] Centos6.6"
+	read -p "Enter a number: " base_image
 	
 	while true; do
 		if [[ -z "$base_image" ]]; then # this condition isn't very robust -- fix later
-			read -p "Please choose a base image to create:\n\t[1] Centos6.6\n\nEnter a number: " base_image
+			echo "Please choose a base image to create:"
+			echo "	[1] Centos6.6"
+			read -p "Enter a number: " base_image
 		else
 			break
 		fi
@@ -35,6 +40,7 @@ base_image_select () {
 }
 
 centos6_base_create () {
+	# Create the necessary directories and bootfiles
 	if [[ ! -d $vbox_tftp_dir/images/RHEL/x86_64/6.6 ]]; then
 		mkdir -p $vbox_tftp_dir/images/RHEL/x86_64/6.6
 	fi
@@ -45,10 +51,31 @@ centos6_base_create () {
 		mkdir $vbox_tftp_dir/pxelinux.cfg
 	fi
 	
-	touch $vbox_tftp_dir/pxelinux.cfg/default
+	cp $setup_dir/centos6_boot_files/pxelinux.0 $vbox_tftp_dir/$cluster_base.pxe
 
-	echo "LABEL centos6.6\n  KERNEL images/RHEL/x86_64/6.6/vmlinuz\n  APPEND initrd=images/RHEL/x86_64/6.6/initrd.img ks=http://$host_ip/$setup_dir/centos6_boot_files/anaconda-ks.cfg" >> $vbox_tftp_dir/pxelinux.cfg/default
+	echo "LABEL centos6.6\n  KERNEL images/RHEL/x86_64/6.6/vmlinuz\n  APPEND initrd=images/RHEL/x86_64/6.6/initrd.img ks=http://$host_ip/anaconda-ks.cfg" >> $vbox_tftp_dir/pxelinux.cfg/default
 	
+	# Copy the necessary files to the apache document root
+	
+	
+	# Create the centos6 base vm
+	VBoxManage createvm --name $cluster_base --ostype "RedHat_64" --register
+	## Add network interfaces and memory
+	VBoxManage modifyvm $cluster_base --memory 2048 --nic1 natnetwork --nat-network1 NatNetwork --nic2 hostonly --hostonlyadapter1 Virtual\ Box\ Host-Only\ Ethernet\ Adapter 
+	## Create a hard drive
+	VBoxManage createhd --filename $cluster_base.vdi --size 20000
+	## Create and attach storage devices and Linux Guest Additions
+	VBoxManage storagectl $cluster_base --name IDE1 --add ide  --bootable on
+	VBoxManage storageattach $cluster_base --storagectl IDE1 --port 0 --device 0 --type dvddrive --medium $iso_dir/CentOS-6.6-x86_64-minimal.iso
+	VBoxManage storagectl $cluster_base --name SATA --add sata  #--bootable on
+	VBoxManage storageattach $cluster_base --storagectl SATA --port 1 --device 0 --type hdd --medium $cluster_base.vdi
+	## Modify the boot order
+	VBoxManage modifyvm $cluster_base --boot1 disk --boot2 net --boot3 none --boot4 none
+	# Start the VM
+	VBoxManage startvm $cluster_base
+	
+	#VBoxManage storagectl $cluster_base --name IDE2 --add ide --bootable off
+	#VBoxManage storageattach $cluster_base --storagectl IDE2 --port 0 --device 1 --type dvddrive --medium $guest_additions
 }
 
 vbox_network_create () {
@@ -60,7 +87,7 @@ vbox_network_create () {
 
 chef_server_create () {
 	# Import the cluster base image for the chef server and nodes, add a shared folder containing server setup scripts, and configure the servers
-	VBoxManage import $iso_dir/Cluster_Base.ova --vsys 0 --vmname "Chef Server Centos"
+	VBoxManage import $iso_dir/$cluster_base.ova --vsys 0 --vmname "Chef Server Centos"
 	VBoxManage sharedfolder add "Chef Server Centos" --name "vm_setup_scripts" --hostpath $vbox_share --transient --automount
 	VBoxManage startvm "Chef Server Centos" --type headless
 	VBoxManage guestcontrol execute --image /media/sf_vm_setup_scripts/fix_networking.sh
@@ -71,7 +98,7 @@ chef_server_create () {
 
 chef_node_create () {
 	node_name=ChefNode$1
-	VBoxManage import $iso_dir/$cluster_base --vsys 0 --vmname $node_name
+	VBoxManage import $iso_dir/$cluster_base.ova --vsys 0 --vmname $node_name
 	VBoxManage sharedfolder add $node_name --name "vm_setup_scripts" --hostpath $vbox_share --transient --automount
 	VBoxManage startvm $node_name --type headless
 	VBoxManage guestcontrol $node_name execute --image /media/sf_vm_setup_scripts/fix_networking.sh
@@ -79,16 +106,51 @@ chef_node_create () {
 	VBoxManage controlvm $node_name poweroff
 }
 
-
 # If VirtualBox isn't installed, install it
-
+#verify_virtualbox
 
 # If Apache isn't installed, install it
-
+#verify_apache
 
 # Setup the environment
 
-source ../vbox_env.sh
+#source vbox_env.sh
+
+### HACK OF THE DAY ###
+# Cygwin variables
+export home_dir="C:\Users\Abby"
+
+# For MacOSX and Linux systems
+
+# The ipaddress of the machine that will be serving the boot files over the network
+export host_ip=192.168.76.2
+
+# The apache server root for the machine serving the boot files
+#export apache_root=
+
+# The directory where all of your ISO files live
+export iso_dir="$home_dir\Desktop\ISB"
+
+# The name of the .ova image file to import
+export cluster_base=Cluster_Base
+
+# The directory where VirtualBox stores vms, by default
+export vbox_vm_dir="$home_dir\VirtualBox VMs"
+
+
+# The VirtualBox TFTP directory (you probably won't need to change this)
+export vbox_tftp_dir="$home_dir\.VirtualBox\TFTP"
+
+# The test infrastructure setup root directory (i.e., the absolute path to the location on your local machine where you have copied the test_infrastructure_setup directory)
+export setup_dir="$home_dir\Desktop\ISB\test_infrastructure_setup"
+
+# The directory functioning as a shared volume between VMs and the host 
+export vbox_share="$home_dir\Desktop\ISB\test_infrastructure_setup\setup_scripts"
+
+# Location of the Linux Guest Additions iso file
+export guest_additions="C:\Program Files\Oracle\VirtualBox\VBoxGuestAdditions.iso"
+
+#######################
 
 # Configure and start the Apache webserver to serve boot files during the PXE boot process in VirtualBox
 
