@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # Before running this script:
 # 1) Do bare bones installation of server (connected to the two necessary network interfaces).
@@ -40,6 +40,28 @@ base_image_select () {
 }
 
 centos6_base_create () {
+	# Create the centos6 base vm
+	VBoxManage createvm --name $cluster_base --ostype "RedHat_64" --register
+	## Add network interfaces and memory
+	echo "made it"
+	VBoxManage modifyvm $cluster_base --memory 2048 --vram 12 
+	#VBoxManage modifyvm $cluster_base --nic1 natnetwork --nat-network1 NatNetwork --nic2 hostonly --hostonlyadapter2 vboxnet0
+	## Configure TFTP
+	VBoxManage modifyvm $cluster_base --natdnshostresolver1 on --nattftpprefix1 $vbox_tftp_dir 
+	## Create a hard drive
+	VBoxManage createhd --filename $cluster_base.vdi --size 20000
+	## Create and attach storage devices
+	VBoxManage storagectl $cluster_base --name IDE --add ide  --bootable on
+	VBoxManage storageattach $cluster_base --storagectl IDE --port 0 --device 0 --type dvddrive --medium $iso_dir/CentOS-6.6-x86_64-minimal.iso
+	VBoxManage storagectl $cluster_base --name SATA --add sata  #--bootable on
+	VBoxManage storageattach $cluster_base --storagectl SATA --port 1 --device 0 --type hdd --medium $cluster_base.vdi
+	## Modify the boot order
+	VBoxManage modifyvm $cluster_base --boot1 net --boot2 none --boot3 none --boot4 none
+	
+	# Get the UUID of the VM
+	
+	#uuid=`VBoxManage showvminfo $cluster_base | awk '/UUID/ {print $2}' | head -n 1`
+	
 	# Create the necessary directories and bootfiles
 	if [[ ! -d $vbox_tftp_dir/images/RHEL/x86_64/6.6 ]]; then
 		mkdir -p $vbox_tftp_dir/images/RHEL/x86_64/6.6
@@ -52,25 +74,23 @@ centos6_base_create () {
 	fi
 	
 	cp $setup_dir/centos6_boot_files/pxelinux.0 $vbox_tftp_dir/$cluster_base.pxe
+	
+	if [[ ! -d $vbox_tftp_dir/kickstart ]]; then
+		mkdir $vbox_tftp_dir/kickstart
+	fi
+	
+	cp $setup_dir/centos6_boot_files/anaconda-ks.cfg $setup_dir/centos6_boot_files/menu.c32 $vbox_tftp_dir
 
-	echo "LABEL centos6.6\n  KERNEL images/RHEL/x86_64/6.6/vmlinuz\n  APPEND initrd=images/RHEL/x86_64/6.6/initrd.img ks=http://$host_ip/anaconda-ks.cfg" >> $vbox_tftp_dir/pxelinux.cfg/default
+	#echo "LABEL centos6.6" > $vbox_tftp_dir/pxelinux.cfg/$uuid
+	#echo "LABEL centos6.6" > $vbox_tftp_dir/pxelinux.cfg/default
+	echo "DEFAULT centos6.6" > $vbox_tftp_dir/pxelinux.cfg/default
+	echo "LABEL centos6.6" >> $vbox_tftp_dir/pxelinux.cfg/default
+	echo "KERNEL images/RHEL/x86_64/6.6/vmlinuz" >> $vbox_tftp_dir/pxelinux.cfg/default
+	echo "APPEND initrd=images/RHEL/x86_64/6.6/initrd.img ks=http://$tftp_host/anaconda-ks.cfg" >> $vbox_tftp_dir/pxelinux.cfg/default
 	
 	# Copy the necessary files to the apache document root
+	cp -R $setup_dir/centos6_boot_files/* $apache_doc_root
 	
-	
-	# Create the centos6 base vm
-	VBoxManage createvm --name $cluster_base --ostype "RedHat_64" --register
-	## Add network interfaces and memory
-	VBoxManage modifyvm $cluster_base --memory 2048 --nic1 natnetwork --nat-network1 NatNetwork --nic2 hostonly --hostonlyadapter1 Virtual\ Box\ Host-Only\ Ethernet\ Adapter 
-	## Create a hard drive
-	VBoxManage createhd --filename $cluster_base.vdi --size 20000
-	## Create and attach storage devices and Linux Guest Additions
-	VBoxManage storagectl $cluster_base --name IDE1 --add ide  --bootable on
-	VBoxManage storageattach $cluster_base --storagectl IDE1 --port 0 --device 0 --type dvddrive --medium $iso_dir/CentOS-6.6-x86_64-minimal.iso
-	VBoxManage storagectl $cluster_base --name SATA --add sata  #--bootable on
-	VBoxManage storageattach $cluster_base --storagectl SATA --port 1 --device 0 --type hdd --medium $cluster_base.vdi
-	## Modify the boot order
-	VBoxManage modifyvm $cluster_base --boot1 disk --boot2 net --boot3 none --boot4 none
 	# Start the VM
 	VBoxManage startvm $cluster_base
 	
@@ -114,53 +134,18 @@ chef_node_create () {
 
 # Setup the environment
 
-#source vbox_env.sh
+source vbox_env.sh
 
-### HACK OF THE DAY ###
-# Cygwin variables
-export home_dir="C:\Users\Abby"
-
-# For MacOSX and Linux systems
-
-# The ipaddress of the machine that will be serving the boot files over the network
-export host_ip=192.168.76.2
-
-# The apache server root for the machine serving the boot files
-#export apache_root=
-
-# The directory where all of your ISO files live
-export iso_dir="$home_dir\Desktop\ISB"
-
-# The name of the .ova image file to import
-export cluster_base=Cluster_Base
-
-# The directory where VirtualBox stores vms, by default
-export vbox_vm_dir="$home_dir\VirtualBox VMs"
-
-
-# The VirtualBox TFTP directory (you probably won't need to change this)
-export vbox_tftp_dir="$home_dir\.VirtualBox\TFTP"
-
-# The test infrastructure setup root directory (i.e., the absolute path to the location on your local machine where you have copied the test_infrastructure_setup directory)
-export setup_dir="$home_dir\Desktop\ISB\test_infrastructure_setup"
-
-# The directory functioning as a shared volume between VMs and the host 
-export vbox_share="$home_dir\Desktop\ISB\test_infrastructure_setup\setup_scripts"
-
-# Location of the Linux Guest Additions iso file
-export guest_additions="C:\Program Files\Oracle\VirtualBox\VBoxGuestAdditions.iso"
-
-#######################
 
 # Configure and start the Apache webserver to serve boot files during the PXE boot process in VirtualBox
-
 
 # Ask the user if they want to create a new base image to clone from
 read -p "Would you like to create a new VirtualBox base image to clone from? [Y|N] " yn
 while true; do
 	case $yn in 
 		Y|y)
-			base_image_select;;
+			base_image_select
+			break;;
 		N|n)
 			break;;
 		*)
@@ -172,7 +157,8 @@ read -p "Would you like to create a new local network for your Virtualbox cluste
 while true; do
 	case $yn in
 		Y|y)
-			network_create;;
+			network_create
+			break;;
 		N|n)
 			break;;
 		*)
@@ -185,7 +171,8 @@ read -p "Would you like to create a new chef server? [Y/N] " yn
 while true; do
 	case $yn in
 		Y|y)
-			chef_server_create;;
+			chef_server_create
+			break;;
 		N|n)
 			break;;
 		*)
