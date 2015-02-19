@@ -1,8 +1,0 @@
-#!/bin/bash
-chef_server=chef-server-centos.com
-user=chef
-fullname="Abby Hahn"
-email=ahahn@systemsbiology.net
-pass=p@s5w0rD
-orgshort=isb
-orglong="Institute for Systems Biology"

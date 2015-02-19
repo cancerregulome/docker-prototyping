@@ -29,8 +29,10 @@ export vbox_share=$setup_dir/setup_scripts/linux
 # Location of the Linux Guest Additions iso file
 export guest_additions=/Applications/VirtualBox.app/Contents/MacOS/VBoxGuestAdditions.iso
 
+# The location of the chef cluster base images to clone from
+export chef_cluster_base_dir=/Users/ahahn/Desktop/Chef_Cluster
+
 # Network details
-#export natnetwork=
 
 #export hostonlyif=
 
