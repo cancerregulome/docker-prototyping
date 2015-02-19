@@ -31,7 +31,7 @@ poweroff
 %post 
 # Create the Chef user and password for the test infrastructure
 useradd chef
-chpasswd -c SHA512 -e "chef:$6$ZWmkctmCdh9Rr1.R$wi48kBtlC5e/xOTscSXfDoVkY0kNY8oJjNu6Wnop1.t37cJPBCQiR.83vfA9gc0R3mG4KMZ4OF.dNJZI0IjBV1"
+echo "chef:$6$ZWmkctmCdh9Rr1.R$wi48kBtlC5e/xOTscSXfDoVkY0kNY8oJjNu6Wnop1.t37cJPBCQiR.83vfA9gc0R3mG4KMZ4OF.dNJZI0IjBV1" | chpasswd -c SHA512
 # Add chef to the sudoers file
 echo "chef ALL=(ALL)	ALL" >> /etc/sudoers
 # Modify /etc/sysconfig/iptables (Flush)
