@@ -1,3 +1,6 @@
+test_infrastructure_setup/setup_scripts/chef_setup_scripts/host_files/**
+!test_infrastructure_setup/setup_scripts/chef_setup_scripts/host_files/README
+
 chef-repo/.chef/*.pem
 chef-repo/.chef/trusted_certs/**
 chef-repo/.chef/syntax_check_cache/**
