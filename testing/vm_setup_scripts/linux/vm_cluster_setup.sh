@@ -172,7 +172,7 @@ while true; do
 done
 
 read -p "How many chef nodes would you like to create? " node_num
-
+# NOTE: also need to check whether node_num is a number!
 while true; do
 	if [[ -z "$node_num" ]]; then
 		read -p "Please enter a number of nodes greater or equal to zero: " node_num

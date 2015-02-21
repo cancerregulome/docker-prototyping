@@ -29,32 +29,7 @@ REM verify_apache
 
 REM Setup the environment
 
-
-SET home_dir=C:\Users\Abby
-
-REM The network location of the kickstart file
-SET kickstart=http://lime.systemsbiology.net:8888/anaconda-ks.cfg
-
-REM The directory where all of your ISO files live
-SET iso_dir=%home_dir%\Desktop\ISB
-
-REM The name of the .ova image file to import
-SET cluster_base=ClusterBase
-
-REM The directory where VirtualBox stores vms, by default
-SET vbox_vm_dir=%home_dir%\VirtualBox VMs
-
-REM The VirtualBox TFTP directory (you probably won't need to change this)
-SET vbox_tftp_dir=%home_dir%\.VirtualBox\TFTP
-
-REM The test infrastructure setup root directory (i.e., the absolute path to the location on your local machine where you have copied the test_infrastructure_setup directory)
-SET setup_dir=%home_dir%\Desktop\test_infrastructure_setup
-
-REM The directory functioning as a shared volume between VMs and the host 
-SET vbox_share=%home_dir%\Desktop\test_infrastructure_setup\setup_scripts
-
-REM Location of the Linux Guest Additions iso file
-SET guest_additions=C:\Program Files\Oracle\VirtualBox-old\VBoxGuestAdditions.iso
+CALL vbox_env.bat
 
 :BaseImagePrompt
 REM Ask the user if they want to create a new base image to clone from
@@ -65,7 +40,7 @@ IF "%yn%" == "Y" IF "%yn%" == "y" (
 	IF "%yn%" == "N" IF "%yn%" == "n" (
 		GOTO NetworkPrompt
 	) ELSE (
-		ECHO That wasn't a valid choice.
+		ECHO "That wasn't a valid choice."
 		GOTO BaseImagePrompt
 	)
 )  
@@ -93,7 +68,7 @@ IF "%yn%" == "Y" || "%yn%" == "y" (
 	IF "%yn% == "N" || "%yn%" == "n" (
 		GOTO ChefServerPrompt
 	) ELSE (
-		ECHO That wasn't a valid choice.
+		ECHO "That wasn't a valid choice."
 		GOTO NetworkPrompt
 	)
 )
@@ -109,16 +84,16 @@ REM Create the necessary directories and boot files
 IF NOT EXIST %vbox_tftp_dir%\images\RHEL\x86_64\6.6 (
 	MKDIR %vbox_tftp_dir%\images\RHEL\x86_64\6.6
 )
-echo %setup_dir%
+echo %bootfiles_dir%
 
-COPY %setup_dir%\centos6_boot_files\initrd.img %vbox_tftp_dir%\images\RHEL\x86_64\6.6
-COPY %setup_dir%\centos6_boot_files\vmlinuz %vbox_tftp_dir%\images\RHEL\x86_64\6.6
+COPY %bootfiles_dir%\centos6_boot_files\initrd.img %vbox_tftp_dir%\images\RHEL\x86_64\6.6
+COPY %bootfiles_dir%\centos6_boot_files\vmlinuz %vbox_tftp_dir%\images\RHEL\x86_64\6.6
 
 IF NOT EXIST %vbox_tftp_dir%\pxelinux.cfg (
 	MD %vbox_tftp_dir%\pxelinux.cfg
 )
 
-COPY %setup_dir%\centos6_boot_files\pxelinux.0 %vbox_tftp_dir%
+COPY %bootfiles_dir%\centos6_boot_files\pxelinux.0 %vbox_tftp_dir%
 
 ECHO DEFAULT centos6.6 > %vbox_tftp_dir%\pxelinux.cfg\default
 ECHO LABEL centos6.6 >> %vbox_tftp_dir%\pxelinux.cfg\default
@@ -141,39 +116,56 @@ VBoxManage storageattach %cluster_base% --storagectl SATA --port 1 --device 0 --
 REM Modify the boot order
 VBoxManage modifyvm %cluster_base% --boot1 disk --boot2 net --boot3 none --boot4 none
 REM Start the VM
-VBoxManage startvm %cluster_base%
-
-REM Install guest additions
-
-
+START /W VBoxManage startvm %cluster_base%
 
 :ChefServerPrompt
 REM Ask the user if they want to create a new chef server
-REM read -p "Would you like to create a new chef server? [Y/N] " yn
+SET /P yn="Would you like to create a new chef server? [Y/N] "
 
-REM while true; do
-	REM case $yn in
-		REM Y|y)
-			REM chef_server_create;;
-		REM N|n)
-			REM break;;
-		REM *)
-	REM esac
-REM done
+IF %yn% == "Y" || %yn% == "y" (
+	GOTO ChefServerCreate
+) ELSE (
+	IF %yn% == "N" || %yn% == "n" (
+		GOTO Finalize
+	) ELSE (
+		ECHO "That wasn't a valid choice."
+		GOTO ChefServerPrompt
+)
+
+:ChefServerCreate
 
 :ChefNodePrompt
 REM read -p "How many chef nodes would you like to create? " node_num
+SET /P node_num="How many chef nodes would you like to create?  Enter a number: "
 
-REM if [[ -z "$node_num" ]]; then
-	REM read -p "Please enter a number of nodes greater or equal to zero: " node_num
-REM else
-	REM count=0
+IF [%node_num%] == [] (
+	ECHO "That wasn't a valid choice."
+	GOTO ChefNodePrompt
+) ELSE (
+	IF (
+	REM If node_num isn't a number
+	) ELSE (
+		REM If node_num is zero, goto Finalize; else do the stuff below.
+		SET /a "count=0"
+		:while 
+		IF %count% < %node_num% (
+			CALL :ChefNodeCreate
+			SET /a "count+=1"
+			GOTO while
+		)
+	)
+)
 
-	REM while [[ $count < $node_num ]]; do
-		REM chef_node_create $node_num
-		REM ((count += 1))
-	REM done
-REM fi
+:ChefNodeCreate
+
+GOTO :EOF
+
+:ChefClusterClone
+
+
+:Finalize
+
+ECHO "All finished!"
 
 
 
