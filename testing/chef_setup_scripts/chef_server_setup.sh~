@@ -18,9 +18,9 @@ sed -i 's/127.0.0.1\t/&'"$chef_server.com $chef_server"'/' /etc/hosts
 cat host_files/nodes/* > /etc/hosts
 
 # Put the config files in the correct places
-cp /media/sf_chef_setup_scripts/kubernetes/config /etc/kubernetes
-cp /media/sf_chef_setup_scripts/kubernetes/apiserver /etc/kubernetes
-cp /media/sf_chef_setup_scripts/kubernetes/controller-manager /etc/kubernetes
+cp $vbox_share/kubernetes/config /etc/kubernetes
+cp $vbox_share/kubernetes/apiserver /etc/kubernetes
+cp $vbox_share/kubernetes/controller-manager /etc/kubernetes
 
 # Start/restart services
 for SERVICES in etcd kube-apiserver kube-controller-manager kube-scheduler network; do

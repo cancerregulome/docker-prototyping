@@ -32,7 +32,7 @@ export guest_additions=/Applications/VirtualBox.app/Contents/MacOS/VBoxGuestAddi
 # The location of the chef cluster base images to clone from
 export chef_cluster_base_dir=/Users/ahahn/Desktop/Chef_Cluster
 
-# The chef server hostname to use
+# Chef cluster details
 export chef_server=chef-server-centos
 
 # Network details

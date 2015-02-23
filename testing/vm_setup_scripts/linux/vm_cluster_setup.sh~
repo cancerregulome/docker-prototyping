@@ -115,7 +115,7 @@ chef_server_create () {
 	VBoxManage sharedfolder add "Chef Server Centos" --name "chef_setup_scripts" --hostpath $vbox_share --transient --automount
 	VBoxManage startvm "Chef Server Centos" --type headless
 	# Wait fot the vm to finish powering on
-	until $(VBoxManage showvminfo --machinereadable "Chef Server Centos" | grep -q ^VMState=.running.); do
+	until $(VBoxManage showvminfo --machinereadable $cluster_base | grep -q ^VMState=.running.); do
 		sleep 1
 	done
 	VBoxManage guestcontrol "Chef Server Centos" execute --image /media/sf_chef_setup_scripts/get_dhcp_ips.sh --username root --password testroot --wait-exit -- master/$chef_server
@@ -128,10 +128,6 @@ chef_node_create () {
 	VBoxManage import $chef_cluster_base_dir/$cluster_base.ova --vsys 0 --vmname $node_name
 	VBoxManage sharedfolder add $node_name --name "chef_setup_scripts" --hostpath $vbox_share --transient --automount
 	VBoxManage startvm $node_name --type headless
-	# Wait fot the vm to finish powering on
-	until $(VBoxManage showvminfo --machinereadable $node_name | grep -q ^VMState=.running.); do
-		sleep 1
-	done
 	VBoxManage guestcontrol $node_name execute --image /media/sf_chef_setup_scripts/get_dhcp_ips.sh --username root --password testroot --wait-exit -- node/$node_name
 }
 
