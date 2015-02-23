@@ -91,7 +91,7 @@ centos6_base_create () {
 	VBoxManage modifyvm $cluster_base --boot1 disk --boot2 net --boot3 none --boot4 none
 	
 	# Start the VM
-	VBoxManage startvm $cluster_base
+	VBoxManage startvm $cluster_base --type headless
 	
 	# Wait fot the installation to finish
 	until $(VBoxManage showvminfo --machinereadable $cluster_base | grep -q ^VMState=.poweroff.); do

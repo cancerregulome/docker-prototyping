@@ -28,10 +28,10 @@ poweroff
 @core
 %end
 
-%post 
+%post --log=/root/ks-post.log
 # Create the Chef user and password for the test infrastructure
 useradd chef
-echo "chef:$6$3FjI1t5VWFAvyIsg$.7HIVz0tMProjBekjwKTnadhWlYpmyPX6Uo0AWw5YK9hwC1TsFj2oiqgfvFGXY02tuQlhzfkxV3VLpm/mokvy." | chpasswd -e
+echo "chef:\$6\$3FjI1t5VWFAvyIsg\$.7HIVz0tMProjBekjwKTnadhWlYpmyPX6Uo0AWw5YK9hwC1TsFj2oiqgfvFGXY02tuQlhzfkxV3VLpm/mokvy." | chpasswd -e
 # Add chef to the sudoers file
 echo "chef ALL=(ALL)	ALL" >> /etc/sudoers
 # Modify /etc/sysconfig/iptables (Flush)
@@ -44,15 +44,15 @@ sed 's/HWADDR=.*//' /etc/sysconfig/network-scripts/ifcfg-eth1
 # Update packages
 yum -y update
 # Install remaining packages
-yum -y install kernel-devel gcc perl wget acpid
+yum -y install kernel-devel gcc perl wget acpid 
 # Install dkms
-wget http://linux.dell.com/dkms/dkms-2.2.0.3-1.noarch.rpm
+wget http://linux.dell.com/dkms/permalink/dkms-2.2.0.3-1.noarch.rpm
 rpm -Uvh dkms-2.2.0.3-1.noarch.rpm
 # Mount the Guest Additions disk
 mount /dev/cdrom1 /mnt
 # Install Guest Additions
 cd /mnt
-./VBoxLinuxAdditions.sh
+./VBoxLinuxAdditions.run
 # Add the chef user to the vboxsf group
 groupadd vboxsf
 usermod -a -G vboxsf chef
