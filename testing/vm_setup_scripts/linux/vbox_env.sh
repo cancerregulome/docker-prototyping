@@ -30,10 +30,10 @@ export vbox_share=$setup_dir/chef_setup_scripts
 export guest_additions=/Applications/VirtualBox.app/Contents/MacOS/VBoxGuestAdditions.iso
 
 # The location of the chef cluster base images to clone from
-export chef_cluster_base_dir=/Users/ahahn/Desktop/Chef_Cluster
+export chef_cluster_dir=/Users/ahahn/Desktop/Chef_Cluster
 
 # The chef server hostname to use
-export chef_server=chef-server-centos
+export chef_server=chef-server
 
 # Network details
 
