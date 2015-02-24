@@ -73,6 +73,7 @@ centos6_base_create () {
 	cp -R $setup_dir/centos6_boot_files/anaconda-ks.cfg $apache_doc_root
 
 	# Create the centos6 base vm
+	# Note to self:  Figure out why this is creating the .vdi in cwd
 	VBoxManage createvm --name $cluster_base --ostype "RedHat_64" --register 
 	## Add network interfaces and memory, and enable ACPI
 	VBoxManage modifyvm $cluster_base --memory 2048 --vram 12 --acpi on
