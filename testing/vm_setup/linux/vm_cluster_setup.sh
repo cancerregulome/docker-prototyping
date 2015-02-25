@@ -24,8 +24,8 @@ pxeboot_setup() {
 		mkdir -p $vbox_tftp_dir/pxelinux.cfg
 	fi
 
-	cp $setup_dir/centos6_boot_files/initrd.img $setup_dir/centos6_boot_files/vmlinuz $vbox_tftp_dir/images/RHEL/x86_64/6.6
-	cp $setup_dir/centos7_boot_files/initrd.img $setup_dir/centos7_boot_files/vmlinuz $vbox_tftp_dir/images/RHEL/x86_64/7
+	cp $setup_dir/centos6_boot_files/initrd.img  $setup_dir/centos6_boot_files/vmlinuz $vbox_tftp_dir/images/CentOS/x86_64/6.6
+	cp $setup_dir/centos7_boot_files/initrd.img $setup_dir/centos7_boot_files/vmlinuz $vbox_tftp_dir/images/CentOS/x86_64/7
 
 	# Set up the directory for exported base images
 	if [[ ! -d $kube_cluster_dir ]]; then 
@@ -34,7 +34,7 @@ pxeboot_setup() {
 
 }
 
-kubernetes_create () {
+kube_create () {
 	kube_role=$1
 	node_num=$2
 	vm_name="kube-$kube_role$node_num"
@@ -68,7 +68,7 @@ kubernetes_create () {
 	VBoxManage modifyvm $vm_name --boot1 disk --boot2 net --boot3 none --boot4 none
 	
 	# Start the VM
-	VBoxManage startvm $vm_name --type headless
+	VBoxManage startvm $vm_name #--type headless
 	
 	# Wait fot the installation to finish
 	until $(VBoxManage showvminfo --machinereadable $vm_name | grep -q ^VMState=.poweroff.); do
@@ -172,6 +172,8 @@ kube_cluster_config() {
 
 source vbox_env.sh
 
+pxeboot_setup
+
 # Ask the user if they want to create a new network for the VMs
 read -p "Would you like to create a new local network for your Virtualbox cluster? [Y/N] " yn
 while true; do
@@ -191,7 +193,7 @@ read -p "Would you like to create a new kube cluster? [Y/N] " yn
 while true; do
 	case $yn in
 		Y|y)
-			kube_create master master 
+			kube_create master 
 			kube_master_config
 			read -p "How many kube nodes would you like to create? " node_num
 			# NOTE: also need to check whether node_num is a number!
@@ -210,7 +212,7 @@ while true; do
 				fi
 			done
 			kube_cluster_config
-			kube_cluster_clone
+			#kube_cluster_clone
 			break;;
 		N|n)
 			break;;
