@@ -11,9 +11,6 @@ export apache_doc_root=/Applications/MAMP/htdocs
 # The directory where all of your ISO files live
 export iso_dir=/Users/ahahn/Desktop/Stuff
 
-# The name of the .ova image file to import
-export cluster_base=ClusterBase
-
 # The directory where VirtualBox stores vms, by default
 export vbox_vm_dir=/Users/ahahn/"VirtualBox VMs"
 
@@ -24,16 +21,16 @@ export vbox_tftp_dir=/Users/ahahn/Library/VirtualBox/TFTP
 export setup_dir=/Users/ahahn/Desktop/VM_Share/testing
 
 # The directory functioning as a shared volume between VMs and the host 
-export vbox_share=$setup_dir/chef_setup_scripts
+export vbox_share=$setup_dir/kubernetes_setup
 
 # Location of the Linux Guest Additions iso file
 export guest_additions=/Applications/VirtualBox.app/Contents/MacOS/VBoxGuestAdditions.iso
 
-# The location of the chef cluster base images to clone from
-export chef_cluster_base_dir=/Users/ahahn/Desktop/Chef_Cluster
+# The location of the kube cluster base images to clone from
+export kube_cluster_dir=/Users/ahahn/Desktop/Kube_Cluster
 
-# Chef cluster details
-export chef_server=chef-server-centos
+# The kube master hostname to use
+export kube_master=kube-master
 
 # Network details
 
