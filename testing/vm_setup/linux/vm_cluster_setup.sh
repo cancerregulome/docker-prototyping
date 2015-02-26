@@ -39,33 +39,39 @@ kube_create () {
 	node_num=$2
 	vm_name="kube-$kube_role$node_num"
 
-	cp $setup_dir/centos7_boot_files/pxelinux.0 $vbox_tftp_dir/$vm_name.pxe
-
-	echo "DEFAULT centos7" > $vbox_tftp_dir/pxelinux.cfg/default
-	echo "LABEL centos7" >> $vbox_tftp_dir/pxelinux.cfg/default
-	echo "KERNEL images/CentOS/x86_64/7/vmlinuz" >> $vbox_tftp_dir/pxelinux.cfg/default
-	echo "APPEND initrd=images/CentOS/x86_64/7/initrd.img ks=http://$tftp_host/kube-$kube_role-ks.cfg ksdevice=eth0" >> $vbox_tftp_dir/pxelinux.cfg/default
-	
-	# Copy the necessary files to the apache document root
-	cp -R $setup_dir/centos7_boot_files/kube* $apache_doc_root
-
 	# Create the centos7 base vm
 	VBoxManage createvm --name $vm_name --ostype "RedHat_64" --register 
 	## Add network interfaces and memory, and enable ACPI
 	VBoxManage modifyvm $vm_name --memory 2048 --vram 12 --acpi on
 	VBoxManage modifyvm $vm_name --nic1 nat --nic2 hostonly --hostonlyadapter2 vboxnet0
 	## Configure TFTP
-	VBoxManage modifyvm $vm_name --natdnshostresolver1 on --nattftpprefix1 $vbox_tftp_dir 
+	VBoxManage modifyvm $vm_name --nattftpprefix1 $vbox_tftp_dir --natdnshostresolver1 on
 	## Create a hard drive
 	VBoxManage createhd --filename $vm_name.vdi --size 20000
 	## Create and attach storage devices (CentOS and Guest Additions images)
 	VBoxManage storagectl $vm_name --name IDE --add ide
 	VBoxManage storageattach $vm_name --storagectl IDE --port 0 --device 0 --type dvddrive --medium $iso_dir/CentOS-7.0-1406-x86_64-Minimal.iso
-	VBoxManage storageattach $vm_name --storagectl IDE --port 1 --device 1 --type dvddrive --medium $guest_additions
+	#VBoxManage storageattach $vm_name --storagectl IDE --port 1 --device 1 --type dvddrive --medium $guest_additions
 	VBoxManage storagectl $vm_name --name SATA --add sata  
 	VBoxManage storageattach $vm_name --storagectl SATA --port 0 --device 0 --type hdd --medium $vm_name.vdi
 	## Modify the boot order
 	VBoxManage modifyvm $vm_name --boot1 disk --boot2 net --boot3 none --boot4 none
+	
+	# Get and format the mac addresses of the network interfaces
+	eth0=$(VBoxManage showvminfo --machinereadable $vm_name | grep macaddress1 | awk 'BEGIN { FS="="; } {print $2}' | awk 'BEGIN {FS="\"";} {print $2}' | sed 's/.\{2\}/&:/' | sed 's/.\{5\}/&:/' | sed 's/.\{8\}/&:/' | sed 's/.\{11\}/&:/' | sed 's/.\{14\}/&:/')
+	eth1=$(VBoxManage showvminfo --machinereadable $vm_name | grep macaddress2 | awk 'BEGIN { FS="="; } {print $2}' | awk 'BEGIN {FS="\"";} {print $2}' | sed 's/.\{2\}/&:/' | sed 's/.\{5\}/&:/' | sed 's/.\{8\}/&:/' | sed 's/.\{11\}/&:/' | sed 's/.\{14\}/&:/')
+	
+	# VM specific boot configuration
+	cp $setup_dir/centos7_boot_files/pxelinux.0 $vbox_tftp_dir/$vm_name.pxe
+
+	echo "DEFAULT centos7" > $vbox_tftp_dir/pxelinux.cfg/default
+	echo "LABEL centos7" >> $vbox_tftp_dir/pxelinux.cfg/default
+	echo "KERNEL images/CentOS/x86_64/7/vmlinuz" >> $vbox_tftp_dir/pxelinux.cfg/default
+	echo "APPEND initrd=images/CentOS/x86_64/7/initrd.img inst.repo=cdrom:LABEL=CentOS_7_x86_64 inst.ks=http://$tftp_host/kube-$kube_role-ks.cfg" >> $vbox_tftp_dir/pxelinux.cfg/default
+	#echo "APPEND initrd=images/CentOS/x86_64/7/initrd.img inst.ks=http://$tftp_host/anaconda-ks.cfg" >> $vbox_tftp_dir/pxelinux.cfg/default
+	# for reference:  eth0=>enp0s3  eth1=>enp0s8
+	# Copy the necessary files to the apache document root
+	cp -R $setup_dir/centos7_boot_files/kube* $apache_doc_root
 	
 	# Start the VM
 	VBoxManage startvm $vm_name #--type headless
