@@ -12,33 +12,42 @@
 
 pxeboot_setup() {
 	# Create the necessary directories and bootfiles
-	if [[ ! -d $vbox_tftp_dir/images/CentOS/x86_64/6.6 ]]; then
-		mkdir -p $vbox_tftp_dir/images/CentOS/x86_64/6.6
-	fi
-
-	if [[ ! -d $vbox_tftp_dir/images/CentOS/x86_64/7 ]]; then
-		mkdir -p $vbox_tftp_dir/images/CentOS/x86_64/7
+	vm_name=$1
+	OS=$2
+	
+	if [[ ! -d $vbox_tftp_dir/images/$OS ]]; then
+		mkdir -p $vbox_tftp_dir/images/$OS
 	fi
 
 	if [[ ! -d $vbox_tftp_dir/pxelinux.cfg ]]; then
 		mkdir -p $vbox_tftp_dir/pxelinux.cfg
 	fi
 
-	cp $setup_dir/centos6_boot_files/initrd.img  $setup_dir/centos6_boot_files/vmlinuz $vbox_tftp_dir/images/CentOS/x86_64/6.6
-	cp $setup_dir/centos7_boot_files/initrd.img $setup_dir/centos7_boot_files/vmlinuz $vbox_tftp_dir/images/CentOS/x86_64/7
-
+	cp $setup_dir/boot_files/$OS/initrd.img  $setup_dir/boot_files/$OS/vmlinuz $vbox_tftp_dir/images/$OS
+	
+	cp $setup_dir/boot_files/$OS/pxelinux.0 $vbox_tftp_dir/$vm_name.pxe
+	
 	# Set up the directory for exported base images
-	if [[ ! -d $kube_cluster_dir ]]; then 
-		mkdir -p $kube_cluster_dir
+	if [[ ! -d $cluster_dir ]]; then 
+		mkdir -p $cluster_dir
 	fi
 
 }
 
-kube_create () {
-	kube_role=$1
-	node_num=$2
-	vm_name="kube-$kube_role$node_num"
+vm_create () {
+	vm_name=$1
+	OS=$2
+	
+	pxeboot_setup $vm_name $OS
 
+	if [[ $OS == "centos6" ]]; then
+		iso=$centos6_iso
+		append_string="APPEND initrd=images/$OS/initrd.img ks=http://$tftp_host/$vm_name-ks.cfg ksdevice=eth0"
+	elif [[ $OS == "centos7" ]]; then
+		iso=$centos7_iso
+		append_string="APPEND initrd=images/$OS/initrd.img inst.repo=cdrom:LABEL=CentOS_7_x86_64 inst.ks=http://$tftp_host/$vm_name-ks.cfg"
+	fi
+	
 	# Create the centos7 base vm
 	VBoxManage createvm --name $vm_name --ostype "RedHat_64" --register 
 	## Add network interfaces and memory, and enable ACPI
@@ -50,7 +59,7 @@ kube_create () {
 	VBoxManage createhd --filename $vm_name.vdi --size 20000
 	## Create and attach storage devices (CentOS and Guest Additions images)
 	VBoxManage storagectl $vm_name --name IDE --add ide
-	VBoxManage storageattach $vm_name --storagectl IDE --port 0 --device 0 --type dvddrive --medium $iso_dir/CentOS-7.0-1406-x86_64-Minimal.iso
+	VBoxManage storageattach $vm_name --storagectl IDE --port 0 --device 0 --type dvddrive --medium $iso
 	#VBoxManage storageattach $vm_name --storagectl IDE --port 1 --device 1 --type dvddrive --medium $guest_additions
 	VBoxManage storagectl $vm_name --name SATA --add sata  
 	VBoxManage storageattach $vm_name --storagectl SATA --port 0 --device 0 --type hdd --medium $vm_name.vdi
@@ -60,18 +69,15 @@ kube_create () {
 	# Get and format the mac addresses of the network interfaces
 	eth0=$(VBoxManage showvminfo --machinereadable $vm_name | grep macaddress1 | awk 'BEGIN { FS="="; } {print $2}' | awk 'BEGIN {FS="\"";} {print $2}' | sed 's/.\{2\}/&:/' | sed 's/.\{5\}/&:/' | sed 's/.\{8\}/&:/' | sed 's/.\{11\}/&:/' | sed 's/.\{14\}/&:/')
 	eth1=$(VBoxManage showvminfo --machinereadable $vm_name | grep macaddress2 | awk 'BEGIN { FS="="; } {print $2}' | awk 'BEGIN {FS="\"";} {print $2}' | sed 's/.\{2\}/&:/' | sed 's/.\{5\}/&:/' | sed 's/.\{8\}/&:/' | sed 's/.\{11\}/&:/' | sed 's/.\{14\}/&:/')
-	
-	# VM specific boot configuration
-	cp $setup_dir/centos7_boot_files/pxelinux.0 $vbox_tftp_dir/$vm_name.pxe
 
 	echo "DEFAULT centos7" > $vbox_tftp_dir/pxelinux.cfg/default
 	echo "LABEL centos7" >> $vbox_tftp_dir/pxelinux.cfg/default
-	echo "KERNEL images/CentOS/x86_64/7/vmlinuz" >> $vbox_tftp_dir/pxelinux.cfg/default
-	echo "APPEND initrd=images/CentOS/x86_64/7/initrd.img inst.repo=cdrom:LABEL=CentOS_7_x86_64 inst.ks=http://$tftp_host/kube-$kube_role-ks.cfg" >> $vbox_tftp_dir/pxelinux.cfg/default
+	echo "KERNEL images/$OS/vmlinuz" >> $vbox_tftp_dir/pxelinux.cfg/default
+	echo $append_string >> $vbox_tftp_dir/pxelinux.cfg/default
 	#echo "APPEND initrd=images/CentOS/x86_64/7/initrd.img inst.ks=http://$tftp_host/anaconda-ks.cfg" >> $vbox_tftp_dir/pxelinux.cfg/default
 	# for reference:  eth0=>enp0s3  eth1=>enp0s8
 	# Copy the necessary files to the apache document root
-	cp -R $setup_dir/centos7_boot_files/kube* $apache_doc_root
+	cp -R $setup_dir/boot_files/$OS/$vm_name-ks.cfg $apache_doc_root
 	
 	# Start the VM
 	VBoxManage startvm $vm_name #--type headless
@@ -82,7 +88,7 @@ kube_create () {
 	done
 
 	# Export the base image
-	VBoxManage export $vm_name -o $kube_cluster_dir/$vm_name.ova
+	#VBoxManage export $vm_name -o $kube_cluster_dir/$vm_name.ova
 	
 }
 
@@ -178,8 +184,6 @@ kube_cluster_config() {
 
 source vbox_env.sh
 
-pxeboot_setup
-
 # Ask the user if they want to create a new network for the VMs
 read -p "Would you like to create a new local network for your Virtualbox cluster? [Y/N] " yn
 while true; do
@@ -194,39 +198,31 @@ while true; do
 done
 
 # Ask the user if they want to create a new kube cluster
-read -p "Would you like to create a new kube cluster? [Y/N] " yn
+read -p "Would you like to create a new cluster? [Y/N] " yn
 
 while true; do
 	case $yn in
 		Y|y)
-			kube_create master 
-			kube_master_config
-			read -p "How many kube nodes would you like to create? " node_num
-			# NOTE: also need to check whether node_num is a number!
-			while true; do
-				if [[ -z "$node_num" ]]; then
-					read -p "Please enter a number of nodes greater or equal to zero: " node_num
-				else
-					count=0
-
-					while [[ $count < $node_num ]]; do
-						kube_create minion $count
-						kube_minion_config $count
-						((count += 1))
-					done
-					break
-				fi
-			done
-			kube_cluster_config
-			#kube_cluster_clone
+			read -p "Enter a vm name: " vm_name
+			echo "Choose an OS for $vm_name: "
+			echo "	[1] CentOS6.6"
+			echo "	[2] CentOS7"
+			read -p "Enter a number: " num
+			if [[ $num == 1 ]]; then
+				OS="centos6"
+			else
+				OS="centos7"
+			fi
+			vm_create $vm_name $OS
 			break;;
+			#read -p "Would you like to create another vm for the cluster? [Y/N] " yn
 		N|n)
 			break;;
 		*)
 	esac
 done
 
-echo "kubernetes cluster creation was successful!"
+echo "Cluster creation was successful!"
 
 
 
