@@ -1,3 +1,3 @@
 # /etc/kubernetes/controller-manager
 
-#KUBELET_ADDRESSES="--machines=<%= @kube_minions.each do |machine| -%><%= machine %><%= "," if 
+KUBELET_ADDRESSES="--machines=<%= @kube_minions.each do |machine| -%><%= machine %><%= "," if machine != @kube_minions.last %><%= end -%>

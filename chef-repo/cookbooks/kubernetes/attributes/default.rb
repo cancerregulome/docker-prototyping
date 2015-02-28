@@ -25,9 +25,9 @@ default['kubernetes']['kube_api_address'] = "0.0.0.0"
 default['kubernetes']['kube_service_addresses'] = "10.254.0.0/16"
 default['kubernetes']['kube_api_args'] = # Not sure yet
 
-# /etc/kubernetes/controller-manager
+# /etc/kubernetes/controller-manager 
 
 # /etc/kubernetes/kubelet
+default['kubernetes']['kubelet_address'] = "0.0.0.0"
+default['kubernetes']['kubelet_args'] = # Not sure yet
 
-
-# /etc/kubernetes/
