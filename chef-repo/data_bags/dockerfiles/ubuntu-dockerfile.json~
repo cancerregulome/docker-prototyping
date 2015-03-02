@@ -1,0 +1,16 @@
+{
+	"id": "ubuntu-dockerfile",
+	"script": ["FROM chef/ubuntu-14.04\n",
+		"ADD chef/ /etc/chef/\n",
+		"RUN chef-init --bootstrap\n",
+		"RUN rm -rf /etc/chef/secure/*\n",
+		"RUN apt-get -qq update\n",
+		"RUN apt-get -qq install build-essential python-django\n",
+		"RUN apt-get -qq clean\n",
+		"ENV DJANGO /usr/lib/python2.7/dist-packages/django/bin\n",
+		"RUN chmod u+x $DJANGO/django-admin.py\n",
+		"RUN $DJANGO/django-admin.py startproject test_app\n",
+		"RUN chmod u+x /test_app/manage.py\n",
+		"EXPOSE 8000\n",
+		"ENTRYPOINT [\"chef-init\"]"]
+}

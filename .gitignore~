@@ -1,0 +1,14 @@
+**/.DS_STORE
+chef-repo/.chef/*.pem
+chef-repo/.chef/trusted_certs/**
+chef-repo/.chef/syntax_check_cache/**
+chef-repo/cookbooks/solrcloud/files/default/dockerfiles/zookeeper/install/**
+chef-repo/cookbooks/solrcloud/files/default/dockerfiles/solr-shard/install/**
+chef-repo/cookbooks/solrcloud/files/default/dockerfiles/zookeeper/config/zoo.cfg
+chef-repo/cookbooks/solrcloud/files/default/dockerfiles/solr-shard/chef/secure/validation.pem
+chef-repo/cookbooks/solrcloud/files/default/dockerfiles/solr-shard/chef/secure/trusted_certs/**
+chef-repo/cookbooks/solrcloud/files/default/dockerfiles/tomcat/chef/secure/validation.pem
+chef-repo/cookbooks/solrcloud/files/default/dockerfiles/tomcat/chef/secure/trusted_certs/**
+chef-repo/cookbooks/solrcloud/files/default/dockerfiles/zookeeper/chef/secure/validation.pem
+chef-repo/cookbooks/solrcloud/files/default/dockerfiles/zookeeper/chef/secure/trusted_certs/**
+chef-repo/dockerfiles/**

@@ -1,0 +1,113 @@
+Scenario 1:  Chef Server with “Physical” Node
+
+
+Assumptions:
+* A fresh install of Ubuntu Server (12.04 or 14.04) has been performed on 2 or more hosts, one for the Chef Server and the others for Chef Nodes.
+* A Linux Desktop (Ubuntu 14.04) is available for use as a workstation.  This isn’t a requirement in general, but is the OS that I used for putting together these instructions.
+
+
+1. Configure Chef Server
+   1. Prepare the machine for installation of Chef Server by installing/upgrading the build-essential package (Ubuntu):
+
+
+sudo apt-get update
+sudo apt-get install build-essential
+
+
+   1. Install the chef server:
+
+
+wget https://web-dl.packagecloud.io/chef/stable/packages/ubuntu/trusty/chef-server-core_12.0.1-1_amd64.deb
+sudo dpkg -i chef-server-core_12.0.1-1_amd64.deb
+
+
+   1. Set the FQDN for the machine (in /etc/hostname) to something that is resolvable through DNS:
+
+
+sudo nano /etc/hostname
+
+
+   1. Edit /etc/hosts to reflect the change in /etc/hostname:
+
+
+…
+127.0.0.0                <FQDN>                <hostname>
+…
+
+
+   1. Restart the machine for hostname changes to take effect
+   2. Perform initial configuration of the Chef Server:
+
+
+sudo chef-server-ctl user-create <admin-username> <full-name> <email> <password> --filename /path/to/<admin-username>.pem
+sudo chef-server-ctl org-create <short-name> <full-name> --association_user <admin-username> --filename /path/to/<short-name>-validator.pem 
+sudo chef-server-ctl reconfigure
+
+
+1. Set up a workstation (Ubuntu 14.04 Desktop Instructions)
+   1. Install build-essential, ChefDK, knife-container gem and Docker:
+sudo apt-get update
+sudo apt-get install build-essential docker.io
+sudo apt-get clean
+wget https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/12.04/x86_64/chefdk_0.3.5-1_amd64.deb
+sudo dpkg -i chefdk_0.3.5-1_amd64.deb
+chef gem install knife-container
+
+
+   1. Edit /etc/hosts to add Chef Server and Chef Node(s) FQDNs.
+   2. Create a chef repo with the following structure to start with:
+                chef-repo
+* .chef
+* cookbooks
+   1. Copy key files generated on Chef Server to the .chef directory:
+
+
+cd .chef
+scp -o stricthostkeychecking=no <admin-username>@<chef server hostname>:/path/to/<admin-username>.pem .
+scp -o stricthostkeychecking=no <admin-username>@<chef server hostname>:/path/to/<short-org-name>-validator.pem .
+
+
+   1. Create a knife.rb file in .chef:
+knife configure
+*follow the prompts after running the above command, or just write knife.rb from scratch (see the official documentation)
+
+
+   1. Check the connection with the Chef Server:
+
+
+knife ssl check
+
+
+If you get an error, run:
+
+
+knife ssl fetch
+
+
+   1. Create a cookbook for “bootstrapping”:
+cd chef-repo
+chef generate cookbook <cookbook name>
+
+
+   1. Upload the contents of the chef repo to the Chef Server:
+        cd chef-repo
+        knife upload .
+
+
+1. Bootstrap the node(s)
+   1. Update the node’s hostname and restart:
+   2. From the workstation, run the following command:
+
+
+knife bootstrap <options> <chef server fqdn>
+
+
+
+
+
+
+Scenario 2:  Chef Server with “Container” Node
+
+
+1. Follow all of the instructions from Scenario 1 for setting up the Chef Server and Workstation.
+2.

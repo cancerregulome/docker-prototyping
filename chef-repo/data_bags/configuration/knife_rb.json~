@@ -1,0 +1,11 @@
+{
+	"id": "knife_rb",
+	"script": ["log_level\t:info\n", 
+			"log_location\tSTDOUT\n",
+			"node_name\t'client'\n",
+			"client_key\t'/etc/chef/client.pem'\n",
+			"validation_client_name\t'validation'\n",
+			"validation_key\t'/etc/chef/validation.pem'\n",
+			"chef_server_url\t'https://chef-server.test.net/organizations/isb'\n",
+			"syntax_check_cache_path\t'/etc/chef/syntax_check_cache'"]
+}

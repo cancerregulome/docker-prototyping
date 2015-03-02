@@ -1,0 +1,81 @@
+# Kickstart file for Chef Cluster base image installation.
+install
+cdrom
+lang en_US.UTF-8
+keyboard us
+network --onboot yes --device eth0 --bootproto dhcp --noipv6
+network --onboot yes --device eth1 --bootproto dhcp --noipv6
+rootpw  --iscrypted $6$3oOfWXD5anbhmMtu$b9kln3DioBz4otxIRNGUPU8DjKReuFCj/EK.1s406o1wiKJYtJrFKgSpgFQF7TfALHKMon2DeXYbDbU0wEBDb0
+firewall --service=ssh
+authconfig --enableshadow --passalgo=sha512
+selinux --enforcing
+timezone --utc America/Los_Angeles
+bootloader --location=mbr --driveorder=sda --append="crashkernel=auto rhgb quiet"
+
+# Partition information
+zerombr
+clearpart --all --drives=sda
+part /boot --fstype=ext4 --size=500
+part pv.008002 --grow --size=1
+volgroup VolGroup --pesize=4096 pv.008002
+logvol / --fstype=ext4 --name=lv_root --vgname=VolGroup --grow --size=1024 --maxsize=51200
+logvol swap --name=lv_swap --vgname=VolGroup --grow --size=2048 --maxsize=2048
+
+# CentOS repo inforomation
+repo --name="CentOS"  --baseurl=file:///mnt/source --cost=100
+
+# Poweroff after installation
+poweroff
+
+%packages --nobase
+@core
+%end
+
+%post 
+# Create the Kubernetes user and password for the test infrastructure
+useradd kube
+echo "kube:\$6\$3FjI1t5VWFAvyIsg\$.7HIVz0tMProjBekjwKTnadhWlYpmyPX6Uo0AWw5YK9hwC1TsFj2oiqgfvFGXY02tuQlhzfkxV3VLpm/mokvy." | chpasswd -e
+
+# Add Kubernetes user to the sudoers file
+echo "kube ALL=(ALL)	ALL" >> /etc/sudoers
+
+# Modify /etc/sysconfig/iptables (Flush)
+echo "*filter\n:INPUT ACCEPT [0:0]\n:FORWARD ACCEPT [0:0]\n:OUTPUT ACCEPT [0:0]\nCOMMIT" > /etc/sysconfig/iptables
+
+# Update packages
+yum -y update
+
+# Install remaining packages (including Kubernetes and Docker Registry)
+yum -y install kernel-devel gcc perl wget acpid kubernetes docker docker-registry
+yum -y clean
+
+# Install dkms
+wget http://linux.dell.com/dkms/permalink/dkms-2.2.0.3-1.noarch.rpm
+rpm -Uvh dkms-2.2.0.3-1.noarch.rpm
+
+# Mount the Guest Additions disk and install
+mount /dev/cdrom1 /mnt
+# Install Guest Additions
+/bin/sh /mnt/VBoxLinuxAdditions.run
+
+# Add the Kubernetes user to the vboxsf and docker groups
+groupadd vboxsf
+groupadd docker
+usermod -a -G vboxsf kube
+usermod -a -G docker kube
+
+# Configure the docker registry as a service
+
+# Start acpid, docker, docker registry, vboxadd and kubernetes (master) services
+for SERVICES in acpid vboxadd-service kube-apiserver kube-controller-manager kube-scheduler; do
+	systemctl restart $SERVICES
+	systemctl enable $SERVICES
+	systemctl status $SERVICES
+done
+
+%end
+
+
+
+
+

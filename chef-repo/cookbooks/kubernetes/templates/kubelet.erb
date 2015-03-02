@@ -1,0 +1,13 @@
+# /etc/kubernetes/kubelet
+
+# The address for the info server to serve on
+KUBELET_ADDRESS="--address=<%= @kubelet_address %>"
+
+# The port for the info server to serve on
+KUBELET_PORT="--port=<%= @kubelet_port %>"
+
+# You may leave this blank to use the actual hostname
+KUBELET_HOSTNAME=
+
+# Add your own!
+KUBELET_ARGS="<%= @kubelet_args %>"
