@@ -1,0 +1,1 @@
+docker run -d -p <%= @host_port =>:<%= @container_port => -e SETTINGS_FLAVOR=<%= @settings_flavor => -e STORAGE_PATH=<%= @storage_path =>
