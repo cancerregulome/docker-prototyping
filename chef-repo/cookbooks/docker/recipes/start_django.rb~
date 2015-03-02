@@ -1,5 +1,0 @@
-service "django" do
-	action :enable
-	init_command 'python test_app/manage.py runserver 0.0.0.0:8000'
-end
-
