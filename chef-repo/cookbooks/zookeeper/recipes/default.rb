@@ -11,13 +11,24 @@ end
 execute "tar -xf /usr/local/src/zookeeper-3.4.6.tar.gz && mv /usr/local/src/zookeeper-3.4.6 /usr/local"
 
 # Configure zookeeper
-template "/var/zookeeper/myid" do
-	source "?" # figure this out later
+file "/var/zookeeper/myid" do
+	content #{ENV['ZOOKEEPERS']}
+	action :create
 end
 
 template "/usr/local/zookeeper-3.4.6/conf/zoo.cfg" do
 	source "zoo.cfg.erb"
+	variables({
+		:tick_time => node[:zookeeper][:tick_time],
+		:data_dir => node[:zookeeper][:data_dir],
+		:client_port => node[:zookeeper][:ports][:client_port],
+		:init_limit => node[:zookeeper][:init_limit],
+		:sync_limit => node[:zookeeper][:sync_limit],
+		:servers => node[:zookeeper][:servers]
+	})
 end
+
+
 
 
 

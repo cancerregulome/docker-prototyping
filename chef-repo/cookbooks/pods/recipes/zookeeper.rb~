@@ -1,0 +1,8 @@
+# Upload zookeeper-controller.json
+
+# Create the zookeeper container
+docker_image "chef-ubuntu-latest" do
+	tag "zookeeper"
+	action :push
+end
+	
