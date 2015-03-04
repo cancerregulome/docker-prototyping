@@ -7,7 +7,7 @@ KUBE_API_ADDRESS="--address=<%= @kube_api_address %>"
 KUBE_API_PORT="--port=<%= @kube_api_port %>"
 
 # How the replication controller and scheduler find the kube-apiserver
-KUBE_MASTER="--master=http://<%= @kube_master %>:<%= @kube_api_port %>"
+KUBE_MASTER="--master=http://<%= @kube_master %>:<%= @kube_api_port>"
 
 # Port minions listen on
 KUBELET_PORT="--kubelet_port=<%= @kubelet_port %>"

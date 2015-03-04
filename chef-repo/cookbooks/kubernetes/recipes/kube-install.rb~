@@ -11,7 +11,7 @@ when "centos", "redhat"
 
 	yum_package 'kubernetes' do
 		action :install
-		flush_cache [:before]
+		flush_cache :before
 		options "--enablerepo=virt7-testing"
 	end
 end

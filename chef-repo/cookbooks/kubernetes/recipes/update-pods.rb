@@ -4,4 +4,4 @@
 # list them out.
 
 include_recipe "pods::zookeeper"
-include_recipe "pods::solr"
+#include_recipe "pods::solr"
