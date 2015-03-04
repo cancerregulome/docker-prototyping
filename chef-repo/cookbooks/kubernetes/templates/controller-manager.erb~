@@ -1,3 +1,0 @@
-# /etc/kubernetes/controller-manager
-
-KUBELET_ADDRESSES="--machines=<%= @kube_minions.join(",") %>

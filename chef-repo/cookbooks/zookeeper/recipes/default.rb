@@ -12,7 +12,7 @@ execute "tar -xf /usr/local/src/zookeeper-3.4.6.tar.gz && mv /usr/local/src/zook
 
 # Configure zookeeper
 file "/var/zookeeper/myid" do
-	content #{ENV['ZOOKEEPERS']}
+	content "#{ENV['ZOOKEEPERS']}"
 	action :create
 end
 
