@@ -4,8 +4,8 @@ test_infrastructure_setup/setup_scripts/chef_setup_scripts/host_files/**
 chef-repo/.chef/*.pem
 chef-repo/.chef/trusted_certs/**
 chef-repo/.chef/syntax_check_cache/**
-chef-repo/cookbooks/pods/files/default/zookeeper/install/**
-chef-repo/cookbooks/pods/files/default/solr/solr-shard/install/**
+chef-repo/cookbooks/zookeeper/files/default/install/*.tgz
+chef-repo/cookbooks/solr-shard/files/default/install/*.tar
 chef-repo/cookbooks/solrcloud/files/default/dockerfiles/zookeeper/config/zoo.cfg
 chef-repo/cookbooks/pods/files/default/solr/solr-shard/chef/secure/validation.pem
 chef-repo/cookbooks/pods/files/default/solr/solr-shard/chef/secure/trusted_certs/**
