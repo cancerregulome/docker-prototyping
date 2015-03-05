@@ -58,6 +58,6 @@ template "/etc/sysconfig/docker" do
 	group 'root'
 	mode '0700'
 	variables({
-		:insecure_registry => node[:docker_registry][:environment][:insecure_registry]
+		:docker_opts => node[:docker_registry][:environment][:docker_opts]
 	})
 end

@@ -7,6 +7,9 @@ default['docker_registry']['environment']['registry_address'] = "localhost"
 default['docker_registry']['environment']['registry_port'] = "5000"
 default['docker_registry']['environment']['gunicorn_workers'] = "4"
 
+# NOTE:  remove the next entry later once an authentication proxy has been set up for the private registry
+default['docker_registry']['environment']['insecure_registry'] = "localhost:5000"
+
 # /etc/init.d/docker-registry (service file)
 default['docker_registry']['service']['description'] = "Registry server for Docker"
 default['docker_registry']['service']['type'] = "simple"

@@ -1,0 +1,13 @@
+[Unit]
+Description=<%= @description %>
+
+[Service]
+Type=<%= @type %>
+Environment=<%= @environment_vars %>
+EnvironmentFile=-<%= @environment_file %>
+WorkingDirectory=<%= @working_directory %>
+ExecStart=<%= @exec_start %>
+Restart=<%= @restart_policy %>
+
+[Install]
+WantedBy=<%= @wanted_by %>

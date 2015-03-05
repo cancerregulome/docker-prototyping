@@ -1,11 +1,18 @@
-# Pull base images from Docker Hub
+# Pull the official chef base images
 docker_image "chef/ubuntu-14.04"
 
-# login to private docker registry
-docker_registry 'https://localhost:#{node[:docker_registry][:host_port]}'
+# Get the private registry ready to push to
+docker_registry "localhost:5000"
 
-# Tag and push base images to private repo 
-docker_image "chef/ubuntu-14.04" do 
-	tag "chef-ubuntu-latest"
+# Tag the image for pushing to the local registry
+docker_image "chef/ubuntu-14.04" do
+	repository 'chef'
+	tag 'latest'
+	action :tag
+end
+
+# Push images to private registry
+docker_image "chef/ubuntu-14.04:latest" do
 	action :push
 end
+

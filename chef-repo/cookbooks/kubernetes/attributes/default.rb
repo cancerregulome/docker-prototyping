@@ -1,10 +1,10 @@
 # kubernetes node attributes
 
-# The kubernetes master hostname -- set at bootstrap time, but I'm putting it here as a temporary reference
-# default['kubernetes']['kube_master'] = 'kube-master' 
+# The kubernetes master hostname -- this should be set by the chef provisioning node, eventually.
+default['kubernetes']['kube_master'] = 'kube-master' 
 
-# The kubernetes minions -- set at bootstrap time
-# default['kubernetes']['kube_minions'] = []
+# The kubernetes minions -- these should be set by the chef provisioning node, eventually.
+default['kubernetes']['kube_minions'] = ["kube-minion1", "kube-minion2"]
 
 # kubernetes ports
 default['kubernetes']['ports']['etcd_port'] = '4001'
@@ -12,7 +12,7 @@ default['kubernetes']['ports']['kube_api_port'] = '8080'
 default['kubernetes']['ports']['kubelet_port'] = '10250'
 
 # kubernetes services
-default['kubernetes']['kube_master_services'] = [ "etcd", "kube-apiserver", "kube-controller-manager", "kube-scheduler", "docker-registry" ]
+default['kubernetes']['kube_master_services'] = [ "etcd", "kube-apiserver", "kube-controller-manager", "kube-scheduler", "docker", "docker-registry" ]
 default['kubernetes']['kube_minion_services'] = [ "kube-proxy", "kubelet", "docker" ]
 
 # /etc/kubernetes/config

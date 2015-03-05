@@ -45,7 +45,7 @@ end
 
 # Perform initial bootstrap operation
 docker_container "chef-ubuntu-latest" do
-	#additional_host "#{node[:chef_server]}"
+	additional_host "#{node[:chef_server]}"
 	expose "#{node[:pods][:zookeeper][:ports]}"
 	volume '/etc/kubernetes/pods/zookeeper/chef:/etc/chef'
 	env "ZOOKEEPER_HOME=/usr/local/zookeeper-#{node[:pods][:zookeeper][:version]}"
