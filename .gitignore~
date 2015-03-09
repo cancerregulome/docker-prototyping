@@ -54,4 +54,4 @@ docs/_build/
 target/
 
 # Chef stuff
-chef-repo/.chef/syntax_check_cache/*
+chef-repo/.chef/**
