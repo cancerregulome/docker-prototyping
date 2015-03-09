@@ -2,10 +2,10 @@
 bash 'generate_server_certificate' do
 	code <<-EOH
 		# Generate a random passphrase
-		export PASSPHRASE=$(head -c 500 /dev/urandom | tr -dc a-z0-9A-Z | head 0c 128; echo)
+		export pass=$(head -c 500 /dev/urandom | tr -dc a-z0-9A-Z | head -c 128; echo)
 
 		# Certificate details
-		cert="
+		export cert="
 		C=US
 		ST=Washington
 		O=ISB
@@ -16,17 +16,21 @@ bash 'generate_server_certificate' do
 		"
 
 		# Generate the private key
-		openssl genrsa -des3 -out /etc/ssl/private/$(hostname).key -passout env:PASSPHRASE 1024
+		openssl genrsa -des3 -out $(hostname).key -passout env:pass 1024
 
 		# Generate the csr
-		openssl req -new -batch -subj "$(echo -n "$cert" | tr "\n" "/")" -key /etc/ssl/private/$(hostname).key -out /tmp/$(hostname).csr --passin env:PASSPHRASE
+		openssl req -new -batch -subj "$(echo -n "$cert" | tr "\n" "/")" -key $(hostname).key -out $(hostname).csr -passin env:pass
 	
 		# Strip out the passphrase
-		cp /etc/ssl/private/$(hostname).key /tmp/$(hostname).key.org
-		openssl rsa -in /tmp/$(hostname).key.org -out /etc/ssl/private/$(hostname).key --passin env:PASSPHRASE
+		cp $(hostname).key $(hostname).key.org
+		openssl rsa -in $(hostname).key.org -out $(hostname).key -passin env:pass
 
 		# Generate the certificate
-		openssl x509 -req -days 365 -in /tmp/$(hostname).csr -signkey /etc/ssl/private/$(hostname).key -out /etc/ssl/certs/$(hostname).crt
+		openssl x509 -req -days 365 -in $(hostname).csr -signkey $(hostname).key -out $(hostname).crt
+
+		# Move the files to the correct locations
+		mv $(hostname).key /etc/ssl/private
+		mv $(hostname).crt /etc/ssl/certs
 		EOH
 	not_if { ::File.exists?("/etc/ssl/certs/#{node[:hostname]}.crt") }
 end
@@ -41,7 +45,7 @@ bash 'generate_htpasswd' do
 		# Create the htpasswd file
 		echo "kube:$(echo $htpasswd)" > /etc/docker-registry/htpasswd
 		EOH
-	not_if { ::File.exists?('/etc/docker-registry/htpasswd')}
+	not_if { ::File.exists?('/etc/docker-registry/htpasswd') }
 end
 
 # Create the docker registry config file
