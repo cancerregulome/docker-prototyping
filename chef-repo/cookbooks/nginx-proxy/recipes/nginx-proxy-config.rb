@@ -1,3 +1,9 @@
+# Ideal code is commented below
+
+# nginx-proxy_rsa_key "/etc/
+
+
+
 # Generate the self-signed server certificate and key
 bash 'generate_server_certificate' do
 	code <<-EOH
@@ -50,13 +56,15 @@ end
 # Create the docker registry config file
 
 template "/etc/nginx/conf.d/docker-registry.conf" do
-	source 'docker-registry.conf.erb'
+	source 'conf.erb'
 	owner 'root'
 	group 'root'
 	mode '0400'
 	variables({
 		:hostname => node[:hostname],
 		:user_file => '/etc/docker-registry/htpasswd'
+		#:proxied_host => ,
+		#:proxied_port =>
 	})
 end
 
