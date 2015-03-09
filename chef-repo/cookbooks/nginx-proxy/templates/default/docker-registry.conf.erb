@@ -1,0 +1,16 @@
+server {
+	listen 443;
+
+	ssl on;
+	ssl_certificate /etc/ssl/certs/<%= @hostname %>.crt;
+	ssl_certificate_key /etc/ssl/private/<%= @hostname %>.key;
+
+	client_max_body_size 0;
+
+	location / {
+		proxy_pass http://localhost:5000;
+
+		auth_basic "Restricted";
+		auth_basic_user_file <%= @user_file %>;
+	}
+}

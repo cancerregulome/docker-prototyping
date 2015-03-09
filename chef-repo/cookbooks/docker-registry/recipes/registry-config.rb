@@ -50,14 +50,4 @@ template "/etc/sysconfig/docker-registry" do
 	})
 end
 
-# Edit the docker environment file to handle the insecure registry
-# NOTE: This is a temporary solution to the problem of being forced to use authentication based access to the private docker registry when using the docker_registry resource in chef.  In production, it will be better to have an authentication proxy set up to handle access to the docker registry for security reasons.
-template "/etc/sysconfig/docker" do
-	source "docker_environment.erb" 
-	owner 'root'
-	group 'root'
-	mode '0700'
-	variables({
-		:insecure_registry => node[:docker_registry][:environment][:insecure_registry]
-	})
-end
+
