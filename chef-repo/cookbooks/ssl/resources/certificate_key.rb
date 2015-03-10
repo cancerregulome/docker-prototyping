@@ -1,4 +1,7 @@
-# ssl_certificate resource
+# ssl_certificate_key resource
+
+require 'openssl'
+require 'etc'
 
 actions :create, :delete, :create_if_missing
 default_action :create
@@ -7,8 +10,11 @@ attribute :owner, :regex => [ /^([a-z]|[A-Z]|[0-9]|_|-)+$/, /^\d+$/ ], :default 
 attribute :group, :regex => [ /^([a-z]|[A-Z]|[0-9]|_|-)+$/, /^\d+$/ ], :default => Etc.getgrgid(Etc.getpwnam(ENV['USER'])[:gid])[:name], :callbacks => { "Group doesn't exist on the system" => lambda { |group| group_exists?(group) } }
 attribute :mode, :regex => /^0?\d{3,4}$/, :default => '0777'
 attribute :path, :kind_of => String, :name_attribute => true, :required
-attribute :pem_key_path, :kind_of => String, :required, :callbacks => { "pem key not found" => lambda { |file| file_exists?(file) }, "pem key not valid" => lambda { |file| valid_pem_file?(file) } }
-attribute :pem_key_passphrase, :kind_of => String, :required # Encrypted data bag item
+attribute :passphrase, :kind_of => String, :required
+attribute :modulus, :kind_of => Integer, :default => 2048, :callbacks => { "Insecure key (<1024 bits)" => lambda { |mod| mod >= 1024 } }
+attribute :cipher, :equal_to => OpenSSL::Cipher.ciphers, :default => 'AES-128-CBC'
+
+attr_accessor :exists
 
 def owner_exists?(owner)
 	result = true
@@ -33,12 +39,8 @@ def group_exists?(group)
 
 end
 
-def file_exists?(file)
 
-end
 
-def valid_pem_file?(file)
 
-end
 
 

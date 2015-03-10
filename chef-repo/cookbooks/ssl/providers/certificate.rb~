@@ -68,10 +68,7 @@ def load_current_resource
 end
 
 def updated_attributes?
-	# Update the resource attributes on the server, and return true if any were actually changed
-	result = true
-	# More here later
-	return result
+	# Update the file attributes
 end
 
 

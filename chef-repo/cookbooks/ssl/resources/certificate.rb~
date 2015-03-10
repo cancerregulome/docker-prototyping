@@ -11,25 +11,10 @@ attribute :pem_key_path, :kind_of => String, :required, :callbacks => { "pem key
 attribute :pem_key_passphrase, :kind_of => String, :required # Encrypted data bag item
 
 def owner_exists?(owner)
-	result = true
-	begin
-		Etc.getpwnam(owner)
-	rescue
-		result = false
-	end
-	
-	return result
+
 end
 
 def group_exists?(group)
-	result = true
-	begin
-		Etc.getgrgid(group)
-	rescue
-		result = false
-	end
-
-	return result
 
 end
 
