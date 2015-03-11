@@ -9,8 +9,8 @@ default_action :create
 attribute :owner, :regex => [ /^([a-z]|[A-Z]|[0-9]|_|-)+$/, /^\d+$/ ], :default => ENV['USER'], :callbacks => { "User doesn't exist on the system" => lambda { |owner| owner_exists?(owner) } }
 attribute :group, :regex => [ /^([a-z]|[A-Z]|[0-9]|_|-)+$/, /^\d+$/ ], :default => Etc.getgrgid(Etc.getpwnam(ENV['USER'])[:gid])[:name], :callbacks => { "Group doesn't exist on the system" => lambda { |group| group_exists?(group) } }
 attribute :mode, :kind_of => String, :regex => /^0?\d{3,4}$/, :default => '0777', :callbacks => { "Invalid file mode" => lambda { |mode| valid_file_mode?(mode) } }
-attribute :path, :kind_of => String, :name_attribute => true, :required
-attribute :passphrase, :kind_of => String, :required
+attribute :path, :kind_of => String, :name_attribute => true, :required => true
+attribute :passphrase, :kind_of => String, :required => true
 attribute :modulus, :kind_of => Integer, :default => 2048, :callbacks => { "Insecure key (<1024 bits)" => lambda { |mod| mod >= 1024 } }
 attribute :cipher, :equal_to => OpenSSL::Cipher.ciphers, :default => 'AES-128-CBC', :callbacks => { "Invalid cipher" => lambda { |cipher| OpenSSL::Cipher.ciphers.include?(cipher) } }
 
