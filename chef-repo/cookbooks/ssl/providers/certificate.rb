@@ -1,6 +1,5 @@
 require 'openssl'
 require 'fileutils'
-require 'etc'
 
 #include
 
@@ -51,8 +50,24 @@ def new_certificate(secure_key)
 		FileUtils.mkdir_p(File.dirname(@new_resource.path))
 	end	
 	# Create the certificate
-
-	# Set the remaining file attributes
+	name = OpenSSL::X509::Name.parse File.open(@current_resource.subj_file_path).read
+	cert = OpenSSL::X509::Certificate.new
+	cert.version = 2
+	cert.serial = 0 # insecure, need to choose a random two digit number?
+	cert.not_before = Time.now
+	cert.not_after = Time.now + 365 * 24 * 60 * 60 # 1 year from creation
+	cert.public_key = secure_key.public key
+	cert.subject = name
+	cert.issuer = name
+	cert.sign secure_key, OpenSSL::Digest::SHA1.new
+	open @current_resource.path, 'w' do |io| io.write cert.to_pem end
+	
+	# Set permissions
+	FileUtils.chmod(@current_resource.mode, @current_resource.path)
+	
+	# Set ownership
+	FileUtils.chown(@current_resource.owner, @current_resource.group, @current_resource.path)
+	
 end
 
 def remove_certificate
@@ -60,17 +75,46 @@ def remove_certificate
 end
 
 def load_current_resource
-	@curent_resource = Chef::Resource::SslCertificate.new(@new_resource.name)
+	@current_resource = Chef::Resource::SslCertificate.new(@new_resource.name)
+	@current_resource.name(@new_resource.name)
+	@current_resource.owner(@new_resource.owner)
+	@current_resource.group(@new_resource.group)
+	@current_resource.mode(@new_resource.mode)
+	@current_resource.path(@new_resource.path)
+	@current_resource.subj_string(@new_resource.subj_string)
+	@current_resource.pem_key_path(@new_resource.pem_key_path)
+	@current_resource.pem_key_passphrase(@new_resource.pem_key_passphrase)
+	
 	# More here later
 	if File.exists?(@current_resource.path)
 		@current_resource.exists = true
+	else
+		@current_resource.exists = false
 	end
 end
 
 def updated_attributes?
 	# Update the resource attributes on the server, and return true if any were actually changed
-	result = true
-	# More here later
+	result = false
+	
+	# Update permissions
+	current_mode = sprintf("%o", File.stat(@current_resource.path).mode)
+	bits = @current_resource.mode.length
+	
+	if @current_resource.mode != current_mode[(-1*bits), -1]
+		FileUtils.chmod(@current_resource.mode, @current_resource.path)
+		result = true
+	end
+	
+	# Update ownership
+	current_owner = Etc.getpwuid(File.stat(@current_resource.path).uid).name
+	current_group = Etc.getgrgid(File.stat(@current_resource.path).gid).name
+	
+	if @current_resource.owner != current_owner || @current_resource.group != current_group
+		FileUtils.chown(@current_resource.owner, @current_resource.group, @current_resource.path)
+		result = true
+	end
+	
 	return result
 end
 

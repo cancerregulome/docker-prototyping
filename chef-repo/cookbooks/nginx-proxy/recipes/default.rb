@@ -7,3 +7,7 @@
 # All rights reserved - Do Not Redistribute
 #
 include_recipe 'nginx'
+
+chef_gem 'htauth' do
+	action :install
+end
