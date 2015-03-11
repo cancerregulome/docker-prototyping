@@ -12,7 +12,7 @@ attribute :mode, :regex => /^0?\d{3,4}$/, :default => '0777', :callbacks => { "I
 attribute :path, :kind_of => String, :name_attribute => true, :required => true
 attribute :subj_file_path, :kind_of => String, :required => true
 attribute :pem_key_path, :kind_of => String, :required => true, :callbacks => { "pem key not found" => lambda { |file| file_exists?(file) }, "pem key not valid" => lambda { |file| valid_pem_file?(file) } }
-attribute :pem_key_passphrase, :kind_of => String, :required # Encrypted data bag item
+attribute :pem_key_passphrase, :kind_of => String, :required => true # Encrypted data bag item
 
 def owner_exists?(owner)
 	result = true
