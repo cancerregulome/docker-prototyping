@@ -33,7 +33,7 @@ action :add_entry do
 	if @current_resource.exists
 		unless contains_entry? do
 			converge_by("Adding entry to htpasswd file")
-				add_entry
+				add_new_entry
 			end
 		else
 			Chef::Log.info "An entry for that user already exists in #{ @current_resource } -- nothing to do."
@@ -45,11 +45,11 @@ end
 
 action :update_entry do
 	if @current_resource.exists
-		if !contains_entry? do
+		unless contains_entry? do
 			Chef::Log.info "No such entry exists in #{ @current_resource } -- nothing to do"
 		else
 			converge_by("Update entry in htpasswd file") do
-				update_entry
+				update_existing_entry
 			end
 		end
 	else
@@ -61,7 +61,7 @@ action :delete_entry do
 	if @current_resource.exists
 		if contains_entry?
 			converge_by("Delete entry from htpasswd file")
-				delete_entry
+				delete_existing_entry
 			end
 		else
 			Chef::Log.info "No such entry exists in #{ @current_resource } -- nothing to do"
@@ -94,7 +94,7 @@ def new_htpasswd_file do
 	FileUtils.chown(@current_resource.owner, @current_resource.group, @current_resource.path)
 end
 
-def add_entry do
+def add_new_entry do
 	# Adds a new user:password record to the existing htpasswd file
 	htpasswd = HTAuth::PasswdFile.open(@current_resource.path, mode="alter")
 	htpasswd.add(@current_resource.user, @current_resource.password, algorithm="#{@current_resource.encryption_algorithm}")
@@ -107,7 +107,7 @@ def add_entry do
 	FileUtils.chown(@current_resource.owner, @current_resource.group, @current_resource.path)
 end
 
-def update_entry do
+def update_existing_entry do
 	# Updates the password for a particular user in the existing htpasswd file
 	htpasswd = HTAuth::PasswdFile.open(@current_resource.path, mode="alter")
 	htpasswd.update(@current_resource.user, @current_resource.password, algorithm="#{@current_resource.encryption_algorithm}")
@@ -120,7 +120,7 @@ def update_entry do
 	FileUtils.chown(@current_resource.owner, @current_resource.group, @current_resource.path)
 end
 
-def delete_entry do
+def delete_existing_entry do
 	# Deletes an existing user:password record from the existing htpasswd file
 	htpasswd = HTAuth::PasswdFile.open(@current_resource.path, mode="alter")
 	htpasswd.delete(@current_resource.user)
