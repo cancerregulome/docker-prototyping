@@ -43,7 +43,7 @@ action :add_entry do
 	end
 end
 
-def :update_entry do
+action :update_entry do
 	if @current_resource.exists
 		unless contains_entry? do
 			Chef::Log.info "No such entry exists in #{ @current_resource } -- nothing to do"
