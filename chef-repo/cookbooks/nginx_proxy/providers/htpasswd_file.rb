@@ -31,7 +31,7 @@ end
 
 action :add_entry do
 	if @current_resource.exists
-		unless contains_entry? do
+		unless contains_entry?
 			converge_by("Adding entry to htpasswd file")
 				add_new_entry
 			end
@@ -45,7 +45,7 @@ end
 
 action :update_entry do
 	if @current_resource.exists
-		unless contains_entry? do
+		unless contains_entry? 
 			Chef::Log.info "No such entry exists in #{ @current_resource } -- nothing to do"
 		else
 			converge_by("Update entry in htpasswd file") do
