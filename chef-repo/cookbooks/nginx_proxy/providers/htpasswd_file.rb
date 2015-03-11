@@ -32,7 +32,7 @@ end
 action :add_entry do
 	if @current_resource.exists
 		unless contains_entry?
-			converge_by("Adding entry to htpasswd file")
+			converge_by("Adding entry to htpasswd file") do
 				add_new_entry
 			end
 		else
@@ -60,7 +60,7 @@ end
 action :delete_entry do
 	if @current_resource.exists
 		if contains_entry?
-			converge_by("Delete entry from htpasswd file")
+			converge_by("Delete entry from htpasswd file") do
 				delete_existing_entry
 			end
 		else
