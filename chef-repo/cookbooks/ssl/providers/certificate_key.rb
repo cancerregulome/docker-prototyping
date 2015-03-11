@@ -42,7 +42,7 @@ end
 
 def new_key 
 	# First, make sure the file path has been created
-	unless Dir.exists?(File.dirname(@current_resource.path)) do
+	unless Dir.exists?(File.dirname(@current_resource.path)) 
 		FileUtils.mkdir_p(File.dirname(@current_resource.path))
 	end
 	# Generate the new key

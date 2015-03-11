@@ -81,7 +81,7 @@ action :delete do
 	end
 end
 
-def new_htpasswd_file do
+def new_htpasswd_file 
 	# Creates a new htpasswd file
 	htpasswd = HTAuth::PasswdFile.open(@current_resource.path, mode="create")
 	htpasswd.add(@current_resource.user, @current_resource.password, algorithm="#{@current_resource.encryption_algorithm}")
@@ -94,7 +94,7 @@ def new_htpasswd_file do
 	FileUtils.chown(@current_resource.owner, @current_resource.group, @current_resource.path)
 end
 
-def add_new_entry do
+def add_new_entry 
 	# Adds a new user:password record to the existing htpasswd file
 	htpasswd = HTAuth::PasswdFile.open(@current_resource.path, mode="alter")
 	htpasswd.add(@current_resource.user, @current_resource.password, algorithm="#{@current_resource.encryption_algorithm}")
@@ -107,7 +107,7 @@ def add_new_entry do
 	FileUtils.chown(@current_resource.owner, @current_resource.group, @current_resource.path)
 end
 
-def update_existing_entry do
+def update_existing_entry 
 	# Updates the password for a particular user in the existing htpasswd file
 	htpasswd = HTAuth::PasswdFile.open(@current_resource.path, mode="alter")
 	htpasswd.update(@current_resource.user, @current_resource.password, algorithm="#{@current_resource.encryption_algorithm}")
@@ -120,7 +120,7 @@ def update_existing_entry do
 	FileUtils.chown(@current_resource.owner, @current_resource.group, @current_resource.path)
 end
 
-def delete_existing_entry do
+def delete_existing_entry 
 	# Deletes an existing user:password record from the existing htpasswd file
 	htpasswd = HTAuth::PasswdFile.open(@current_resource.path, mode="alter")
 	htpasswd.delete(@current_resource.user)
@@ -133,7 +133,7 @@ def delete_existing_entry do
 	FileUtils.chown(@current_resource.owner, @current_resource.group, @current_resource.path)
 end
 
-def contains_entry? do
+def contains_entry? 
 	result = false
 	
 	if HTAuth::PasswdFile.open(@current_resource.path, mode="alter").has_entry?(@current_resource.user)
@@ -143,7 +143,7 @@ def contains_entry? do
 	return result
 end
 
-def load_current_resource do
+def load_current_resource 
 	@current_resource = Chef::Resource::NginxProxyHtpasswordFile.new(@new_resource.name)
 	@current_resource.name(@new_resource.name)
 	@current_resource.owner(@new_resource.owner)

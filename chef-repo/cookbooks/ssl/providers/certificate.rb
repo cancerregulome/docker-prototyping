@@ -46,7 +46,7 @@ end
 
 def new_certificate(secure_key)
 	# First, make sure the file path has been created
-	unless Dir.exists?(File.dirname(@new_resource.path)) do
+	unless Dir.exists?(File.dirname(@new_resource.path)) 
 		FileUtils.mkdir_p(File.dirname(@new_resource.path))
 	end	
 	# Create the certificate
