@@ -45,7 +45,7 @@ end
 
 action :update_entry do
 	if @current_resource.exists
-		unless contains_entry? do
+		if !contains_entry? do
 			Chef::Log.info "No such entry exists in #{ @current_resource } -- nothing to do"
 		else
 			converge_by("Update entry in htpasswd file") do
