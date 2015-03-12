@@ -1,0 +1,1 @@
+C=<%= @country_name %>/CN=<%= @common_name %>/DC=<%= @domain_component %>/O=<%= @organization_name %>/OU=<%= @organizational_unit %>/ST=<%= @state_or_province %>

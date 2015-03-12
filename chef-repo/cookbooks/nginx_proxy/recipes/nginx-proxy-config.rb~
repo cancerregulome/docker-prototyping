@@ -1,64 +1,45 @@
-# Generate the self-signed server certificate and key
-bash 'generate_server_certificate' do
-	code <<-EOH
-		# Generate a random passphrase
-		export pass=$(head -c 500 /dev/urandom | tr -dc a-z0-9A-Z | head -c 128; echo)
+# nginx-proxy-config.rb
 
-		# Certificate details
-		export cert="
-		C=US
-		ST=Washington
-		O=ISB
-		localityName=Seattle
-		commonName=$(hostname)
-		organizationalUnitName=Engineering
-		emailAddress=ahahn@systemsbiology.org
-		"
+# Create variables for the encrypted databag items required for authentication
 
-		# Generate the private key
-		openssl genrsa -des3 -out $(hostname).key -passout env:pass 1024
 
-		# Generate the csr
-		openssl req -new -batch -subj "$(echo -n "$cert" | tr "\n" "/")" -key $(hostname).key -out $(hostname).csr -passin env:pass
-	
-		# Strip out the passphrase
-		cp $(hostname).key $(hostname).key.org
-		openssl rsa -in $(hostname).key.org -out $(hostname).key -passin env:pass
-
-		# Generate the certificate
-		openssl x509 -req -days 365 -in $(hostname).csr -signkey $(hostname).key -out $(hostname).crt
-
-		# Move the files to the correct locations
-		mv $(hostname).key /etc/ssl/private
-		mv $(hostname).crt /etc/ssl/certs
-		EOH
-	not_if { ::File.exists?("/etc/ssl/certs/#{node[:hostname]}.crt") }
+# Make sure all of the nginx config directories exist
+directory "#{node[:nginx_proxy][:htpasswd_path]}" do
+	action :create
 end
 
-# Create the htpasswd file for the docker registry
-bash 'generate_htpasswd' do
-	code <<-EOH
-		# Generate a random passphrase
-		export PASSPHRASE=$(head -c 500 /dev/urandom | tr -dc a-z0-9A-Z | head 0c 128; echo)
-		htpasswd=$(echo $PASSPHRASE | openssl passwd -stdin)
-
-		# Create the htpasswd file
-		echo "kube:$(echo $htpasswd)" > /etc/docker-registry/htpasswd
-		EOH
-	not_if { ::File.exists?('/etc/docker-registry/htpasswd') }
+directory "#{node[:nginx_proxy][:crt_request_path]}" do
+	action :create
 end
 
-# Create the docker registry config file
-
-template "/etc/nginx/conf.d/docker-registry.conf" do
-	source 'docker-registry.conf.erb'
+# Generate an RSA key (required for the self-signed certificate)
+ssl_certificate_key "#{node[:nginx_proxy][:pem_key_path]}" do
 	owner 'root'
 	group 'root'
 	mode '0400'
-	variables({
-		:hostname => node[:hostname],
-		:user_file => '/etc/docker-registry/htpasswd'
+	modulus '2048'
+	cipher 'AES-128-CBC'
+end
+
+# Create the subject file for the certificate request
+template "#{node[:nginx_proxy][:crt_request_path]}/#{node[:hostname]}" do
+	source "#{node[:nginx_proxy][:templates][:crt_request]}"
+	owner 'root'
+	group 'root'
+	mode '0400'
+	variables({ #from encrypted databag
+	
 	})
+end
+
+# Generate the self-signed certificate
+ssl_certificate "#{node[:nginx_proxy][:certificate_path]}" do
+	owner 'root'
+	group 'root'
+	mode '0400'
+	subj_file "#{default['nginx_proxy']['crt_request_path']}/#{node[:hostname]}"
+	pem_key "#{node[:nginx_proxy][:pem_key_path]}"
+	pem_key_passphrase #from encrypted databag
 end
 
 

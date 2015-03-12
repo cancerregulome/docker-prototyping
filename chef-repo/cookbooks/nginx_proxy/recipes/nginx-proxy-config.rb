@@ -1,10 +1,20 @@
 # nginx-proxy-config.rb
 
 # Create variables for the encrypted databag items required for authentication
+certificate_details = data_bag_item('certificate_generation', 'nginx_proxy')
+pem_key_passphrase = certificate_details["nginx_proxy"]["pem_key_passphrase"]
 
+# Make sure all of the nginx config directories exist
+directory "#{node[:nginx_proxy][:htpasswd_path]}" do
+	action :create
+end
+
+directory "#{node[:nginx_proxy][:crt_request_path]}" do
+	action :create
+end
 
 # Generate an RSA key (required for the self-signed certificate)
-ssl_certificate_key node[:nginx_proxy][:pem_key_path] do
+ssl_certificate_key "#{node[:nginx_proxy][:pem_key_path]}" do
 	owner 'root'
 	group 'root'
 	mode '0400'
@@ -13,47 +23,29 @@ ssl_certificate_key node[:nginx_proxy][:pem_key_path] do
 end
 
 # Create the subject file for the certificate request
-template "#{default['nginx_proxy']['crt_request']}/#{node[:hostname]}" do
-	source 'subj.erb'
+template "#{node[:nginx_proxy][:crt_request_path]}/#{node[:hostname]}" do
+	source "#{node[:nginx_proxy][:templates][:crt_request]}"
 	owner 'root'
 	group 'root'
 	mode '0400'
 	variables({ #from encrypted databag
-	
+		:country_name => certificate_details["nginx_proxy"]["cert_subject"]["C"],
+		:locality => certificate_details["nginx_proxy"]["cert_subject"]["L"],
+		:state_or_province => certificate_details["nginx_proxy"]["cert_subject"]["S"],
+		:organization_name => certificate_details["nginx_proxy"]["cert_subject"]["O"],
+		:organizational_unit => certificate_details["nginx_proxy"]["cert_subject"]["OU"],
+		:common_name => node[:hostname]
 	})
 end
 
 # Generate the self-signed certificate
-ssl_certificate node[:nginx_proxy][:certificate_path] do
+ssl_certificate "#{node[:nginx_proxy][:certificate_path]}" do
 	owner 'root'
 	group 'root'
 	mode '0400'
-	subj_file "#{default['nginx_proxy']['crt_request']}/#{node[:hostname]}"
-	pem_key node[:nginx_proxy][:pem_key_path]
-	pem_key_passphrase #from encrypted databag
-end
-
-# Create the htpasswd file for the docker registry
-nginx_proxy_htpasswd_file node[:nginx_proxy][:htpasswd_file] do
-	owner 'root'
-	group 'root'
-	mode '0400'
-	
-end
-
-# Create the docker registry config file
-template "/etc/nginx/conf.d/docker-registry.conf" do
-	source 'proxy-conf.erb'
-	owner 'root'
-	group 'root'
-	mode '0400'
-	variables({
-		:pem_key => node[:nginx_proxy][:pem_key_path],
-		:certificate => node[:nginx_proxy][:certificate_path],
-		:htpasswd_file => node[:nginx_proxy][:htpasswd_file],
-		:proxied_host => node[:nginx_proxy][:docker_registry][:proxied_host],
-		:proxied_port => node[:nginx_proxy][:docker_registry][:proxied_host]
-	})
+	subj_file "#{default['nginx_proxy']['crt_request_path']}/#{node[:hostname]}"
+	pem_key "#{node[:nginx_proxy][:pem_key_path]}"
+	pem_key_passphrase "#{pem_key_passphrase}"
 end
 
 

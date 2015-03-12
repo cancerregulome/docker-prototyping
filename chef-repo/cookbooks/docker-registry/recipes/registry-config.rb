@@ -1,25 +1,28 @@
 # registry-config.rb
 
+# Get the encrypted data bag items from the chef vault
+users = data_bag_item['nginx_proxy_auth']['docker_registry_users']
+
 # Create the docker registry storage path
-directory "#{node[:docker_registry][:config][:storage_path]}" do
+directory node[:docker_registry][:primary_config][:storage_path] do
 	action :create
 end
 
 # Create the docker registry config file
-# NOTE:  The only values that are updated are the values for the "local" storage flavor... add node attributes and corresponding variables as needed when storage flavor needs change.
-template "/etc/docker-registry.yml" do
-	source "config.erb"
+# NOTE:  The only value currently updated is the value for the "local" storage flavor... add node attributes and corresponding variables in the template as needed when storage flavor needs change.
+template "#{node[:docker_registry][:config_files][:primary_config_file]}" do
+	source "#{node[:docker_registry][:templates][:primary_cofig]}"
 	owner 'root'
 	group 'root'
 	mode '0700'
 	variables({
-		:storage_path => node[:docker_registry][:config][:storage_path]
+		:storage_path => node[:docker_registry][:primary_config][:storage_path]
 	})
 end
 
 # Create the service init script
-template "/usr/lib/systemd/system/docker-registry.service" do
-	source "service.erb"
+template "#{node[:docker_registry][:config_files][:service_file]}" do
+	source "#{node[:docker_registry][:templates][:service]}"
 	owner 'root'
 	group 'root'
 	mode '0700'
@@ -36,8 +39,8 @@ template "/usr/lib/systemd/system/docker-registry.service" do
 end
 
 # Create the environment file
-template "/etc/sysconfig/docker-registry" do
-	source "environment.erb"
+template "#{node[:docker_registry][:config_files][:environment_file]}" do
+	source "#{node[:docker_registry][:templates][:environment]}"
 	owner 'root'
 	group 'root'
 	mode '0700'
@@ -50,4 +53,36 @@ template "/etc/sysconfig/docker-registry" do
 	})
 end
 
+# Create the docker-registry nginx config file for nginx proxy authentication
+template "#{node[:nginx_proxy][:conf_d_path]}/docker-registry.conf" do
+	source "#{node[:nginx_proxy][:templates][:conf_d]}"
+	owner 'root'
+	group 'root'
+	mode '0400'
+	variables({
+		:pem_key => node[:nginx_proxy][:pem_key_path],
+		:certificate => node[:nginx_proxy][:certificate_path],
+		:htpasswd_file => "#{node[:nginx_proxy][:htpasswd_path]}/docker-registry",
+		:proxied_host => node[:docker_registry][:environment][:registry_address],
+		:proxied_port => node[:docker_registry][:environment][:registry_port]
+	})
+end
+
+# Create an nginx htpasswd file for the docker registry username/password combinations 
+nginx_proxy_htpasswd_file "#{node[:nginx_proxy][:htpasswd_path]}/docker-registry" do
+	owner 'root'
+	group 'root'
+	mode '0400'
+end
+
+users.each do |user|
+	password = user["password"]
+	nginx_proxy_htpasswd_file "#{node[:nginx_proxy][:htpasswd_path]}/docker-registry" do
+	owner 'root'
+	group 'root'
+	mode '0400'
+	user "#{user}"
+	password "#{password}"
+	end
+end	
 

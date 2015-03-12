@@ -1,6 +1,8 @@
 # Docker registry configuration values and command line parameters
 
 # /etc/sysconfig/docker-registry (environment file)
+default['docker_registry']['config_files']['environment_file'] = "/etc/sysconfig/docker-registry"
+default['docker_registry']['templates']['environment'] = "environment.erb"
 default['docker_registry']['environment']['config_file'] = "/etc/docker-registry.yml"
 default['docker_registry']['environment']['settings_flavor'] = "local"
 default['docker_registry']['environment']['registry_address'] = "localhost"
@@ -8,6 +10,8 @@ default['docker_registry']['environment']['registry_port'] = "5000"
 default['docker_registry']['environment']['gunicorn_workers'] = "4"
 
 # /etc/init.d/docker-registry (service file)
+default['docker_registry']['config_files']['service_file'] = "/etc/init.d/docker-registry"
+default['docker_registry']['templates']['service'] = "service.erb"
 default['docker_registry']['service']['description'] = "Registry server for Docker"
 default['docker_registry']['service']['type'] = "simple"
 default['docker_registry']['service']['environment_vars'] = "DOCKER_REGISTRY_CONFIG=/etc/docker-registry.yml"
@@ -18,7 +22,10 @@ default['docker_registry']['service']['restart_policy'] = "on-failure"
 default['docker_registry']['service']['wanted_by'] = "multi-user.target"
 
 # /etc/docker-registry.yml (config file)
-default['docker_registry']['config']['storage_path'] = "/var/docker-registry"
+default['docker_registry']['config_files']['primary_config_file'] = "/etc/docker-registry.yml"
+default['docker_registry']['templates']['primary_config'] = "config.erb"
+default['docker_registry']['primary_config']['storage_path'] = "/var/docker-registry"
 # Add more later when values are known and needed
+
 
 
