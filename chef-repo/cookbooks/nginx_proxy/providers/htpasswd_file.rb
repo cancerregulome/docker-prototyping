@@ -1,7 +1,9 @@
 # nginx-proxy htpasswd file provider
 
-require 'fileutils'
+$:.unshift *Dir[::File.expand_path('../../files/default/vendor/gems/**/lib', __FILE__)]
+
 require 'htauth'
+require 'fileutils'
 
 def whyrun_supported?
 	true

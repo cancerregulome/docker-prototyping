@@ -11,3 +11,4 @@ include_recipe 'nginx'
 chef_gem 'htauth' do
 	action :install
 end
+

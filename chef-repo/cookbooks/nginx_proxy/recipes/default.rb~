@@ -10,5 +10,7 @@ include_recipe 'nginx'
 
 chef_gem 'htauth' do
 	action :install
-	compile_time true
 end
+
+require 'htauth'
+require 'fileutils'

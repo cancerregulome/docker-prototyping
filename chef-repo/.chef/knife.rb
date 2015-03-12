@@ -7,3 +7,4 @@ validation_key           "#{ENV['chef_repo']}/.chef/tcga-validator.pem"
 chef_server_url          "https://#{ENV['chef_server']}/organizations/tcga"
 syntax_check_cache_path  "#{ENV['chef_repo']}/.chef/syntax_check_cache"
 cookbook_path	[ "#{ENV['chef_repo']}/cookbooks" ]
+repo_mode	'everything'
