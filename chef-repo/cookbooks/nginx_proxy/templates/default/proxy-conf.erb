@@ -2,8 +2,8 @@ server {
 	listen 443;
 
 	ssl on;
-	ssl_certificate /etc/ssl/certs/<%= @hostname %>.crt;
-	ssl_certificate_key /etc/ssl/private/<%= @hostname %>.key;
+	ssl_certificate <%= @certs %>/<%= @hostname %>.crt;
+	ssl_certificate_key <%= @pem %>/<%= @hostname %>.key;
 
 	client_max_body_size 0;
 
@@ -11,6 +11,6 @@ server {
 		proxy_pass http://<%= @proxied_host %>:<%= @proxied_port %>;
 
 		auth_basic "Restricted";
-		auth_basic_user_file <%= @user_file %>;
+		auth_basic_user_file <%= @htpasswd_file %>;
 	}
 }

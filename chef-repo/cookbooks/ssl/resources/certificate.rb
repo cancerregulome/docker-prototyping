@@ -10,8 +10,8 @@ attribute :owner, :regex => [ /^([a-z]|[A-Z]|[0-9]|_|-)+$/, /^\d+$/ ], :default 
 attribute :group, :regex => [ /^([a-z]|[A-Z]|[0-9]|_|-)+$/, /^\d+$/ ], :default => Etc.getgrgid(Etc.getpwnam(ENV['USER'])[:gid])[:name], :callbacks => { "Group doesn't exist on the system" => lambda { |group| group_exists?(group) } }
 attribute :mode, :regex => /^0?\d{3,4}$/, :default => '0777', :callbacks => { "Invalid file mode" => lambda { |mode| valid_file_mode?(mode) } }
 attribute :path, :kind_of => String, :name_attribute => true, :required => true
-attribute :subj_file_path, :kind_of => String, :required => true
-attribute :pem_key_path, :kind_of => String, :required => true, :callbacks => { "pem key not found" => lambda { |file| file_exists?(file) }, "pem key not valid" => lambda { |file| valid_pem_file?(file) } }
+attribute :subj_file, :kind_of => String, :required => true
+attribute :pem_key, :kind_of => String, :required => true, :callbacks => { "pem key not found" => lambda { |file| file_exists?(file) }, "pem key not valid" => lambda { |file| valid_pem_file?(file) } }
 attribute :pem_key_passphrase, :kind_of => String, :required => true # Encrypted data bag item
 
 def owner_exists?(owner)

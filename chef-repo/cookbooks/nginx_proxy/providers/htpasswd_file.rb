@@ -35,6 +35,8 @@ action :add_entry do
 			converge_by("Adding entry to htpasswd file") do
 				add_new_entry
 			end
+		elsif !@current_resource.user.nil?
+			Chef::Log.warn("No user was provided -- no entries will be added!")
 		else
 			Chef::Log.info "An entry for that user already exists in #{ @current_resource } -- nothing to do."
 		end
@@ -47,6 +49,8 @@ action :update_entry do
 	if @current_resource.exists
 		unless contains_entry? 
 			Chef::Log.info "No such entry exists in #{ @current_resource } -- nothing to do"
+		elsif !@current_resource.user.nil?
+			Chef::Log.warn("No user was provided -- no entries will be updated!")
 		else
 			converge_by("Update entry in htpasswd file") do
 				update_existing_entry
@@ -63,6 +67,8 @@ action :delete_entry do
 			converge_by("Delete entry from htpasswd file") do
 				delete_existing_entry
 			end
+		elsif !@current_resource.user.nil?
+			Chef::Log.warn("No user was provided -- no entries will be deleted!")
 		else
 			Chef::Log.info "No such entry exists in #{ @current_resource } -- nothing to do"
 		end
@@ -84,8 +90,11 @@ end
 def new_htpasswd_file 
 	# Creates a new htpasswd file
 	htpasswd = HTAuth::PasswdFile.open(@current_resource.path, mode="create")
-	htpasswd.add(@current_resource.user, @current_resource.password, algorithm="#{@current_resource.encryption_algorithm}")
-	htpasswd.save!
+	
+	unless @current_resource.user.nil?
+		htpasswd.add(@current_resource.user, @current_resource.password, algorithm="#{@current_resource.encryption_algorithm}")
+		htpasswd.save!
+	end
 	
 	# Set permissions
 	FileUtils.chmod(@current_resource.mode, @current_resource.path)
@@ -134,6 +143,7 @@ def delete_existing_entry
 end
 
 def contains_entry? 
+	# A wrapper for readability :)
 	result = false
 	
 	if HTAuth::PasswdFile.open(@current_resource.path, mode="alter").has_entry?(@current_resource.user)
@@ -144,6 +154,7 @@ def contains_entry?
 end
 
 def load_current_resource 
+	# Load the resource as defined in the calling recipe
 	@current_resource = Chef::Resource::NginxProxyHtpasswordFile.new(@new_resource.name)
 	@current_resource.name(@new_resource.name)
 	@current_resource.owner(@new_resource.owner)

@@ -14,7 +14,7 @@ action :create do
 		end
 	else
 		converge_by("Create self-signed SSL certificate") do
-			key = OpenSSL::PKey::RSA.new File.read @new_resource.pem_key_path
+			key = OpenSSL::PKey::RSA.new File.read @new_resource.pem_key
 			secure_key = key, @new_resource.pem_key_passphrase
 			new_certificate(secure_key)		
 		end
@@ -26,7 +26,7 @@ action :create_if_missing do
 		Chef::Log.info "#{ @new_resource } already exists -- nothing to do."
 	else
 		converge_by("Create self-signed SSL certificate") do
-			key = OpenSSL::PKey::RSA.new File.read @new_resource.pem_key_path
+			key = OpenSSL::PKey::RSA.new File.read @new_resource.pem_key
 			secure_key = key, @new_resource.pem_key_passphrase
 			new_certificate(secure_key)
 		end	
@@ -50,7 +50,7 @@ def new_certificate(secure_key)
 		FileUtils.mkdir_p(File.dirname(@new_resource.path))
 	end	
 	# Create the certificate
-	name = OpenSSL::X509::Name.parse File.open(@current_resource.subj_file_path).read
+	name = OpenSSL::X509::Name.parse File.open(@current_resource.subj_file).read
 	cert = OpenSSL::X509::Certificate.new
 	cert.version = 2
 	cert.serial = 0 # insecure, need to choose a random two digit number?
@@ -82,7 +82,7 @@ def load_current_resource
 	@current_resource.mode(@new_resource.mode)
 	@current_resource.path(@new_resource.path)
 	@current_resource.subj_string(@new_resource.subj_string)
-	@current_resource.pem_key_path(@new_resource.pem_key_path)
+	@current_resource.pem_key(@new_resource.pem_key)
 	@current_resource.pem_key_passphrase(@new_resource.pem_key_passphrase)
 	
 	# More here later

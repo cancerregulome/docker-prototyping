@@ -10,8 +10,8 @@ attribute :owner, :regex => [ /^([a-z]|[A-Z]|[0-9]|_|-)+$/, /^\d+$/ ], :default 
 attribute :group, :regex => [ /^([a-z]|[A-Z]|[0-9]|_|-)+$/, /^\d+$/ ], :default => Etc.getgrgid(Etc.getpwnam(ENV['USER'])[:gid])[:name], :callbacks => { "Group doesn't exist on the system" => lambda { |group| group_exists?(group) } }
 attribute :mode, :kind_of => String, :regex => /^0?\d{3,4}$/, :default => '0777', :callbacks => { "Invalid file mode" => lambda { |mode| valid_file_mode?(mode) } }
 attribute :path, :kind_of => String, :name_attribute => true, :required => true
-attribute :user, :kind_of => String, :required => true # Encrypted databag item
-attribute :password, :kind_of => String, :required => true # Encrypted databag item
+attribute :user, :kind_of => String # Encrypted databag item
+attribute :password, :kind_of => String # Encrypted databag item
 attribute :encryption_algorithm, :kind_of => String, :equal_to => HTAuth::Algorithm.sub_klasses.keys, :default => "crypt", :callbacks => { "Invalid encryption algorithm" => lambda { |algorithm| HTAuth.Algorithm.sub_klasses.keys.include?(algorithm) } }
 
 attr_accessor :exists
