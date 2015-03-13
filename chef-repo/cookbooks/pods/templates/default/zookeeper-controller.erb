@@ -1,0 +1,44 @@
+# The zookeeper replication controller -- NOTE:  Need to make 3 copies in order to create a cluster of 3 unique zookeepers
+{
+  "id": "zookeeper-controller",
+  "kind": "ReplicationController",
+  "apiVersion": "v1beta1",
+  "desiredState": {
+    "replicas": 1,
+    "replicaSelector": {"name": "zookeeper-<%= @version =>"},
+    "podTemplate": {
+      "desiredState": {
+        "manifest": {
+          "version": "v1beta1",
+          "id": "zookeeper",
+          "containers": [{
+            "name": "zookeeper-<%= @version =>",
+            "image": "zookeeper-<%= @version =>",
+            "cpu": 100,
+            "ports": [
+			{
+              "containerPort": <%= @client_port =>,
+			  "name": "client"
+            }, 
+			{
+			  "containerPort": <%= @leader_connect =>,
+			  "name: "leader_connect"
+			},
+			{
+			  "containerPort": <%= @leader_elect =>,
+			  "name: "leader_elect"
+			}
+			]
+          }]
+        }
+      },
+      "labels": {
+        "name": "zookeeper-<%= @version =>",
+        "app": "zookeeper"
+      }
+    }
+  },
+  "labels": {
+    "name": "zookeeper-<%= @version =>" # This label needed for when we start our redis-master service.
+  }
+}

@@ -1,57 +1,16 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
+test_infrastructure_setup/setup_scripts/chef_setup_scripts/host_files/**
+!test_infrastructure_setup/setup_scripts/chef_setup_scripts/host_files/README
 
-# C extensions
-*.so
-
-# Distribution / packaging
-.Python
-env/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
-
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.coverage
-.cache
-nosetests.xml
-coverage.xml
-
-# Translations
-*.mo
-*.pot
-
-# Django stuff:
-*.log
-
-# Sphinx documentation
-docs/_build/
-
-# PyBuilder
-target/
-
-# Chef stuff
-chef-repo/.chef/syntax_check_cache/*
+chef-repo/.chef/*.pem
+chef-repo/.chef/trusted_certs/**
+chef-repo/.chef/syntax_check_cache/**
+chef-repo/cookbooks/zookeeper/files/default/install/*.tar*
+chef-repo/cookbooks/solr-shard/files/default/install/*.tar*
+chef-repo/cookbooks/solrcloud/files/default/dockerfiles/zookeeper/config/zoo.cfg
+chef-repo/cookbooks/pods/files/default/solr/solr-shard/chef/secure/validation.pem
+chef-repo/cookbooks/pods/files/default/solr/solr-shard/chef/secure/trusted_certs/**
+chef-repo/cookbooks/pods/files/default/solr/tomcat/chef/secure/validation.pem
+chef-repo/cookbooks/pods/files/default/solr/tomcat/chef/secure/trusted_certs/**
+chef-repo/cookbooks/pods/files/default/zookeeper/chef/secure/validation.pem
+chef-repo/cookbooks/pods/files/default/zookeeper/chef/secure/trusted_certs/**
+chef-repo/dockerfiles/**

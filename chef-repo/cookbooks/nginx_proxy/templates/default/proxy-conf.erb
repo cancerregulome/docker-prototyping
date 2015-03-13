@@ -1,0 +1,16 @@
+server {
+	listen 443;
+
+	ssl on;
+	ssl_certificate <%= @certs %>/<%= @hostname %>.crt;
+	ssl_certificate_key <%= @pem %>/<%= @hostname %>.key;
+
+	client_max_body_size 0;
+
+	location / {
+		proxy_pass http://<%= @proxied_host %>:<%= @proxied_port %>;
+
+		auth_basic "Restricted";
+		auth_basic_user_file <%= @htpasswd_file %>;
+	}
+}

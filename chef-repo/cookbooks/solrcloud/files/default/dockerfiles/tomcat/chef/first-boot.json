@@ -1,0 +1,10 @@
+{
+  "run_list": [
+    "recipe[tomcat]"
+  ], 
+  "container_service": {
+    "tomcat": {
+      "command": "/etc/init.d/tomcat7 start"
+    }
+  }
+}

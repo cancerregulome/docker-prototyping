@@ -1,0 +1,11 @@
+{
+	"id": "docker_registry_host",
+	"cert_subject": {
+		"C": "US",
+		"L": "Seattle",
+		"S": "Washington",
+		"O": "ISB",
+		"OU": "TCGA"
+	},
+	"pem_key_passphrase": "A man a plan a canal panama"
+}

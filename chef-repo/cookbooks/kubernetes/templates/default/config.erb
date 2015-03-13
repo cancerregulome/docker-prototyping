@@ -1,0 +1,13 @@
+# /etc/kubernetes/config
+
+# Comma separated list of nodes in the etcd cluster
+KUBE_ETCD_SERVERS="--etcd_servers=http://<%= @kube_master %>:<%= @etcd_port %>"
+
+# logging to stderr means we get it in the systemd journal
+KUBE_LOGTOSTDERR="--logtostderr=<%= @logtostderr %>"
+
+# journal message level, 0 is debug
+KUBE_LOG_LEVEL="--v=<%= @kube_log_level %>"
+
+# Should this cluster be allowed to run privileged docker containers
+KUBE_ALLOW_PRIV="--allow_privileged=<%= @kube_allow_privileged %>"
