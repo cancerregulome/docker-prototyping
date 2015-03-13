@@ -75,6 +75,8 @@ EOP
 <% end -%>
 <% end -%>
 
+config_content="no_lazy_load 'true'"
+
 cat > /etc/chef/client.rb <<'EOP'
 <%= config_content %>
 EOP
