@@ -45,10 +45,6 @@ action :delete do
 end
 
 def new_certificate(secure_key)
-	# First, make sure the file path has been created
-	unless Dir.exists?(File.dirname(@new_resource.path)) 
-		FileUtils.mkdir_p(File.dirname(@new_resource.path))
-	end	
 	# Create the certificate
 	name = OpenSSL::X509::Name.parse File.open(@current_resource.subj_file).read
 	cert = OpenSSL::X509::Certificate.new

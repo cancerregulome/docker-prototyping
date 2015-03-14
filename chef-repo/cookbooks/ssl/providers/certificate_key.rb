@@ -41,10 +41,6 @@ action :delete do
 end
 
 def new_key 
-	# First, make sure the file path has been created
-	unless Dir.exists?(File.dirname(@current_resource.path)) 
-		FileUtils.mkdir_p(File.dirname(@current_resource.path))
-	end
 	# Generate the new key
 	key = OpenSSL::PKey::RSA.new @current_resource.modulus
 	cipher = OpenSSL::Cipher.new @current_resource.cipher

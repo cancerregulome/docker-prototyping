@@ -1,7 +1,7 @@
 # registry-config.rb
 
 # Get the encrypted data bag items from the chef vault
-users = data_bag_item('nginx_proxy_auth','docker_registry_users')
+registry_users = data_bag_item('nginx_proxy_auth','docker_registry_users')['users']
 
 # Create the docker registry storage path
 directory node[:docker_registry][:primary_config][:storage_path] do
@@ -75,13 +75,14 @@ nginx_proxy_htpasswd_file "#{node[:nginx_proxy][:htpasswd_path]}/docker-registry
 	mode '0400'
 end
 
-users.each do |user|
-	password = user["password"]
+registry_users.keys.each do |registry_user|
+	password = registry_users[registry_user]
+	
 	nginx_proxy_htpasswd_file "#{node[:nginx_proxy][:htpasswd_path]}/docker-registry" do
 	owner 'root'
 	group 'root'
 	mode '0400'
-	user "#{user}"
+	user "#{registry_user}"
 	password "#{password}"
 	end
 end	

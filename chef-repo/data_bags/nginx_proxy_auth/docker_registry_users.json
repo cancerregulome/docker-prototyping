@@ -1,4 +1,6 @@
 {
 	"id": "docker_registry_users",
-	"kube": "Kb/Gev4OSdF36"
+	"users": {
+		"kube": "Kb/Gev4OSdF36"
+	}
 }
