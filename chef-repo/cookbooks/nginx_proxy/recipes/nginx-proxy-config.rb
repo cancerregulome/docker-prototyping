@@ -13,7 +13,7 @@ end
 ssl_certificate "#{node[:nginx_proxy][:certificate_path]}/#{node[:hostname]}.crt" do
 	owner 'root'
 	group 'root'
-	mode '0400'
+	mode 0400
 	subj_string "#{subj}"
 	pem_key_passphrase "#{pem_key_passphrase}"
 end

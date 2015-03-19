@@ -3,15 +3,20 @@
 # Get the encrypted data bag items from the chef vault
 registry_users = data_bag_item('nginx_proxy_auth','docker_registry_users')['users']
 
-# Create the docker registry storage path
+# Create the docker registry storage path 
 directory node[:docker_registry][:primary_config][:storage_path] do
+	action :create
+end
+
+# Note to self:  The block immediately following this comment should be moved to the nginx_proxy cookbook config recipe
+directory node[:nginx_proxy][:htpasswd_path] do
 	action :create
 end
 
 # Create the docker registry config file
 # NOTE:  The only value currently updated is the value for the "local" storage flavor... add node attributes and corresponding variables in the template as needed when storage flavor needs change.
 template "#{node[:docker_registry][:config_files][:primary_config_file]}" do
-	source "#{node[:docker_registry][:templates][:primary_cofig]}"
+	source 'config.erb'
 	owner 'root'
 	group 'root'
 	mode '0700'
@@ -22,7 +27,7 @@ end
 
 # Create the service init script
 template "#{node[:docker_registry][:config_files][:service_file]}" do
-	source "#{node[:docker_registry][:templates][:service]}"
+	source 'service.erb'
 	owner 'root'
 	group 'root'
 	mode '0700'
@@ -40,7 +45,7 @@ end
 
 # Create the environment file
 template "#{node[:docker_registry][:config_files][:environment_file]}" do
-	source "#{node[:docker_registry][:templates][:environment]}"
+	source 'environment.erb'
 	owner 'root'
 	group 'root'
 	mode '0700'
@@ -56,6 +61,7 @@ end
 # Create the docker-registry nginx config file for nginx proxy authentication
 template "#{node[:nginx_proxy][:conf_d_path]}/docker-registry.conf" do
 	source "#{node[:nginx_proxy][:templates][:conf_d]}"
+	cookbook 'nginx_proxy'
 	owner 'root'
 	group 'root'
 	mode '0400'
@@ -72,18 +78,19 @@ end
 nginx_proxy_htpasswd_file "#{node[:nginx_proxy][:htpasswd_path]}/docker-registry" do
 	owner 'root'
 	group 'root'
-	mode '0400'
+	mode 0400
 end
 
 registry_users.keys.each do |registry_user|
 	password = registry_users[registry_user]
 	
 	nginx_proxy_htpasswd_file "#{node[:nginx_proxy][:htpasswd_path]}/docker-registry" do
-	owner 'root'
-	group 'root'
-	mode '0400'
-	user "#{registry_user}"
-	password "#{password}"
+		owner 'root'
+		group 'root'
+		mode 0400
+		user "#{registry_user}"
+		password "#{password}"
+		action :add_entry
 	end
 end	
 

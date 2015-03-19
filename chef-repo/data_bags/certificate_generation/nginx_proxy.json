@@ -3,7 +3,7 @@
 	"cert_subject": {
 		"C": "US",
 		"L": "Seattle",
-		"S": "Washington",
+		"ST": "Washington",
 		"O": "ISB",
 		"OU": "TCGA"
 	},

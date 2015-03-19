@@ -91,6 +91,7 @@ end
 
 def new_htpasswd_file 
 	# Creates a new htpasswd file
+	FileUtils.touch(@current_resource.path)
 	htpasswd = HTAuth::PasswdFile.open(@current_resource.path, mode="create")
 	
 	unless @current_resource.user.nil?
@@ -157,16 +158,16 @@ end
 
 def load_current_resource 
 	# Load the resource as defined in the calling recipe
-	@current_resource = Chef::Resource::NginxProxyHtpasswordFile.new(@new_resource.name)
+	@current_resource = Chef::Resource::NginxProxyHtpasswdFile.new(@new_resource.name)
 	@current_resource.name(@new_resource.name)
 	@current_resource.owner(@new_resource.owner)
 	@current_resource.group(@new_resource.group)
 	@current_resource.mode(@new_resource.mode)
 	@current_resource.path(@new_resource.path)
-	@current_resource.path(@new_resource.user)
-	@current_resource.path(@new_resourc.password)
+	@current_resource.user(@new_resource.user)
+	@current_resource.password(@new_resource.password)
 	
-	if File.exists?(@current_resource.path)
+	if ::File.exists?(@current_resource.path)
 		@current_resource.exists = true
 	else
 		@current_resource.exists = false
@@ -178,17 +179,16 @@ def updated_attributes?
 	result = false
 	
 	# Update permissions
-	current_mode = sprintf("%o", File.stat(@current_resource.path).mode)
-	bits = @current_resource.mode.length
+	current_mode = ::File.stat(@current_resource.path).mode
 	
-	if @current_resource.mode != current_mode[(-1*bits), -1]
+	if @current_resource.mode != current_mode
 		FileUtils.chmod(@current_resource.mode, @current_resource.path)
 		result = true
 	end
 	
 	# Update ownership
-	current_owner = Etc.getpwuid(File.stat(@current_resource.path).uid).name
-	current_group = Etc.getgrgid(File.stat(@current_resource.path).gid).name
+	current_owner = Etc.getpwuid(::File.stat(@current_resource.path).uid).name
+	current_group = Etc.getgrgid(::File.stat(@current_resource.path).gid).name
 	
 	if @current_resource.owner != current_owner || @current_resource.group != current_group
 		FileUtils.chown(@current_resource.owner, @current_resource.group, @current_resource.path)

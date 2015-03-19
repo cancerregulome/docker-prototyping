@@ -58,10 +58,10 @@ def new_certificate
 	cert.serial = 0 # insecure, need to choose a random two digit number?
 	cert.not_before = Time.now
 	cert.not_after = Time.now + 365 * 24 * 60 * 60 # 1 year from creation
-	cert.public_key = secure_key.public key
+	cert.public_key = key.public_key
 	cert.subject = name
 	cert.issuer = name
-	cert.sign secure_key, OpenSSL::Digest::SHA1.new
+	cert.sign key, OpenSSL::Digest::SHA1.new
 	::File.open(@current_resource.path, 'w') do |io| io.write cert.to_pem end
 	
 	# Set permissions
@@ -89,7 +89,7 @@ def load_current_resource
 	@current_resource.pem_key_passphrase(@new_resource.pem_key_passphrase)
 	
 	# More here later
-	if ::File::exist?(@current_resource.path)
+	if ::File.exist?(@current_resource.path)
 		@current_resource.exists = true
 	else
 		@current_resource.exists = false
@@ -101,17 +101,16 @@ def updated_attributes?
 	result = false
 	
 	# Update permissions
-	current_mode = sprintf("%o", File.stat(@current_resource.path).mode)
-	bits = @current_resource.mode.length
+	current_mode = ::File.stat(@current_resource.path).mode
 	
-	if @current_resource.mode != current_mode[(-1*bits), -1]
+	if @current_resource.mode != current_mode
 		FileUtils.chmod(@current_resource.mode, @current_resource.path)
 		result = true
 	end
 	
 	# Update ownership
-	current_owner = Etc.getpwuid(File.stat(@current_resource.path).uid).name
-	current_group = Etc.getgrgid(File.stat(@current_resource.path).gid).name
+	current_owner = Etc.getpwuid(::File.stat(@current_resource.path).uid).name
+	current_group = Etc.getgrgid(::File.stat(@current_resource.path).gid).name
 	
 	if @current_resource.owner != current_owner || @current_resource.group != current_group
 		FileUtils.chown(@current_resource.owner, @current_resource.group, @current_resource.path)

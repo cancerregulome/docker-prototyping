@@ -11,7 +11,7 @@ default_action :create
 
 attribute :owner, :regex => [ /^([a-z]|[A-Z]|[0-9]|_|-)+$/, /^\d+$/ ], :default => ENV['USER'], :callbacks => { "User doesn't exist on the system" => lambda { |owner| ParameterValidation.owner_exists?(owner) } }
 attribute :group, :regex => [ /^([a-z]|[A-Z]|[0-9]|_|-)+$/, /^\d+$/ ], :default => Etc.getgrgid(Etc.getpwnam(ENV['USER'])[:gid])[:name], :callbacks => { "Group doesn't exist on the system" => lambda { |group| ParameterValidation.group_exists?(group) } }
-attribute :mode, :kind_of => String, :regex => /^0?\d{3,4}$/, :default => '0777', :callbacks => { "Invalid file mode" => lambda { |mode| ParameterValidation.valid_file_mode?(mode) } }
+attribute :mode, :regex => /^0?\d{3,4}$/, :default => 0777
 attribute :path, :kind_of => String, :name_attribute => true, :required => true
 attribute :user, :kind_of => String # Encrypted databag item
 attribute :password, :kind_of => String # Encrypted databag item
