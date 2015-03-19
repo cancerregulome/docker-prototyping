@@ -38,7 +38,7 @@ action :delete do
 	end
 end
 
-def new_certificate(secure_key)
+def new_certificate
 	# Create the RSA key in /etc/ssl/private
 	key = OpenSSL::PKey::RSA.new @current_resource.pem_key_modulus
 	cipher = OpenSSL::Cipher.new @current_resource.pem_key_cipher
