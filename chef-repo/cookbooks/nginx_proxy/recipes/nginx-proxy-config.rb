@@ -2,7 +2,6 @@
 
 # Create variables for the encrypted databag items required for authentication
 certificate_details = data_bag_item('certificate_generation', 'nginx_proxy')
-pem_key_passphrase = certificate_details["pem_key_passphrase"]
 subj_hash = certificate_details["cert_subject"]
 subj = ""
 subj_hash.keys.each do |entry|
@@ -15,7 +14,6 @@ ssl_certificate "#{node[:nginx_proxy][:certificate_path]}/#{node[:hostname]}.crt
 	group 'root'
 	mode 0400
 	subj_string "#{subj}"
-	pem_key_passphrase "#{pem_key_passphrase}"
 end
 
 
