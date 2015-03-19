@@ -14,8 +14,6 @@ action :create do
 		end
 	else
 		converge_by("Create self-signed SSL certificate") do
-			key = OpenSSL::PKey::RSA.new File.read @new_resource.pem_key
-			secure_key = key, @new_resource.pem_key_passphrase
 			new_certificate(secure_key)		
 		end
 	end
@@ -26,8 +24,6 @@ action :create_if_missing do
 		Chef::Log.info "#{ @new_resource } already exists -- nothing to do."
 	else
 		converge_by("Create self-signed SSL certificate") do
-			key = OpenSSL::PKey::RSA.new File.read @new_resource.pem_key
-			secure_key = key, @new_resource.pem_key_passphrase
 			new_certificate(secure_key)
 		end	
 	end
@@ -45,8 +41,20 @@ action :delete do
 end
 
 def new_certificate(secure_key)
+	# Create the RSA key in /etc/ssl/private
+	key = OpenSSL::PKey::RSA.new @current_resource.pem_key_modulus
+	cipher = OpenSSL::Cipher.new @current_resource.pem_key_cipher
+	secure_key = key.export cipher, @current_resource.pem_key_passphrase
+	open "/etc/ssl/private/#{node[:hostname]}.pem", 'w' do |io| io.write secure_key.to_pem end	
+
+	# Set permissions
+	FileUtils.chmod(@current_resource.mode, "/etc/ssl/private/#{node[:hostname]}.pem")
+	
+	# Set ownership
+	FileUtils.chown(@current_resource.owner, @current_resource.group, "/etc/ssl/private/#{node[:hostname]}.pem")
+
 	# Create the certificate
-	name = OpenSSL::X509::Name.parse File.open(@current_resource.subj_file).read
+	name = OpenSSL::X509::Name.parse @current_resource.subj_string
 	cert = OpenSSL::X509::Certificate.new
 	cert.version = 2
 	cert.serial = 0 # insecure, need to choose a random two digit number?
@@ -78,7 +86,8 @@ def load_current_resource
 	@current_resource.mode(@new_resource.mode)
 	@current_resource.path(@new_resource.path)
 	@current_resource.subj_string(@new_resource.subj_string)
-	@current_resource.pem_key(@new_resource.pem_key)
+	@current_resource.pem_key_modulus(@new_resource.pem_key_modulus)
+	@current_resource.pem_key_cipher(@new_resource.pem_key_cipher)
 	@current_resource.pem_key_passphrase(@new_resource.pem_key_passphrase)
 	
 	# More here later
