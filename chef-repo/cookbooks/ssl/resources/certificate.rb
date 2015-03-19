@@ -12,7 +12,7 @@ attribute :group, :regex => [ /^([a-z]|[A-Z]|[0-9]|_|-)+$/, /^\d+$/ ], :default 
 attribute :mode, :regex => /^0?\d{3,4}$/, :default => '0777', :callbacks => { "Invalid file mode" => lambda { |mode| ParameterValidation.valid_file_mode?(mode) } }
 attribute :path, :kind_of => String, :name_attribute => true, :required => true
 attribute :subj_string, :kind_of => String, :required => true
-attribute :pem_key_modulus, :kind_of => String, :default => '2048', :callbacks => { "Insecure key (<1024 bits)" => lambda { |mod| mod.to_i >= 1024 } }
+attribute :pem_key_modulus, :kind_of => Integer, :default => 2048, :callbacks => { "Insecure key (<1024 bits)" => lambda { |mod| mod >= 1024 } }
 attribute :pem_key_cipher, :kind_of => String, :equal_to => OpenSSL::Cipher.ciphers, :default => 'AES-128-CBC', :callbacks => { "Invalid cipher" => lambda { |cipher| OpenSSL::Cipher.ciphers.include?(cipher) } }
 attribute :pem_key_passphrase, :kind_of => String, :required => true 
 
