@@ -1,5 +1,10 @@
 # nginx-proxy-config.rb
 
+# Create the htpasswd directory 
+directory node[:nginx_proxy][:htpasswd_path] do
+	action :create
+end
+
 # Create variables for the encrypted databag items required for authentication
 certificate_details = data_bag_item('certificate_generation', 'nginx_proxy')
 subj_hash = certificate_details["cert_subject"]

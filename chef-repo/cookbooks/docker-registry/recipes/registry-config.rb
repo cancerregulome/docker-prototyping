@@ -8,11 +8,6 @@ directory node[:docker_registry][:primary_config][:storage_path] do
 	action :create
 end
 
-# Note to self:  The block immediately following this comment should be moved to the nginx_proxy cookbook config recipe
-directory node[:nginx_proxy][:htpasswd_path] do
-	action :create
-end
-
 # Create the docker registry config file
 # NOTE:  The only value currently updated is the value for the "local" storage flavor... add node attributes and corresponding variables in the template as needed when storage flavor needs change.
 template "#{node[:docker_registry][:config_files][:primary_config_file]}" do
@@ -95,4 +90,15 @@ registry_users.keys.each do |registry_user|
 		action :add_entry
 	end
 end	
+
+# Create the trusted certificate directory in /etc/docker
+directory "/etc/docker/certs.d/kube-master:443" do
+	action :create
+end
+
+# Make copy the server certificate to /etc/docker/certs.d/kube-master:443/ca.crt
+file "/etc/docker/certs.d/kube-master:443/ca.crt" do
+	content IO.read("/etc/ssl/certs/kube-master.crt")
+	action :create
+end
 
