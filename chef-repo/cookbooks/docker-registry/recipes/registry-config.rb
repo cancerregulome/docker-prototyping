@@ -84,7 +84,7 @@ nginx_proxy_htpasswd_file "#{node[:nginx_proxy][:htpasswd_path]}/docker-registry
 end
 
 registry_users.keys.each do |registry_user|
-	password = registry_users[registry_user]
+	password = registry_users[registry_user]["password"]
 	
 	nginx_proxy_htpasswd_file "#{node[:nginx_proxy][:htpasswd_path]}/docker-registry" do
 		owner 'root'
