@@ -9,7 +9,7 @@ default_action :create
 
 attribute :owner, :regex => [ /^([a-z]|[A-Z]|[0-9]|_|-)+$/, /^\d+$/ ], :default => ENV['USER'], :callbacks => { "User doesn't exist on the system" => lambda { |owner| ParameterValidation.owner_exists?(owner) } }
 attribute :group, :regex => [ /^([a-z]|[A-Z]|[0-9]|_|-)+$/, /^\d+$/ ], :default => Etc.getgrgid(Etc.getpwnam(ENV['USER'])[:gid])[:name], :callbacks => { "Group doesn't exist on the system" => lambda { |group| ParameterValidation.group_exists?(group) } }
-attribute :mode, :regex => /^0?\d{3,4}$/, :default => '0777', :callbacks => { "Invalid file mode" => lambda { |mode| ParameterValidation.valid_file_mode?(mode) } }
+attribute :mode, :regex => /^0?\d{3,4}$/, :default => 0777, :callbacks => { "Invalid file mode" => lambda { |mode| ParameterValidation.valid_file_mode?(mode) } }
 attribute :path, :kind_of => String, :name_attribute => true, :required => true
 attribute :subj_string, :kind_of => String, :required => true
 attribute :pem_key_modulus, :kind_of => Integer, :default => 2048, :callbacks => { "Insecure key (<1024 bits)" => lambda { |mod| mod >= 1024 } }
