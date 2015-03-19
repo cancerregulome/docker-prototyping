@@ -1,5 +1,5 @@
 server {
-	listen 443;
+	listen <%= @ssl_port %>;
 
 	ssl on;
 	ssl_certificate <%= @certificate %>;

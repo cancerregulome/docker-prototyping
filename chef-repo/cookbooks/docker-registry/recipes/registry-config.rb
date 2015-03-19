@@ -69,6 +69,8 @@ template "#{node[:nginx_proxy][:conf_d_path]}/docker-registry.conf" do
 		:pem_key => "#{node[:nginx_proxy][:pem_key_path]}/#{node[:hostname]}.pem",
 		:certificate => "#{node[:nginx_proxy][:certificate_path]}/#{node[:hostname]}.crt",
 		:htpasswd_file => "#{node[:nginx_proxy][:htpasswd_path]}/docker-registry",
+		:domain_name => node[:docker_registry][:nginx_conf][:domain_name],
+		:ssl_port => node[:docker_registry][:nginx_conf][:ssl_port],
 		:proxied_host => node[:docker_registry][:environment][:registry_address],
 		:proxied_port => node[:docker_registry][:environment][:registry_port]
 	})

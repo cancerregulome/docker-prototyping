@@ -7,7 +7,7 @@ registry_admin_password = registry_users["users"][registry_admin]
 docker_image "chef/ubuntu-14.04"
 
 # Get the private registry ready to push to
-docker_registry "https://#{node[:docker_registry][:environment][:registry_address]}:#{node[:docker_registry][:environment][:registry_port]}" do 
+docker_registry "https://#{node[:hostname]}:#{node[:docker_registry][:nginx_conf][:ssl_port]}" do 
 	username "#{registry_admin}"
 	password "#{registry_admin_password}"
 end

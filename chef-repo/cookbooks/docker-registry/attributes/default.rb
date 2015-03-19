@@ -27,5 +27,9 @@ default['docker_registry']['templates']['primary_config'] = "config.erb"
 default['docker_registry']['primary_config']['storage_path'] = "/var/docker-registry"
 # Add more later when values are known and needed
 
+# /etc/nginx/conf.d/docker_registry
+default['docker_registry']['nginx_conf']['domain_name'] = "tcga-registry.com"
+default['docker_registry']['nginx_conf']['ssl_port'] = "443"
+
 
 
