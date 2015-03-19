@@ -46,7 +46,7 @@ def new_certificate
 	::File.open("/etc/ssl/private/#{node[:hostname]}.pem", 'w') do |io| io.write secure_key end	
 
 	# Set permissions
-	FileUtils.chmod(@current_resource.mode, "/etc/ssl/private/#{node[:hostname]}.pem")
+	FileUtils.chmod %o(@current_resource.mode), "/etc/ssl/private/#{node[:hostname]}.pem"
 	
 	# Set ownership
 	FileUtils.chown(@current_resource.owner, @current_resource.group, "/etc/ssl/private/#{node[:hostname]}.pem")
