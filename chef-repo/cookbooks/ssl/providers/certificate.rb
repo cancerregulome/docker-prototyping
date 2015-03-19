@@ -43,7 +43,7 @@ def new_certificate
 	key = OpenSSL::PKey::RSA.new @current_resource.pem_key_modulus
 	cipher = OpenSSL::Cipher.new @current_resource.pem_key_cipher
 	secure_key = key.export cipher, @current_resource.pem_key_passphrase
-	::File.open("/etc/ssl/private/#{node[:hostname]}.pem", 'w') do |io| io.write secure_key.to_pem end	
+	::File.open("/etc/ssl/private/#{node[:hostname]}.pem", 'w') do |io| io.write secure_key end	
 
 	# Set permissions
 	FileUtils.chmod(@current_resource.mode, "/etc/ssl/private/#{node[:hostname]}.pem")
