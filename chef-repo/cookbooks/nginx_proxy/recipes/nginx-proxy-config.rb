@@ -7,6 +7,7 @@ subj = ""
 subj_hash.keys.each do |entry|
 	subj = subj + "#{entry}=#{subj_hash[entry]}/"
 end
+subj = subj + "CN=#{node[:hostname]}"
 
 # Generate the self-signed certificate
 ssl_certificate "#{node[:nginx_proxy][:certificate_path]}/#{node[:hostname]}.crt" do
