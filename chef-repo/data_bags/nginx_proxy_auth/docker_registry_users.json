@@ -1,5 +1,6 @@
 {
 	"id": "docker_registry_users",
+	"admin_user": "kube",
 	"users": {
 		"kube": "Kb/Gev4OSdF36"
 	}
