@@ -1,8 +1,6 @@
 require 'openssl'
 require 'fileutils'
 
-#include
-
 def whyrun_supported?
 	true
 end
@@ -91,7 +89,7 @@ def load_current_resource
 	@current_resource.pem_key_passphrase(@new_resource.pem_key_passphrase)
 	
 	# More here later
-	if File::Stat::File.exist?(@current_resource.path)
+	if ::File.exist?(@current_resource.path)
 		@current_resource.exists = true
 	else
 		@current_resource.exists = false
