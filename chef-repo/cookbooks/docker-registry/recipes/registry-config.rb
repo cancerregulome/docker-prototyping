@@ -66,8 +66,8 @@ template "#{node[:nginx_proxy][:conf_d_path]}/docker-registry.conf" do
 	group 'root'
 	mode '0400'
 	variables({
-		:pem_key => node[:nginx_proxy][:pem_key_path],
-		:certificate => node[:nginx_proxy][:certificate_path],
+		:pem_key => "#{node[:nginx_proxy][:pem_key_path]}/#{node[:hostname]}.pem",
+		:certificate => "#{node[:nginx_proxy][:certificate_path]}/#{node[:hostname]}.crt",
 		:htpasswd_file => "#{node[:nginx_proxy][:htpasswd_path]}/docker-registry",
 		:proxied_host => node[:docker_registry][:environment][:registry_address],
 		:proxied_port => node[:docker_registry][:environment][:registry_port]

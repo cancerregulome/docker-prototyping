@@ -2,8 +2,8 @@ server {
 	listen 443;
 
 	ssl on;
-	ssl_certificate <%= @certs %>/<%= @hostname %>.crt;
-	ssl_certificate_key <%= @pem %>/<%= @hostname %>.key;
+	ssl_certificate <%= @certificate %>/<%= @hostname %>.crt;
+	ssl_certificate_key <%= @pem_key %>/<%= @hostname %>.key;
 
 	client_max_body_size 0;
 

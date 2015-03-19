@@ -15,6 +15,6 @@ attribute :mode, :regex => /^0?\d{3,4}$/, :default => 0777
 attribute :path, :kind_of => String, :name_attribute => true, :required => true
 attribute :user, :kind_of => String # Encrypted databag item
 attribute :password, :kind_of => String # Encrypted databag item
-attribute :encryption_algorithm, :kind_of => String, :equal_to => HTAuth::Algorithm.sub_klasses.keys, :default => "crypt", :callbacks => { "Invalid encryption algorithm" => lambda { |algorithm| HTAuth.Algorithm.sub_klasses.keys.include?(algorithm) } }
+attribute :encryption_algorithm, :kind_of => String, :equal_to => HTAuth::Algorithm.sub_klasses.keys, :default => "crypt", :callbacks => { "Invalid encryption algorithm" => lambda { |algorithm| HTAuth::Algorithm.sub_klasses.keys.include?(algorithm) } }
 
 attr_accessor :exists
