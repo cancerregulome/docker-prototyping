@@ -12,7 +12,7 @@ action :create do
 		end
 	else
 		converge_by("Create self-signed SSL certificate") do
-			new_certificate(secure_key)		
+			new_certificate	
 		end
 	end
 end
@@ -22,7 +22,7 @@ action :create_if_missing do
 		Chef::Log.info "#{ @new_resource } already exists -- nothing to do."
 	else
 		converge_by("Create self-signed SSL certificate") do
-			new_certificate(secure_key)
+			new_certificate
 		end	
 	end
 end
