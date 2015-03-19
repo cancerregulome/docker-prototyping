@@ -94,6 +94,7 @@ end
 # Create the trusted certificate directory in /etc/docker
 directory "/etc/docker/certs.d/kube-master:443" do
 	action :create
+	recursive true
 end
 
 # Make copy the server certificate to /etc/docker/certs.d/kube-master:443/ca.crt
