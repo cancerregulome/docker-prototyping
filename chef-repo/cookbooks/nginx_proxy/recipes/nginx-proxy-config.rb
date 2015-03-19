@@ -10,7 +10,7 @@ subj_hash.keys.each do |entry|
 end
 
 # Generate the self-signed certificate
-ssl_certificate "#{node[:nginx_proxy][:certificate_path]}" do
+ssl_certificate "#{node[:nginx_proxy][:certificate_path]}/#{node[:hostname]}.crt" do
 	owner 'root'
 	group 'root'
 	mode '0400'
