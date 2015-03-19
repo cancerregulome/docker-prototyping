@@ -83,8 +83,6 @@ def load_current_resource
 	@current_resource.path(@new_resource.path)
 	@current_resource.subj_string(@new_resource.subj_string)
 	@current_resource.pem_key_modulus(@new_resource.pem_key_modulus)
-	@current_resource.pem_key_cipher(@new_resource.pem_key_cipher)
-	@current_resource.pem_key_passphrase(@new_resource.pem_key_passphrase)
 	
 	# More here later
 	if ::File.exist?(@current_resource.path)
