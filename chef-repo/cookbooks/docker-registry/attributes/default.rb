@@ -33,7 +33,7 @@ default['docker_registry']['nginx_conf']['ssl_port'] = "443"
 
 ### FOR DEVELOPMENT/TESTING ONLY
 # Override attributes
-override['docker']['options'] = "--insecure-registry localhost:5000"
+override['docker']['options'] = "--insecure-registry #{node[:hostname]}:5000"
 
 
 
