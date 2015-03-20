@@ -91,15 +91,4 @@ registry_users.keys.each do |registry_user|
 	end
 end	
 
-# Create the trusted certificate directory in /etc/docker
-directory "/etc/docker/certs.d/kube-master:443" do
-	action :create
-	recursive true
-end
-
-# Make copy the server certificate to /etc/docker/certs.d/kube-master:443/ca.crt
-file "/etc/docker/certs.d/kube-master:443/ca.crt" do
-	content IO.read("/etc/ssl/certs/kube-master.crt")
-	action :create
-end
 
