@@ -50,6 +50,7 @@ def new_certificate
 	FileUtils.chown(@current_resource.owner, @current_resource.group, "/etc/ssl/private/#{node[:hostname]}.pem")
 
 	# Create the certificate
+	# NOTE:  This will need to be modified in the future to use a real CA 
 	name = OpenSSL::X509::Name.parse @current_resource.subj_string
 	cert = OpenSSL::X509::Certificate.new
 	cert.version = 2

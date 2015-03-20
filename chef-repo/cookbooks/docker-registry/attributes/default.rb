@@ -31,5 +31,9 @@ default['docker_registry']['primary_config']['storage_path'] = "/var/docker-regi
 default['docker_registry']['nginx_conf']['domain_name'] = "tcga-registry.com"
 default['docker_registry']['nginx_conf']['ssl_port'] = "443"
 
+### FOR DEVELOPMENT/TESTING ONLY
+# Override attributes
+override['docker']['options'] = "--insecure-registry localhost:5000"
+
 
 
