@@ -15,3 +15,6 @@ when "centos", "redhat"
 		options "--enablerepo=virt7-testing"
 	end
 end
+
+# Try using the docker cookbook to update the docker installation for chef
+include_recipe "docker"
