@@ -16,5 +16,5 @@ when "centos", "redhat"
 	end
 end
 
-# Try using the docker cookbook to update the docker installation for chef
+# Try using the docker cookbook to update the docker installation for chef 
 include_recipe "docker"
