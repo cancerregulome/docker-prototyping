@@ -17,5 +17,4 @@ when "centos", "redhat"
 end
 
 # Try using the docker cookbook to update the docker installation for chef 
-node.override['docker']['options'] = "--insecure-registry #{node[:hostname]}:443"
 include_recipe "docker"
