@@ -5,8 +5,7 @@ description "The kubernetes master node role"
 run_list "recipe[roles::kubernetes-master]"
 ### FOR DEVELOPMENT/TESTING ONLY
 # Override attributes
-override_attributes "docker" => { 
-	"options" => "--insecure-registry #{node[:hostname]}:443", 
+override_attributes "docker" => {  
 	"init_type" => {
 		"default" => "systemd" 
 	}
