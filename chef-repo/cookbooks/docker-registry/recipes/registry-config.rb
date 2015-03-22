@@ -8,16 +8,6 @@ admin_password = users[admin]
 # Override a few attributes in the current cookbook
 node.default['docker_registry']['custom_docker']['service']['https_proxy'] = "https://#{admin}:#{admin_password}@#{node[:hostname]}:#{node[:docker_registry][:nginx_conf][:ssl_port]}"
 
-# Add drop-in snippets for the docker service file, and then reload it
-#node[:docker_registry][:config_files][:custom_docker].each do |snippet|
-#	template "#{node[:docker_registry][:config_files][:custom_docker][snippet]}" do
-#		source "#{node[:docker_registry][:templates][:custom_docker][snippet]}"
-#		owner 'root'
-#		group 'root'
-#		mode '0700'
-#	end
-#end
-
 directory "/etc/systemd/system/docker.d" do
 	action :create
 	recursive true
