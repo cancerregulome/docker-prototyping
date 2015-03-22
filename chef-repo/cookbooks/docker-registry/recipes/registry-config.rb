@@ -18,6 +18,11 @@ node.default['docker_registry']['custom_docker']['service']['https_proxy'] = "ht
 #	end
 #end
 
+directory "/etc/systemd/system/docker.d" do
+	action :create
+	recursive true
+end
+	
 template "/etc/systemd/system/docker.d/custom_service.conf" do
 	source "custom-docker-service.erb"
 	owner 'root'
