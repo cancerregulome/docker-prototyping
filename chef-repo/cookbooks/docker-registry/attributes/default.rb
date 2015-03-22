@@ -37,7 +37,7 @@ default['docker_registry']['templates']['custom_docker']['service'] = "custom-do
 default['docker_registry']['custom_docker']['service']['https_proxy'] = nil # set later in recipes
 
 # For testing/development only -- delete later
-override['docker']['options'] = "--insecure-registry #{node[:hostname]}:#{node[:docker_registry][:environment][:registry_port]}"
+override['docker']['options'] = "--insecure-registry #{node[:hostname]}:#{node[:docker_registry][:nginx_conf][:ssl_port]}"
 
 
 
