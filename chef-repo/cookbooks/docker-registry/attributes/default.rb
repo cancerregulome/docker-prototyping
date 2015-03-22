@@ -32,7 +32,7 @@ default['docker_registry']['nginx_conf']['domain_name'] = "tcga-registry.com"
 default['docker_registry']['nginx_conf']['ssl_port'] = "443"
 
 # /etc/systemd/system/docker.d/customenv.conf
-default['docker_registry']['config_files']['custom_docker']['service'] = "/etc/systemd/system/docker.d/custom_service.conf"
+default['docker_registry']['config_files']['custom_docker']['service'] = "/etc/systemd/system/docker.service.d/custom_service.conf"
 default['docker_registry']['templates']['custom_docker']['service'] = "custom-docker-service.erb"
 default['docker_registry']['custom_docker']['service']['https_proxy'] = nil # set later in recipes
 
