@@ -3,7 +3,7 @@
 # Get data bag items (should be encryptyed later)
 users = data_bag_item('nginx_proxy_auth','docker_registry_users')['users']
 admin = data_bag_item('nginx_proxy_auth','docker_registry_users')['admin_user']
-admin_password = users[admin]
+admin_password = users[admin]['password']
 
 # Override a few attributes in the current cookbook
 node.default['docker_registry']['custom_docker']['service']['https_proxy'] = "https://#{admin}:#{admin_password}@#{node[:hostname]}:#{node[:docker_registry][:nginx_conf][:ssl_port]}"
@@ -22,7 +22,6 @@ end
 
 service 'docker' do
   provider Chef::Provider::Service::Systemd
-  supports :status => true, :restart => true, :reload => true
   action :reload
 end
 
