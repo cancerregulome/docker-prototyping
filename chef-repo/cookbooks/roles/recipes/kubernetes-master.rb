@@ -12,5 +12,5 @@ include_recipe "kubernetes::pull-base-images"
 #include_recipe "kubernetes::static-dockerfiles"  # workaround for lack of a valid CA for signing certificates
 include_recipe "kubernetes::configure-pods"
 include_recipe "kubernetes::start-pods"
-#include_recipe "kubernetes::update-pods" # For demonstration purposes only in anything but a production setting 
+#include_recipe "kubernetes::update-pods" # should be moved to the kubernetes minion?
 
