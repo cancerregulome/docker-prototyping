@@ -8,6 +8,7 @@ admin_password = users[admin]['password']
 # Override a few attributes in the current cookbook
 node.default['docker_registry']['custom_docker']['service']['https_proxy'] = "https://#{admin}:#{admin_password}@#{node[:hostname]}:#{node[:docker_registry][:nginx_conf][:ssl_port]}"
 
+# Create drop-in snippets to customize the docker service, and then reload it
 directory "/etc/systemd/system/docker.d" do
 	action :create
 	recursive true
@@ -20,9 +21,14 @@ template "/etc/systemd/system/docker.d/custom_service.conf" do
 	mode '0400'
 end
 
+execute 'systemctl-daemon-reload' do
+  command '/bin/systemctl --system daemon-reload'
+  action :nothing
+end
+
 service 'docker' do
   provider Chef::Provider::Service::Systemd
-  action :reload
+  action :restart
 end
 
 # Create the docker registry storage path 
