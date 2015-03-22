@@ -8,11 +8,12 @@ registry_admin_email = registry_users["users"][registry_admin]["email"]
 docker_image "chef/ubuntu-14.04"
 
 # Get the private registry ready to push to
-docker_registry "#{node[:hostname]}:#{node[:docker_registry][:nginx_conf][:ssl_port]}" do 
-	username "#{registry_admin}"
-	password "#{registry_admin_password}"
-	email "#{registry_admin_email}"
-end
+#docker_registry "#{node[:hostname]}:#{node[:docker_registry][:nginx_conf][:ssl_port]}" do 
+#	username "#{registry_admin}"
+#	password "#{registry_admin_password}"
+#	email "#{registry_admin_email}"
+#end
+docker_registry "localhost:5000" 
 
 # Tag the image for pushing to the local registry
 docker_image "chef/ubuntu-14.04" do
