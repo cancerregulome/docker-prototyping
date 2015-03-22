@@ -13,7 +13,7 @@ docker_image "chef/ubuntu-14.04"
 #	password "#{registry_admin_password}"
 #	email "#{registry_admin_email}"
 #end
-docker_registry "localhost:5000"
+docker_registry "localhost:5000" do
 	username "#{registry_admin}"
 	password "#{registry_admin_password}"
 	email "#{registry_admin_email}"
