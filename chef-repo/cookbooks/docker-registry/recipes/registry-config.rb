@@ -1,13 +1,5 @@
 # registry-config.rb
 
-# Get data bag items (should be encryptyed later)
-registry_users = data_bag_item('nginx_proxy_auth','docker_registry_users')['users']
-registry_admin = data_bag_item('nginx_proxy_auth','docker_registry_users')['admin_user']
-registry_admin_password = registry_users[registry_admin]
-
-# Override a few attributes in the current cookbook
-node.override['docker_registry']['custom_docker']['service']['https_proxy'] = "https://#{registry_admin}:#{registry_admin_password}@#{node[:hostname]}:#{node[:docker-registry][:nginx_conf][:ssl_port]}"
-
 # Add drop-in snippets for the docker service file, and then reload it
 node[:docker_registry][:config_files][:custom_docker].each do |snippet|
 	template "#{node[:docker_registry][:config_files][:custom_docker][snippet]}" do
