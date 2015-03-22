@@ -35,14 +35,6 @@ default['docker_registry']['nginx_conf']['ssl_port'] = "443"
 default['docker_registry']['config_files']['custom_docker']['service'] = "/etc/systemd/system/docker.d/custom_service.conf"
 default['docker_registry']['templates']['custom_docker']['service'] = "custom-docker-service.erb"
 
-# Get data bag items (should be encryptyed later)
-registry_users = data_bag_item('nginx_proxy_auth','docker_registry_users')['users']
-registry_admin = data_bag_item('nginx_proxy_auth','docker_registry_users')['admin_user']
-registry_admin_password = registry_users[registry_admin]
-
-# Override a few attributes in the current cookbook
-default['docker_registry']['custom_docker']['service']['https_proxy'] = "https://#{registry_admin}:#{registry_admin_password}@#{node[:hostname]}:#{node[:docker-registry][:nginx_conf][:ssl_port]}"
-
 # For testing/development only -- delete later
 override['docker']['options'] = "--insecure-registry #{node[:hostname]}:#{node[:docker_registry][:environment][:registry_port]}"
 
