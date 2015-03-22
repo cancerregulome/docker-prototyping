@@ -9,12 +9,12 @@ admin_password = users[admin]['password']
 node.default['docker_registry']['custom_docker']['service']['https_proxy'] = "https://#{admin}:#{admin_password}@#{node[:hostname]}:#{node[:docker_registry][:nginx_conf][:ssl_port]}"
 
 # Create drop-in snippets to customize the docker service, and then reload it
-directory "/etc/systemd/system/docker.d" do
+directory "/etc/systemd/system/docker.service.d" do
 	action :create
 	recursive true
 end
 	
-template "/etc/systemd/system/docker.d/custom_service.conf" do
+template "/etc/systemd/system/docker.service.d/custom_service.conf" do
 	source "custom-docker-service.erb"
 	owner 'root'
 	group 'root'
