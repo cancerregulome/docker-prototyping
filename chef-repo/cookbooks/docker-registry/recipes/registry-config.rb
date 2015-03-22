@@ -1,12 +1,12 @@
 # registry-config.rb
 
 # Get data bag items (should be encryptyed later)
-registry_users = data_bag_item('nginx_proxy_auth','docker_registry_users')['users']
-registry_admin = data_bag_item('nginx_proxy_auth','docker_registry_users')['admin_user']
-registry_admin_password = registry_users[registry_admin]
+users = data_bag_item('nginx_proxy_auth','docker_registry_users')['users']
+admin = data_bag_item('nginx_proxy_auth','docker_registry_users')['admin_user']
+admin_password = users[admin]
 
 # Override a few attributes in the current cookbook
-node.default["docker_registry"]["custom_docker"]["service"]["https_proxy"] = "https://#{registry_admin}:#{registry_admin_password}@#{node[:hostname]}:#{node[:docker-registry][:nginx_conf][:ssl_port]}"
+node.default["docker_registry"]["custom_docker"]["service"]["https_proxy"] = "https://#{admin}:#{admin_password}@#{node[:hostname]}:#{node[:docker-registry][:nginx_conf][:ssl_port]}"
 
 # Add drop-in snippets for the docker service file, and then reload it
 node[:docker_registry][:config_files][:custom_docker].each do |snippet|
@@ -98,14 +98,14 @@ nginx_proxy_htpasswd_file "#{node[:nginx_proxy][:htpasswd_path]}/docker-registry
 	mode 0400
 end
 
-registry_users.keys.each do |registry_user|
-	password = registry_users[registry_user]["password"]
+users.keys.each do |user|
+	password = users[user]["password"]
 	
 	nginx_proxy_htpasswd_file "#{node[:nginx_proxy][:htpasswd_path]}/docker-registry" do
 		owner 'root'
 		group 'root'
 		mode 0400
-		user "#{registry_user}"
+		user "#{user}"
 		password "#{password}"
 		action :add_entry
 	end
