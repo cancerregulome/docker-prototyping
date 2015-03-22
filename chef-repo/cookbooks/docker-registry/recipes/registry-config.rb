@@ -11,7 +11,7 @@ node.override['docker_registry']['custom_docker']['service']['https_proxy'] = "h
 # Add drop-in snippets for the docker service file, and then reload it
 node[:docker_registry][:config_files][:custom_docker].each do |snippet|
 	template "#{node[:docker_registry][:config_files][:custom_docker][snippet]}" do
-		source "#{node[:docker_registry][:templates][:custom_docker][snippet]}"
+		source "#{node[:docker_registry][:templates][:custom_docker][snippet]}.erb"
 		owner 'root'
 		group 'root'
 		mode '0700'
