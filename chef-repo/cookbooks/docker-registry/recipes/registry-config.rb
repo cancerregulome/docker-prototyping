@@ -1,7 +1,27 @@
 # registry-config.rb
 
-# Get the encrypted data bag items from the chef vault
+# Get data bag items (should be encryptyed later)
 registry_users = data_bag_item('nginx_proxy_auth','docker_registry_users')['users']
+registry_admin = registry_users['admin_user']
+registry_admin_password = registry_users['users'][registry_admin_user]
+
+# Override a few attributes in the current cookbook
+node.override['docker_registry']['custom_docker']['service']['https_proxy'] = "https://#{registry_admin}:#{registry_admin_password}@#{node[:hostname]}:#{node[:docker-registry][:nginx_conf][:ssl_port]}"
+
+# Add drop-in snippets for the docker service file, and then reload it
+node[:docker_registry][:config_files][:custom_docker].each do |snippet|
+	template "#{node[:docker_registry][:config_files][:custom_docker][snippet]}" do
+		source "#{node[:docker_registry][:templates][:custom_docker][snippet]}"
+		owner 'root'
+		group 'root'
+		mode '0700'
+	end
+end
+
+service 'docker' do
+  provider Chef::Provider::Service::Systemd
+  action :reload
+end
 
 # Create the docker registry storage path 
 directory node[:docker_registry][:primary_config][:storage_path] do
@@ -11,7 +31,7 @@ end
 # Create the docker registry config file
 # NOTE:  The only value currently updated is the value for the "local" storage flavor... add node attributes and corresponding variables in the template as needed when storage flavor needs change.
 template "#{node[:docker_registry][:config_files][:primary_config_file]}" do
-	source 'config.erb'
+	source "#{node[:docker_registry][:templates][:primary_config]}"
 	owner 'root'
 	group 'root'
 	mode '0700'
@@ -22,7 +42,7 @@ end
 
 # Create the service init script
 template "#{node[:docker_registry][:config_files][:service_file]}" do
-	source 'service.erb'
+	source "#{node[:docker_registry][:templates][:service]}"
 	owner 'root'
 	group 'root'
 	mode '0700'
@@ -40,7 +60,7 @@ end
 
 # Create the environment file
 template "#{node[:docker_registry][:config_files][:environment_file]}" do
-	source 'environment.erb'
+	source "#{node[:docker_registry][:templates][:environment]}"
 	owner 'root'
 	group 'root'
 	mode '0700'

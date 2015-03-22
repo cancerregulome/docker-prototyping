@@ -31,6 +31,14 @@ default['docker_registry']['primary_config']['storage_path'] = "/var/docker-regi
 default['docker_registry']['nginx_conf']['domain_name'] = "tcga-registry.com"
 default['docker_registry']['nginx_conf']['ssl_port'] = "443"
 
-override['docker']['options'] = "--insecure-registry #{node[:hostname]}:443"
+# /etc/systemd/system/docker.d/customenv.conf
+default['docker_registry']['config_files']['custom_docker']['service'] = "/etc/systemd/system/docker.d/custom_service.conf"
+default['docker_registry']['templates']['custom_docker']['service'] = "custom-docker-service.erb"
+default['docker_registry']['custom_docker']['service']['https_proxy'] = nil # set in the config recipe for this cookbook
+
+# For testing/development only -- delete later
+override['docker']['options'] = "--insecure-registry #{node[:hostname]}:#{node[:docker_registry][:environment][:registry_port]}"
+
+
 
 
