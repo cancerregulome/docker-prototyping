@@ -21,13 +21,13 @@ end
 
 # Tag the image for pushing to the local registry
 docker_image "chef/ubuntu-14.04" do
-	repository 'chef'
+	repository 'localhost:5000/chef-ubuntu'
 	tag 'latest'
-	action :tag
+	action :commit
 end
 
 # Push images to private registry
-docker_image "chef/ubuntu-14.04:latest" do
+docker_image "localhost:5000/chef-ubuntu:latest" do
 	action :push
 end
 

@@ -13,7 +13,7 @@
           "id": "zookeeper",
           "containers": [{
             "name": "zookeeper-<%= @version =>",
-            "image": "localhost:5000/zookeeper-<%= @version =>",
+            "image": "zookeeper-<%= @version =>",
             "cpu": 100,
             "ports": [
 			{

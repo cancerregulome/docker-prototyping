@@ -42,27 +42,3 @@ file "/etc/kubernetes/pods/zookeeper/chef/.node_name" do
 	group 'root'
 	action :create
 end
-
-# Perform initial bootstrap operation
-docker_container "chef/ubuntu-14.04:latest" do 
-	#additional_host "#{node[:chef_server]}"
-	expose "#{node[:pods][:zookeeper][:ports]}"
-	volume '/etc/kubernetes/pods/zookeeper/chef:/etc/chef'
-	env "ZOOKEEPER_HOME=/usr/local/zookeeper-#{node[:pods][:zookeeper][:version]}"
-end
-
-# Commit changes
-docker_container "chef/ubuntu-14.04:latest" do
-	tag "zookeeper-#{node[:pods][:zookeeper][:version]}"
-	action :commit
-end
-
-# Push changes
-docker_image "zookeeper-#{node[:pods][:zookeeper][:version]}" do
-	action :push
-end
-
-# Kill the container
-docker_container "zookeeper-#{node[:pods][:zookeeper][:version]}" do
-	action :kill
-end

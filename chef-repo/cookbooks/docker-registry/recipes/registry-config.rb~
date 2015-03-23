@@ -1,9 +1,36 @@
 # registry-config.rb
 
-# Get the encrypted data bag items from the chef vault
+# Get data bag items (should be encryptyed later)
+users = data_bag_item('nginx_proxy_auth','docker_registry_users')['users']
+admin = data_bag_item('nginx_proxy_auth','docker_registry_users')['admin_user']
+admin_password = users[admin]['password']
 
+# Override a few attributes in the current cookbook
+node.default['docker_registry']['custom_docker']['service']['https_proxy'] = "https://#{admin}:#{admin_password}@#{node[:hostname]}:#{node[:docker_registry][:nginx_conf][:ssl_port]}"
 
-# Create the docker registry storage path
+# Create drop-in snippets to customize the docker service, and then reload it
+directory "/etc/systemd/system/docker.service.d" do
+	action :create
+	recursive true
+end
+	
+template "/etc/systemd/system/docker.service.d/custom_service.conf" do
+	source "custom-docker-service.erb"
+	owner 'root'
+	group 'root'
+	mode '0400'
+end
+
+execute 'systemctl-daemon-reload' do
+  command '/bin/systemctl --system daemon-reload'
+end
+
+service 'docker' do
+  provider Chef::Provider::Service::Systemd
+  action :restart
+end
+
+# Create the docker registry storage path 
 directory node[:docker_registry][:primary_config][:storage_path] do
 	action :create
 end
@@ -11,7 +38,7 @@ end
 # Create the docker registry config file
 # NOTE:  The only value currently updated is the value for the "local" storage flavor... add node attributes and corresponding variables in the template as needed when storage flavor needs change.
 template "#{node[:docker_registry][:config_files][:primary_config_file]}" do
-	source "#{node[:docker_registry][:templates][:primary_cofig]}"
+	source "#{node[:docker_registry][:templates][:primary_config]}"
 	owner 'root'
 	group 'root'
 	mode '0700'
@@ -56,13 +83,16 @@ end
 # Create the docker-registry nginx config file for nginx proxy authentication
 template "#{node[:nginx_proxy][:conf_d_path]}/docker-registry.conf" do
 	source "#{node[:nginx_proxy][:templates][:conf_d]}"
+	cookbook 'nginx_proxy'
 	owner 'root'
 	group 'root'
 	mode '0400'
 	variables({
-		:pem_key => node[:nginx_proxy][:pem_key_path],
-		:certificate => node[:nginx_proxy][:certificate_path],
+		:pem_key => "#{node[:nginx_proxy][:pem_key_path]}/#{node[:hostname]}.pem",
+		:certificate => "#{node[:nginx_proxy][:certificate_path]}/#{node[:hostname]}.crt",
 		:htpasswd_file => "#{node[:nginx_proxy][:htpasswd_path]}/docker-registry",
+		:domain_name => node[:docker_registry][:nginx_conf][:domain_name],
+		:ssl_port => node[:docker_registry][:nginx_conf][:ssl_port],
 		:proxied_host => node[:docker_registry][:environment][:registry_address],
 		:proxied_port => node[:docker_registry][:environment][:registry_port]
 	})
@@ -72,7 +102,20 @@ end
 nginx_proxy_htpasswd_file "#{node[:nginx_proxy][:htpasswd_path]}/docker-registry" do
 	owner 'root'
 	group 'root'
-	mode '0400'
-	# More here later
+	mode 0400
 end
+
+users.keys.each do |user|
+	password = users[user]["password"]
+	
+	nginx_proxy_htpasswd_file "#{node[:nginx_proxy][:htpasswd_path]}/docker-registry" do
+		owner 'root'
+		group 'root'
+		mode 0400
+		user "#{user}"
+		password "#{password}"
+		action :add_entry
+	end
+end	
+
 

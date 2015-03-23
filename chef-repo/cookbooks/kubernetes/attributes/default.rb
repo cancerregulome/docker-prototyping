@@ -30,3 +30,8 @@ default['kubernetes']['kube_api_args'] = ""# Not sure yet
 # /etc/kubernetes/kubelet
 default['kubernetes']['kubelet_address'] = "0.0.0.0"
 default['kubernetes']['kubelet_args'] = ""# Not sure yet
+
+# environment variables 
+default['kubernetes']['env']['chef_driver'] = "docker"
+
+
