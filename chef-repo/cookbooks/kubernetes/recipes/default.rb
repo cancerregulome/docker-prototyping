@@ -10,17 +10,17 @@
 # Install gems and other dependencies
 
 # NOTE:  Only install the patch command if it's not there already
-yum_package "ruby-devel" do
-	action :install
-end
 
-yum_package "epel-release" do 
-	action :install
+case node[:platform]
+when "centos", "redhat"
+	yum_package "ruby-devel"
+
+	yum_package "epel-release" 
+
+	yum_package "patch" 
 end
 
 chef_gem "chef-provisioning-docker" do
 	action :install
 end
-
-
 
