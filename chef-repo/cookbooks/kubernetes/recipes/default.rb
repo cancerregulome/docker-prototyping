@@ -9,7 +9,7 @@
 
 # Install gems and other dependencies
 
-# NOTE:  Only install the patch command if it's not there already
+# NOTE:  the following packages, when installed manually, allow the chef provisioning gem to be installed fine.
 
 yum_package "ruby-devel" do
 	action :install
