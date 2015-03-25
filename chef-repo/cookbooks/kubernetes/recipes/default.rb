@@ -9,7 +9,12 @@
 
 # Install gems and other dependencies
 
-package "patch" do
+# NOTE:  Only install the patch command if it's not there already
+yum_package "ruby-devel" do
+	action :install
+end
+
+yum_package "epel-release" do 
 	action :install
 end
 
