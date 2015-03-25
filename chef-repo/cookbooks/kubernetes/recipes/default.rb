@@ -13,10 +13,6 @@ package "patch" do
 	action :install
 end
 
-chef_gem "nokogiri" do
-	action :install
-end
-
 chef_gem "chef-provisioning-docker" do
 	action :install
 end
