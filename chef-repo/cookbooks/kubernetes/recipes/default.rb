@@ -9,6 +9,10 @@
 
 # Install gems and other dependencies
 
+package "patch" do
+	action :install
+end
+
 chef_gem "nokogiri" do
 	action :install
 end
