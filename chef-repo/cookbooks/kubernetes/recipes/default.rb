@@ -13,11 +13,17 @@
 
 case node[:platform]
 when "centos", "redhat"
-	yum_package "ruby-devel"
+	yum_package "ruby-devel" do
+		action :install
+	end
 
-	yum_package "epel-release" 
+	yum_package "epel-release" do 
+		action :install
+	end
 
-	yum_package "patch" 
+	yum_package "patch" do 
+		action :install
+	end
 end
 
 chef_gem "chef-provisioning-docker" do
