@@ -1,5 +1,9 @@
 # zookeeper::default.rb
 
+# Update the number of configured zookeepers
+# This will likely need to be moved somewhere more globally whenever autoscaling code is written
+node.default[:zookeeper][:configured_zookeepers] += 1
+
 # Install the necessary packages
 package "openjdk-7-jdk"
 package "openjdk-7-jre"
@@ -12,7 +16,7 @@ execute "tar -xf /usr/local/src/zookeeper-3.4.6.tar.gz && mv /usr/local/src/zook
 
 # Configure zookeeper
 file "/var/zookeeper/myid" do
-	content "#{ENV['ZOOKEEPERS']}"
+	content "#{node[:zookeeper][:configured_zookeepers]}"
 	action :create
 end
 
@@ -27,6 +31,8 @@ template "/usr/local/zookeeper-3.4.6/conf/zoo.cfg" do
 		:servers => node[:zookeeper][:servers]
 	})
 end
+
+
 
 
 

@@ -3,9 +3,6 @@ dataDir=<%= @data_dir %>
 clientPort=<%= @client_port %>
 initLimit=<%= @init_limit %>
 syncLimit=<%= @sync_limit %>
-# Here, need to find a way to set all of the zookeeper hosts.
-# In other words, kubernetes needs to keep track of how many zookeeper pods there currently are, 
-# and store them in a file somewhere.
-#<%= @servers.each do ...
+<%= @servers.each do |server| server %>
 
 
