@@ -5,15 +5,15 @@
   "apiVersion": "v1beta1",
   "desiredState": {
     "replicas": <%= @quorum_size %>,
-    "replicaSelector": {"name": "zookeeper-<%= @version %>"},
+    "replicaSelector": {"name": "<%= @pod_name %>"},
     "podTemplate": {
       "desiredState": {
         "manifest": {
           "version": "v1beta1",
           "id": "zookeeper",
           "containers": [{
-            "name": "zookeeper-<%= @version %>",
-            "image": "zookeeper-<%= @version %>",
+            "name": "<%= @pod_name %>",
+            "image": "<%= @pod_name %>",
             "cpu": 100,
             "ports": [
 			{
@@ -33,12 +33,12 @@
         }
       },
       "labels": {
-        "name": "zookeeper-<%= @version %>",
+        "name": "<%= @pod_name %>",
         "app": "zookeeper"
       }
     }
   },
   "labels": {
-    "name": "zookeeper-<%= @version %>" 
+    "name": "<%= @pod_name %>" 
   }
 }

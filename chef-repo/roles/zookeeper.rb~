@@ -1,0 +1,17 @@
+name "zookeeper"
+description "A container that will run an instance of Apache Zookeeper"
+run_list "recipe[roles::zookeeper]"
+default_attributes "zookeeper" => {
+	"ports" => {
+		"client_port" => "2181",
+		"leader_connect" => "2888",
+		"leader_elect" => "3888"
+	},
+	"version" => "3.4.6",
+	"quorum_size" => "3",
+	"environment" => {
+		"ZOOKEEPER_HOME" => "/usr/local/zookeeper-3.5.6"
+	}
+}
+
+

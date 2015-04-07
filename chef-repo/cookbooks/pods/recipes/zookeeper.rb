@@ -15,11 +15,12 @@ template "/etc/kubernetes/pods/zookeeper/zookeeper-controller.json" do
 	owner 'root'
 	group 'root'
 	variables({
-		:version => node[:pods][:zookeeper][:version],
-		:client_port => node[:pods][:zookeeper][:client_port],
-		:leader_connect => node[:pods][:zookeeper][:leader_connect],
-		:leader_elect => node[:pods][:zookeeper][:leader_elect]
-		:quorum_size => node[:zookeeper][:quorum_size]
+		:pod_name => node[:roles][:zookeeper][:hostname_base],
+		:version => node[:roles][:zookeeper][:version],
+		:client_port => node[:roles][:zookeeper][:ports][:client_port],
+		:leader_connect => node[:roles][:zookeeper][:ports][:leader_connect],
+		:leader_elect => node[:roles][:zookeeper][:ports][:leader_elect],
+		:quorum_size => node[:roles][:zookeeper][:quorum_size]
 	})
 end
 

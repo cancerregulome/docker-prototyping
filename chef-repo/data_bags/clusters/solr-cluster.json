@@ -1,0 +1,13 @@
+{
+	"id": "solr-cluster",
+	"nodes": {
+		"zookeeper": {
+			"active_nodes": "0",
+			"hosts": []
+		},
+		"solr": {	
+			"active_nodes": "0",
+			"hosts": []
+		}
+	}
+}
