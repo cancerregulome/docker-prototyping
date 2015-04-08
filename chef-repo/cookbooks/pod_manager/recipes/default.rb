@@ -32,11 +32,11 @@ yum_package "patch" do
 end
 
 gem_package "chef-provisioning" do
-	#compile_time false if respond_to?(:compile_time)
+	compile_time false if respond_to?(:compile_time)
 	action :install
 end
 
 gem_package "chef-provisioning-docker" do
-	#compile_time false if respond_to?(:compile_time)
+	compile_time false if respond_to?(:compile_time)
 	action :install
 end
