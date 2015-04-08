@@ -7,6 +7,11 @@
 # All rights reserved - Do Not Redistribute
 #
 
+execute "yum_update" do
+	command "yum -y update"
+	action :run
+end
+
 # Create the repo from a cookbook file
 
 case node[:platform]

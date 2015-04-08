@@ -6,10 +6,6 @@
 #
 # All rights reserved - Do Not Redistribute
 #
-execute "yum_update" do
-	command "yum -y update"
-	action :run
-end
 
 yum_package "gcc" do
 	action :install
