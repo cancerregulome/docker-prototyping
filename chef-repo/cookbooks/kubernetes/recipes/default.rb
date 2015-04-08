@@ -7,43 +7,24 @@
 # All rights reserved - Do Not Redistribute
 #
 
-# Install gems and other dependencies
+# Create the repo from a cookbook file
 
-# NOTE:  the following packages, when installed manually, allow the chef provisioning gem to be installed fine.
-# NOTE:  need to find a way to check OS before deciding to install using yum
+case node[:platform]
+when "centos", "redhat"
+	cookbook_file "virt7-testing.repo" do
+		path "/etc/yum.repos.d/virt7-testing.repo"
+		mode 00644
+	end
 
-execute "yum_update" do
-	command "yum -y update"
-	action :run
+	yum_package 'kubernetes' do
+		action :install
+		flush_cache [:before]
+		options "--enablerepo=virt7-testing"
+	end
 end
 
-yum_package "gcc" do
-	action :install
-end
+# Try using the docker cookbook to update the docker installation for chef 
+include_recipe "docker"
 
-yum_package "ruby-devel" do
-	action :install
-end
 
-yum_package "zlib-devel" do
-	action :install
-end
-
-yum_package "epel-release" do 
-	action :install
-end
-
-yum_package "patch" do 
-	action :install
-end
-
-gem_package "chef-provisioning" do
-	#compile_time false if respond_to?(:compile_time)
-	action :install
-end
-
-gem_package "chef-provisioning-docker" do
-	#compile_time false if respond_to?(:compile_time)
-	action :install
-end
 
