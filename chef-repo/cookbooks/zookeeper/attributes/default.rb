@@ -1,1 +1,1 @@
-include_attribute "roles::zookeeper"
+#include_attribute "roles"

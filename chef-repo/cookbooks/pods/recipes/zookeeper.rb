@@ -1,5 +1,6 @@
 require 'chef/provisioning/docker_driver'
-
+Chef::Log.info(node[:roles][:zookeeper][:hostname_base])
+test_var=node[:roles][:zookeeper][:hostname_base]
 # Upload the chef configuration directory for zookeeper
 directory "/etc/kubernetes/pods/zookeeper" do
 	mode '0400'
