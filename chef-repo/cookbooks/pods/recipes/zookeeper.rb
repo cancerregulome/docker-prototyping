@@ -2,8 +2,6 @@ require 'chef/provisioning/docker_driver'
 
 # Upload the chef configuration directory for zookeeper
 directory "/etc/kubernetes/pods/zookeeper" do
-	files_mode '0400'
-	files_owner 'root'
 	mode '0400'
 	owner 'root'
 	group 'root'

@@ -1,4 +1,4 @@
-require "chef/provisioning/#{node[:kubernetes][:env][:chef_driver]}_driver"
+require "chef/provisioning/docker_driver"
 # Get data bag items
 registry_users = data_bag_item("nginx_proxy_auth", "docker_registry_users")
 registry_admin = registry_users["admin_user"]
@@ -11,7 +11,7 @@ ENV['CHEF_DRIVER'] = node[:kubernetes][:env][:chef_driver]
 
 # Create the machine images
 
-machine_image "zookeeper-#{node[:pods][:zookeeper][:version]}" do
+machine_image "zookeeper" do
 	recipe 'zookeeper'
 
 	machine_options :docker_options => {
@@ -25,23 +25,23 @@ machine_image "zookeeper-#{node[:pods][:zookeeper][:version]}" do
 end	
 
 # Log in to the private docker registry
-docker_registry "localhost:5000" do
-	username "#{registry_admin}"
-	password "#{registry_admin_password}"
-	email "#{registry_admin_email}"
-end
+#docker_registry "localhost:5000" do
+#	username "#{registry_admin}"
+#	password "#{registry_admin_password}"
+#	email "#{registry_admin_email}"
+#end
 
 # Tag the images for pushing to the local registry
-docker_image "zookeeper-#{node[:pods][:zookeeper][:version]}" do
-	repository "localhost:5000/zookeeper-#{node[:pods][:zookeeper][:version]}"
-	tag 'latest'
-	action :commit
-end
+#docker_image "zookeeper-#{node[:pods][:zookeeper][:version]}" do
+#	repository "localhost:5000/zookeeper-#{node[:pods][:zookeeper][:version]}"
+#	tag 'latest'
+#	action :commit
+#end
 
 # Push images to private registry
-docker_image "zookeeper-#{node[:pods][:zookeeper][:version]}:latest" do
-	action :push
-end
+#docker_image "zookeeper-#{node[:pods][:zookeeper][:version]}:latest" do
+#	action :push
+#end
 
 	
 
