@@ -1,6 +1,6 @@
 require 'chef/provisioning/docker_driver'
-Chef::Log.info(node[:roles][:zookeeper][:hostname_base])
-test_var=node[:roles][:zookeeper][:hostname_base]
+
+test_var=node[:solr_cluster_roles][:zookeeper][:hostname_base]
 # Upload the chef configuration directory for zookeeper
 directory "/etc/kubernetes/pods/zookeeper" do
 	mode '0400'
@@ -16,24 +16,24 @@ template "/etc/kubernetes/pods/zookeeper/zookeeper-controller.json" do
 	owner 'root'
 	group 'root'
 	variables({
-		:pod_name => node[:roles][:zookeeper][:hostname_base],
-		:version => node[:roles][:zookeeper][:version],
-		:client_port => node[:roles][:zookeeper][:ports][:client_port],
-		:leader_connect => node[:roles][:zookeeper][:ports][:leader_connect],
-		:leader_elect => node[:roles][:zookeeper][:ports][:leader_elect],
-		:quorum_size => node[:roles][:zookeeper][:quorum_size]
+		:pod_name => node[:solr_cluster_roles][:zookeeper][:hostname_base],
+		:version => node[:solr_cluster_roles][:zookeeper][:version],
+		:client_port => node[:solr_cluster_roles][:zookeeper][:ports][:client_port],
+		:leader_connect => node[:solr_cluster_roles][:zookeeper][:ports][:leader_connect],
+		:leader_elect => node[:solr_cluster_roles][:zookeeper][:ports][:leader_elect],
+		:quorum_size => node[:solr_cluster_roles][:zookeeper][:quorum_size]
 	})
 end
 
 # Create the base image for zookeeper
-machine_image "zookeeper-#{node[:pods][:zookeeper][:version]}" do
+machine_image "zookeeper" do
 	recipe 'roles::zookeeper'
 	
 	machine_options :docker_options => {
 		:base_image => {
 			:name => 'ubuntu',
 			:repository => 'ubuntu',
-			:tag => '14.04'
+			:tag => 'latest'
 		}
 	},
 	
