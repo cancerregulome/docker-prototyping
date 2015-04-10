@@ -26,7 +26,7 @@ template "/etc/kubernetes/pods/zookeeper/zookeeper-controller.json" do
 end
 
 # Create the base image for zookeeper
-machine_image "zookeeper" do
+machine_image "zookeeper-#{node[:solr_cluster_roles][:zookeeper][:version]}" do
 	recipe 'roles::zookeeper'
 	
 	machine_options :docker_options => {
@@ -38,12 +38,12 @@ machine_image "zookeeper" do
 	},
 	
 	:env => {
-		"ZOOKEEPER_HOME" => node[:pods][:zookeeper][:environment][:zookeeper_home]
+		"ZOOKEEPER_HOME" => node[:solr_cluster_roles][:zookeeper][:environment][:zookeeper_home]
 	},
 	
 	:command => "java -cp $ZOOKEEPER_HOME/zookeeper-3.4.6.jar:$ZOOKEEPER_HOME/lib/slf4j-api-1.6.1.jar:$ZOOKEEPER_HOME/lib/slf4j-log4j12-1.6.1.jar:$ZOOKEEPER_HOME/lib/log4j-1.2.15.jar:conf \ org.apache.zookeeper.server.quorum.QuorumPeerMain $ZOOKEEPER_HOME/conf/zoo.cfg",
 
-	:ports => node[:pods][:zookeeper][:ports]
+	:ports => node[:solr_cluster_roles][:zookeeper][:ports].values
 end
 
 # Create the client.rb file
