@@ -1,4 +1,4 @@
-include_recipe "pod_manager::create-images"
+#include_recipe "pod_manager::create-images"
 #include_recipe "pod_manager::static-dockerfiles"  # workaround for lack of a valid CA for signing certificates
 include_recipe "pod_manager::configure-pods"
 include_recipe "pod_manager::start-pods"
