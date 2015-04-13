@@ -28,7 +28,7 @@ template "/etc/kubernetes/pods/zookeeper/zookeeper-controller.json" do
 end
 
 # Create the base image for zookeeper
-machine_image "chef:zookeeper-#{node[:solr_cluster_roles][:zookeeper][:version]}" do
+machine_image "zookeeper-#{node[:solr_cluster_roles][:zookeeper][:version]}" do
 	recipe 'roles::zookeeper'
 	driver 'docker'	
 	machine_options :docker_options => {

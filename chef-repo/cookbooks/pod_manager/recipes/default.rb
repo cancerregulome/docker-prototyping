@@ -27,12 +27,12 @@ yum_package "patch" do
 	action :install
 end
 
-chef_gem "archive-tar-minitar" do
+gem_package "archive-tar-minitar" do
 	compile_time false if respond_to?(:compile_time)
 	action :install
 end
 
-chef_gem "chef-provisioning-docker" do
+gem_package "chef-provisioning-docker" do
 	compile_time false if respond_to?(:compile_time)
 	action :install
 end
