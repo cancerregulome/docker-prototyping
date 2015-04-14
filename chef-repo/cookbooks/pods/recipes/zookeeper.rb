@@ -1,7 +1,5 @@
-require 'chef/provisioning'
 require 'chef/provisioning/docker_driver'
 
-test_var=node[:solr_cluster_roles][:zookeeper][:hostname_base]
 # Upload the chef configuration directory for zookeeper
 directory "/etc/kubernetes/pods/zookeeper" do
 	mode '0400'
@@ -28,23 +26,29 @@ template "/etc/kubernetes/pods/zookeeper/zookeeper-controller.json" do
 end
 
 # Create the base image for zookeeper
+with_driver "docker"
 machine_image "zookeeper-#{node[:solr_cluster_roles][:zookeeper][:version]}" do
 	recipe 'roles::zookeeper'
-	driver 'docker'	
+	#driver 'docker'	
 	machine_options :docker_options => {
 		:base_image => {
 			:name => 'ubuntu',
 			:repository => 'ubuntu',
 			:tag => 'latest'
-		},
-		:env => {
-		"ZOOKEEPER_HOME" => node[:solr_cluster_roles][:zookeeper][:environment][:zookeeper_home]
-		},
+		}#,
+		#:env => {
+		#"ZOOKEEPER_HOME" => node[:solr_cluster_roles][:zookeeper][:environment][:zookeeper_home]
+		#},
 	
-		:command => "java -cp $ZOOKEEPER_HOME/zookeeper-3.4.6.jar:$ZOOKEEPER_HOME/lib/slf4j-api-1.6.1.jar:$ZOOKEEPER_HOME/lib/slf4j-log4j12-1.6.1.jar:$ZOOKEEPER_HOME/lib/log4j-1.2.15.jar:conf \ org.apache.zookeeper.server.quorum.QuorumPeerMain $ZOOKEEPER_HOME/conf/zoo.cfg",
+		#:command => "java -cp $ZOOKEEPER_HOME/zookeeper-3.4.6.jar:$ZOOKEEPER_HOME/lib/slf4j-api-1.6.1.jar:$ZOOKEEPER_HOME/lib/slf4j-log4j12-1.6.1.jar:$ZOOKEEPER_HOME/lib/log4j-1.2.15.jar:conf \ org.apache.zookeeper.server.quorum.QuorumPeerMain $ZOOKEEPER_HOME/conf/zoo.cfg",
 
-		:ports => node[:solr_cluster_roles][:zookeeper][:ports].values
+		#:ports => node[:solr_cluster_roles][:zookeeper][:ports].values
 	}
+	action :create
+end
+
+machine "zookeeper-#{node[:solr_cluster_roles][:zookeeper][:version]}" do
+	action :destroy
 end
 
 # Create the client.rb file

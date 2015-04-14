@@ -80,6 +80,11 @@ template "#{node[:docker_registry][:config_files][:environment_file]}" do
 	})
 end
 
+directory "#{node[:nginx_proxy][:conf_d_path]}" do
+	action :create
+	recursive true
+end
+
 # Create the docker-registry nginx config file for nginx proxy authentication
 template "#{node[:nginx_proxy][:conf_d_path]}/docker-registry.conf" do
 	source "#{node[:nginx_proxy][:templates][:conf_d]}"
@@ -98,11 +103,17 @@ template "#{node[:nginx_proxy][:conf_d_path]}/docker-registry.conf" do
 	})
 end
 
+directory "#{node[:nginx_proxy][:htpasswd_path]}" do
+	action :create
+	recursive true
+end
+
 # Create an nginx htpasswd file for the docker registry username/password combinations 
 nginx_proxy_htpasswd_file "#{node[:nginx_proxy][:htpasswd_path]}/docker-registry" do
 	owner 'root'
 	group 'root'
 	mode 0400
+	action :create
 end
 
 users.keys.each do |user|

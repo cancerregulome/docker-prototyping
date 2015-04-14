@@ -38,7 +38,7 @@ default['docker_registry']['custom_docker']['service']['https_proxy'] = nil # se
 
 # For testing/development only -- delete later
 #override['docker']['options'] = "--insecure-registry #{node[:hostname]}:#{node[:docker_registry][:nginx_conf][:ssl_port]}"
-override['docker']['options'] = "--insecure-registry localhost:5000"
+#override['docker']['options'] = "--insecure-registry localhost:5000"
 
 
 
