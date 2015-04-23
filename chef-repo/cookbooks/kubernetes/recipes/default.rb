@@ -28,6 +28,12 @@ when "centos", "redhat"
 	end
 end
 
+# Install gcloud tool
+execute 'install_gcloud' do
+	command "curl https://sdk.cloud.google.com | bash"
+	not_if ::Dir.exists?('/google-cloud-sdk')
+end
+
 # Try using the docker cookbook to update the docker installation for chef 
 include_recipe "docker"
 
