@@ -1,48 +1,46 @@
-require "chef/provisioning/docker_driver"
-# Get data bag items
-registry_users = data_bag_item("nginx_proxy_auth", "docker_registry_users")
-registry_admin = registry_users["admin_user"]
-registry_admin_password = registry_users["users"][registry_admin]["password"]
-registry_admin_email = registry_users["users"][registry_admin]["email"]
+# Authenticate to GCP to push images to the private CGC registry
+execute 'gcloud_auth_login' do
+	command 'gcloud auth login ahahn@systemsbiology.org --no-launch-browser --project isb-cgc -q'
+	action :run
+end
 
-# Set up the environment
+# Copy the chef docker context to the node
+remote_directory "/etc/kubernetes/pods/dockerfiles" do
+	source "dockerfiles"
+	recursive true
+	action :create
+end
 
-ENV['CHEF_DRIVER'] = node[:kubernetes][:env][:chef_driver]
+# Build the chef base image first
+docker_image 'chef_base' do
+	source "/etc/kubernetes/pods/dockerfiles/chef_base/Dockerfile"
+	tag "gcr.io/isb_cgc/chef_base"
+	action :build_if_missing
+	notifies :run, 'execute[gcloud_push_base]', :immediately
+end
 
-# Create the machine images
+# Push the chef base to the google container registry
+execute 'gcloud_push_base' do
+	command 'gcloud preview docker push gcr.io/isb_cgc/chef_base'
+	action :nothing
+end
 
-machine_image "zookeeper" do
-	recipe 'zookeeper'
-
-	machine_options :docker_options => {
-		:base_image => {
-			:name => 'ubuntu',
-			:repository => 'ubuntu',
-			:tag => '14.04'
-		},
-		:command => "java -cp $ZOOKEEPER_HOME/zookeeper-3.4.6.jar:$ZOOKEEPER_HOME/lib/slf4j-api-1.6.1.jar:$ZOOKEEPER_HOME/lib/slf4j-log4j12-1.6.1.jar:$ZOOKEEPER_HOME/lib/log4j-1.2.15.jar:conf \ org.apache.zookeeper.server.quorum.QuorumPeerMain $ZOOKEEPER_HOME/conf/zoo.cfg"
-	}
-end	
-
-# Log in to the private docker registry
-#docker_registry "localhost:5000" do
-#	username "#{registry_admin}"
-#	password "#{registry_admin_password}"
-#	email "#{registry_admin_email}"
-#end
-
-# Tag the images for pushing to the local registry
-#docker_image "zookeeper-#{node[:pods][:zookeeper][:version]}" do
-#	repository "localhost:5000/zookeeper-#{node[:pods][:zookeeper][:version]}"
-#	tag 'latest'
-#	action :commit
-#end
-
-# Push images to private registry
-#docker_image "zookeeper-#{node[:pods][:zookeeper][:version]}:latest" do
-#	action :push
-#end
-
+# Build/tag/push the rest of the images
+Dir.foreach('/etc/kubernetes/pods/dockerfiles/apps') do |context_name|
+	docker_image "#{context_name}" do
+		source "/etc/kubernetes/pods/dockerfiles/apps/#{context_name}/Dockerfile"
+		tag "gcr.io/isb_cgc/#{context_name}"
+		action :build_if_missing
+		notifies :run, 'execute[gcloud_push_app]', :immediately
+	end
 	
+	execute 'gcloud_push_app' do
+		command "gcloud preview docker push gcr.io/isb_cgc/#{context_name}"
+		action :nothing
+	end
+end
+
+
+
 
 
