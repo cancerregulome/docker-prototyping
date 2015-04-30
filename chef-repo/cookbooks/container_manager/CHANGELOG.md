@@ -1,11 +1,11 @@
-container_manager CHANGELOG
-===========================
+pod_manager CHANGELOG
+=====================
 
-This file is used to list changes made in each version of the container_manager cookbook.
+This file is used to list changes made in each version of the pod_manager cookbook.
 
 0.1.0
 -----
-- [your_name] - Initial release of container_manager
+- [your_name] - Initial release of pod_manager
 
 - - -
 Check the [Markdown Syntax Guide](http://daringfireball.net/projects/markdown/syntax) for help with Markdown.

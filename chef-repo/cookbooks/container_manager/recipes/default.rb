@@ -1,8 +1,7 @@
-#
-# Cookbook Name:: container_manager
-# Recipe:: default
-#
-# Copyright 2015, YOUR_COMPANY_NAME
-#
-# All rights reserved - Do Not Redistribute
-#
+# Copy the chef docker context to the node
+remote_directory "/etc/kubernetes/pods/dockerfiles" do
+	source "dockerfiles"
+	recursive true
+	action :create
+end
+
