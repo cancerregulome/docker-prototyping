@@ -1,8 +1,8 @@
 # Apache Zookeeper Container
-FROM gcr.io/isb_cgc/chef_base
+FROM chef_base
 # Configure supervisor for zookeeper
 RUN mkdir -p /var/log/supervisor
-COPY supervisord.conf /etc/supervisor/conf.d/supervisor.conf
+COPY supervisor.conf /etc/supervisor/conf.d/supervisor.conf
 # Configure chef-client
 COPY chef /etc/chef
 # Install and configure zookeeper

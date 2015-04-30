@@ -6,3 +6,4 @@ RUN apt-get -yqq update
 RUN apt-get -yqq install curl supervisor
 RUN curl -L https://www.chef.io/chef/install.sh | sudo bash
 
+

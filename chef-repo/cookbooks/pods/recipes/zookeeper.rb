@@ -1,4 +1,4 @@
-require 'chef/provisioning/docker_driver'
+#require 'chef/provisioning/docker_driver'
 
 # Upload the chef configuration directory for zookeeper
 directory "/etc/kubernetes/pods/zookeeper" do
@@ -17,7 +17,7 @@ template "/etc/kubernetes/pods/zookeeper/zookeeper-controller.json" do
 	group 'root'
 	variables({
 		:pod_name => node[:solr_cluster_roles][:zookeeper][:hostname_base],
-		:image_name => 'gcr.io/isb_cgc/chef_base',
+		:image_name => 'tcga/zookeeper',
 		:version => node[:solr_cluster_roles][:zookeeper][:version],
 		:client_port => node[:solr_cluster_roles][:zookeeper][:ports][:client_port],
 		:leader_connect => node[:solr_cluster_roles][:zookeeper][:ports][:leader_connect],
