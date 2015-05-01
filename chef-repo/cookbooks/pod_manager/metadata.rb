@@ -1,4 +1,4 @@
-name             'pods'
+name             'pod_manager'
 maintainer       'YOUR_COMPANY_NAME'
 maintainer_email 'YOUR_EMAIL'
 license          'All rights reserved'
