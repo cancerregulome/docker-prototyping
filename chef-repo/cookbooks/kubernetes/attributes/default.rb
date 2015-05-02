@@ -13,8 +13,8 @@ default['kubernetes']['ports']['kubelet_port'] = '10250'
 
 # kubernetes services
 # NOTE: deleted nginx and docker-registry services -- will move to respective roles
-default['kubernetes']['kube_master_services'] = [ "etcd", "kube-apiserver", "kube-controller-manager", "kube-scheduler", "docker", "docker-registry" ]
-default['kubernetes']['kube_minion_services'] = [ "kube-proxy", "kubelet", "docker" ]
+default['kubernetes']['kube_master_services'] = [ "etcd", "kube-apiserver", "kube-controller-manager", "docker", "docker-registry" ]
+default['kubernetes']['kube_minion_services'] = [ "kube-proxy", "kubelet", "kube-scheduler", "docker" ]
 
 # /etc/kubernetes/config
 default['kubernetes']['logtostderr'] = "true"
