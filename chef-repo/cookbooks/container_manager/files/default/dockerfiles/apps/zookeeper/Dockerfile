@@ -16,4 +16,4 @@ COPY chef /etc/chef
 #EXPOSE 2181
 #EXPOSE 2888
 #EXPOSE 3888
-CMD ["/usr/bin/supervisord"]
+#CMD ["/usr/bin/supervisord"]

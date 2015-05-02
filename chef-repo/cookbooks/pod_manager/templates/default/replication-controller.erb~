@@ -1,0 +1,43 @@
+{
+  "id": "<%= @replication_controller_id %>",
+  "kind": "ReplicationController",
+  "apiVersion": "v1beta1",
+  "desiredState": {
+    "replicas": <%= @quorum_size %>,
+    "replicaSelector": {
+    	"name": "<%= @replica_selector['name'] %>"
+    },
+    "podTemplate": {
+      "desiredState": {
+        "manifest": {
+          "containers": [
+          <% @containers.each do |container, specs| %>
+          {
+            "image": "<% specs['image'] %>",
+            "name": "<%= specs['name'] %>",
+            "entrypoint": "<%= specs['entrypoint'] %>",
+            "ports": [
+            <% specs['ports'].each do |port_name, port_num| %>
+            	{ "name": <%= port_name %>,
+            	"containerPort": <%= port_num %> },
+            <% end %>
+            ]
+          }
+          <% end %>
+          ],
+          "id": "<%= @pod_id %>",
+          "version": "v1beta1"
+        },
+      },
+      "labels": {
+        "name": "<%= @replica_selector['name'] %>"
+      }
+    }
+    },
+    "labels": {"name": "test"}
+}
+
+        
+
+
+    

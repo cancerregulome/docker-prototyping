@@ -1,6 +1,6 @@
 # Create the zookeeper controller file
 
-template "/etc/kubernetes/pods/zookeeper/zookeeper-controller.json" do
+template "/etc/kubernetes/pods/zookeeper/zookeeper-controller.yaml" do
 	source "replication-controller.erb"
 	mode '0400'
 	owner 'root'

@@ -1,0 +1,9 @@
+[Unit]
+Description=Kubernetes API Server
+After=etcd.service
+After=docker.service
+Wants=etcd.service
+Wants=docker.service
+
+[Service]
+

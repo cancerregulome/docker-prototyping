@@ -5,7 +5,4 @@ remote_directory "/etc/kubernetes/pods/dockerfiles" do
 	action :create
 end
 
-# Install the docker api gem
-chef_gem 'docker-api' do
-	action :install
-end
+

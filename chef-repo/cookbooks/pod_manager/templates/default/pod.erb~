@@ -1,0 +1,21 @@
+id: <%= @pod_id %>
+kind: Pod
+labels:
+  app: <%= @app_label %>
+apiVersion: v1beta1
+desiredState:
+  manifest:
+  <% @containers.each do |container| %>
+    containers:
+    - image: <%= container.image_name %>
+      name: <%= container.name %>
+      entrypoint: <%= container.entrypoint %>
+      ports: 
+      <% container.ports.each do |port| %>
+      - name: <%= port.name %>
+        containerPort: <%= port.num %>
+      <% end %>
+  <% end %>
+    id: <% @pod_id %>
+    version: v1beta1
+    

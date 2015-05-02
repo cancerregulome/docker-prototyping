@@ -18,7 +18,12 @@ case node[:platform]
 when "centos", "redhat"
 	cookbook_file "virt7-testing.repo" do
 		path "/etc/yum.repos.d/virt7-testing.repo"
-		mode 00644
+		mode 0644
+	end
+	
+	execute "erase_etcd" do
+		command "yum -y erase etcd && yum -y install http://cbs.centos.org/kojifiles/packages/etcd/0.4.6/7.el7.centos/x86_64/etcd-0.4.6-7.el7.centos.x86_64.rpm"
+		not_if "etcd --version | grep 0.4.6"
 	end
 
 	yum_package 'kubernetes' do
@@ -27,12 +32,6 @@ when "centos", "redhat"
 		options "--enablerepo=virt7-testing"
 	end
 end
-
-# Install gcloud tool
-#execute 'install_gcloud' do
-#	command "curl https://sdk.cloud.google.com | bash"
-#	not_if ::Dir.exists?('/google-cloud-sdk')
-#end
 
 # Try using the docker cookbook to update the docker installation for chef 
 include_recipe "docker"

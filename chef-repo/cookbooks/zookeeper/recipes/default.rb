@@ -8,9 +8,13 @@ package "openjdk-7-jre"
 
 cookbook_file "install/zookeeper-3.4.6.tar.gz" do
 	path "/usr/local/src/zookeeper-3.4.6.tar.gz"
+	not_if "ls /usr/local/src | grep zookeeper-3.4.6.tar.gz"
 end
 
-execute "tar -xf /usr/local/src/zookeeper-3.4.6.tar.gz && mv /usr/local/src/zookeeper-3.4.6 /usr/local"
+execute "install_zookeeper" do
+	command "tar -xf /usr/local/src/zookeeper-3.4.6.tar.gz && mv /usr/local/src/zookeeper-3.4.6 /usr/local"
+	not_if "ls /usr/local | grep zookeeper-3.4.6"
+end
 
 # Create a lock for accessing a databag item
 lock = Chef::RunLock.new(Chef::FileCache.find("chef-client-running.pid"))
@@ -36,12 +40,12 @@ end
 template "/usr/local/zookeeper-3.4.6/conf/zoo.cfg" do
 	source "zoo.cfg.erb"
 	variables({
-		:tick_time => node[:roles][:zookeeper][:tick_time],
-		:data_dir => node[:roles][:zookeeper][:data_dir],
-		:client_port => node[:roles][:zookeeper][:ports][:client_port],
-		:init_limit => node[:roles][:zookeeper][:init_limit],
-		:sync_limit => node[:roles][:zookeeper][:sync_limit],
-		:servers => node[:roles][:zookeeper][:servers]
+		:tick_time => node[:zookeeper][:tick_time],
+		:data_dir => node[:zookeeper][:data_dir],
+		:client_port => node[:zookeeper][:ports][:client_port],
+		:init_limit => node[:zookeeper][:init_limit],
+		:sync_limit => node[:zookeeper][:sync_limit],
+		:servers => node[:zookeeper][:servers]
 	})
 end
 
