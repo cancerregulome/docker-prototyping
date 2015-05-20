@@ -1,46 +1,29 @@
-#
-# Cookbook Name:: solrcloud
-# Recipe:: default
-#
-# Copyright 2015, YOUR_COMPANY_NAME
-#
-# All rights reserved - Do Not Redistribute
-#
+# Install java
+package "openjdk-7-jre"
+package "openjdk-7-jdk"
 
-# Install necessary packages
-
-node_num = node['node_id']
-
-package "epel-release" do
-	action :install
+# Install SOLR
+remote_file "/tmp/solr-5.1.0.tgz" do
+	source "solr-5.1.0.tgz"
+	action :create_if_missing
 end
 
-package "docker-io" do
-	action :install
-end
-
-execute "yum -y update && yum -y clean all"
-
-# Install additional cookbook files from Chef Server (docker contexts and installation files for solr, tomcat and zookeeper)
-
-remote_directory "/dockerfiles" do
-	source "dockerfiles"
+# Create needed directories
+directory "/var/solr" do
 	action :create
+	recursive true
 end
 
-# Create a file containing the node number that was passed in through the command line using knife.  This will be the zookeeper container's ID within the ensemble.
-file "/dockerfiles/zookeeper/config/myid" do
-	content "#{node_num}"
+directory "/opt/solr" do
 	action :create
+	recursive true
 end
 
-# Start the docker service
-service "docker" do
-	action :start
+# Run the setup script with the appropriate options
+execute "solr-setup" do
+	command "tar xzf /tmp/solr-5.1.0.tgz /tmp/solr-5.1.0/bin/install_solr_service.sh -d /var/solr -i /opt/solr --strip-components=2"
+	only_if "id -u solr"
 end
-
-
-
 
 
 

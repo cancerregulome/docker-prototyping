@@ -34,6 +34,11 @@ file "/dockerfiles/zookeeper/config/myid" do
 	action :create
 end
 
+# Start the docker service
+service "docker" do
+	action :start
+end
+
 
 
 
