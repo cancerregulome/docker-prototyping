@@ -1,0 +1,7 @@
+# Service attributes
+
+# Zookeeper service attributes
+default["kubernetes"]["services"]["zookeeper"]["v1beta3"]["metadata_name"] = "zookeeper-services"
+default["kubernetes"]["services"]["zookeeper"]["v1beta3"]["metadata_label_name"] = "zookeeper-services"
+
+
