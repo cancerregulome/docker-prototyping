@@ -1,16 +1,23 @@
-# Create the zookeeper controller file
+# Create the zookeeper controller files
 
-template "/etc/kubernetes/pods/zookeeper/zookeeper-controller.json" do
-	source "replication-controller.erb"
-	mode '0400'
-	owner 'root'
-	group 'root'
-	variables({
-		:replication_controller_id => node[:pods][:zookeeper][:replication_controller][:id],
-		:replica_selector => node[:pods][:zookeeper][:replication_controller][:replica_selector],
-		:quorum_size => node[:pods][:zookeeper][:replication_controller][:replication_factor],
-		:containers => node[:pods][:zookeeper][:pod_template][:manifest][:containers],
-		:pod_id => node[:pods][:zookeeper][:pod_template][:manifest][:id]
-	})
+controllers = 1
+node[:pods][:zookeeper][:quorum_size].times do
+	template "/etc/kubernetes/pods/zookeeper/zookeeper-controller-#{controllers}.json" do
+		source "replication-controller.erb"
+		mode '0400'
+		owner 'root'
+		group 'root'
+		variables({
+			:rc_metadata_name => "#{node[:pods][:zookeeper][:replication_controller][:v1beta3][:metadata][:name]}-#{controllers}",
+			:rc_metadata_label_name => "#{node[:pods][:zookeeper][:replication_controller][:v1beta3][:metadata][:labels][:name]}-#{controllers}",
+			:rc_spec_replicas => node[:pods][:zookeeper][:replication_controller][:v1beta3][:spec][:replicas],
+			:rc_spec_selector_name => "#{node[:pods][:zookeeper][:replication_controller][:v1beta3][:spec][:selector][:name]}-#{controllers}",
+			:rc_spec_template_metadata_label_name => "#{node[:pods][:zookeeper][:replication_controller][:v1beta3][:spec][:template][:metadata][:labels][:name]}-#{controllers}",
+			:rc_spec_template_spec_restartpolicy => node[:pods][:zookeeper][:replication_controller][:v1beta3][:spec][:template][:spec][:restartPolicy],
+			:rc_spec_template_spec_containers => node[:pods][:zookeeper][:replication_controller][:v1beta3][:spec][:template][:spec][:containers]
+		})
+	end
+	node[:pods][:definitions].push("/etc/kubernetes/pods/zookeeper/zookeeper-controller-#{controllers}.json")
+	controllers += 1
 end
 
