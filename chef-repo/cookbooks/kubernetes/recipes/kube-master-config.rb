@@ -3,7 +3,7 @@
 # Modify /etc/kubernetes/apiserver
 
 template "/etc/kubernetes/apiserver" do
-	source "apiserver.erb"
+	source "conf/apiserver.erb"
 	mode '0440' #verify this
 	owner 'root'
 	group 'root'

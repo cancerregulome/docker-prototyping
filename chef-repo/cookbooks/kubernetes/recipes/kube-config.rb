@@ -2,7 +2,7 @@
 
 # Modify /etc/kubernetes/config 
 template "/etc/kubernetes/config" do
-	source "config.erb"
+	source "conf/config.erb"
 	mode '0440' # verify this
 	owner 'root'
 	group 'root'

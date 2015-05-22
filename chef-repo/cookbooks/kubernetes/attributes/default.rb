@@ -35,4 +35,10 @@ default['kubernetes']['kubelet_args'] = ""# Not sure yet
 # environment variables 
 default['kubernetes']['env']['chef_driver'] = "docker"
 
+# General pod attributes
+default["kubernetes"]["pods"]["definitions"] = []
+
+#include_attribute "kubernetes::pods"
+#include_attributes "kubernetes::containers"
+
 

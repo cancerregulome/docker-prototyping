@@ -6,4 +6,8 @@ description      'Installs/Configures roles'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          '0.1.0'
 depends          'kubernetes'
-
+depends          'docker-registry'
+depends		 'nginx_proxy'
+depends 'container_manager'
+depends	'pod_manager'
+depends 'zookeeper'

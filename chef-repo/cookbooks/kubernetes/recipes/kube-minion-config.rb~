@@ -2,7 +2,7 @@
 
 # /etc/kubernetes/kubelet
 template "/etc/kubernetes/kubelet" do
-	source "conf/kubelet.erb"
+	source "kubelet.erb"
 	mode '0440'
 	owner 'root'
 	group 'root'

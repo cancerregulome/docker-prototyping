@@ -6,8 +6,8 @@ RUN tar -xf zookeeper-3.4.6.tar.gz && rm zookeeper-3.4.6.tar.gz
 ENV ZOOKEEPER_HOME /zookeeper-3.4.6
 RUN apt-get -qq update && apt-get -qq install openjdk-7-jdk openjdk-7-jre && apt-get -qq clean
 RUN mkdir -p /var/zookeeper
-COPY config/zoo.cfg /zookeeper-3.4.6/conf
-COPY config/myid /var/zookeeper/myid
+COPY conf/zoo.cfg /zookeeper-3.4.6/conf/
+COPY conf/myid /var/zookeeper/myid
 EXPOSE 2181
 EXPOSE 2888
 EXPOSE 3888

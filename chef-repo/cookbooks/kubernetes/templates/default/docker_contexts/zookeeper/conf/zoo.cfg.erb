@@ -1,0 +1,12 @@
+tickTime=<%= @tick_time %>
+dataDir=<%= @data_dir %>
+clientPort=<%= @client_port %>
+initLimit=<%= @init_limit %>
+syncLimit=<%= @sync_limit %>
+<% i = 1 %>
+<% @quorum_size.times do %>
+server.<%= i %>=<%= @container_hostname_base %><%= i %>:<%= @leader_connect_port %>:<%= @leader_elect_port %>
+<% i += 1 %>
+<% end %>
+
+

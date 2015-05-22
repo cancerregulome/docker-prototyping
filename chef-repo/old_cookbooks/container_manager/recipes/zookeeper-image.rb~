@@ -1,0 +1,17 @@
+#Build the zookeeper image
+
+#require 'docker'
+zookeeper_count = 1
+node[:pods][:zookeeper][:quorum_size].times do
+	# Create the docker context for this particular zookeeper container
+	directory "" do
+	
+	end
+
+	execute 'zookeeper-image' do
+		command "docker build -t zookeeper /etc/kubernetes/pods/dockerfiles/apps/zookeeper"
+		not_if "docker images | grep zookeeper"
+	end
+
+	zookeeper_count += 1
+end

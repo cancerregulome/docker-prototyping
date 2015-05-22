@@ -12,8 +12,9 @@ default['kubernetes']['ports']['kube_api_port'] = '8080'
 default['kubernetes']['ports']['kubelet_port'] = '10250'
 
 # kubernetes services
-default['kubernetes']['kube_master_services'] = [ "etcd", "kube-apiserver", "kube-controller-manager", "kube-scheduler", "docker", "nginx", "docker-registry" ]
-default['kubernetes']['kube_minion_services'] = [ "kube-proxy", "kubelet", "docker" ]
+# NOTE: deleted nginx and docker-registry services -- will move to respective roles
+default['kubernetes']['kube_master_services'] = [ "etcd", "kube-apiserver", "kube-controller-manager", "docker", "docker-registry" ]
+default['kubernetes']['kube_minion_services'] = [ "kube-proxy", "kubelet", "kube-scheduler", "docker" ]
 
 # /etc/kubernetes/config
 default['kubernetes']['logtostderr'] = "true"
@@ -31,7 +32,10 @@ default['kubernetes']['kube_api_args'] = ""# Not sure yet
 default['kubernetes']['kubelet_address'] = "0.0.0.0"
 default['kubernetes']['kubelet_args'] = ""# Not sure yet
 
-# /home/kube/.kuberc -- environment variables 
+# environment variables 
 default['kubernetes']['env']['chef_driver'] = "docker"
+
+# General pod attributes
+default["kubernetes"]["pods"]["definitions"] = []
 
 

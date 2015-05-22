@@ -36,5 +36,41 @@ end
 # Try using the docker cookbook to update the docker installation for chef 
 include_recipe "docker"
 
+# Create necessary directories
 
+# Docker contexts
+directory "/etc/kubernetes/docker_contexts" do
+	mode '0400'
+	owner 'root'
+	group 'root'
+	action :create
+	recursive true
+end
+
+# Pod configuration
+directory "/etc/kubernetes/pods" do
+	mode '0400'
+	owner 'root'
+	group 'root'
+	action :create
+	recursive true
+end
+
+# Replication controllers
+directory "/etc/kubernetes/replication_controllers" do
+	mode '0400'
+	owner 'root'
+	group 'root'
+	action :create
+	recursive true
+end
+
+# Services
+directory "/etc/kubernetes/services" do
+	mode '0400'
+	owner 'root'
+	group 'root'
+	action :create
+	recursive true
+end
 

@@ -25,7 +25,7 @@ template "/etc/kubernetes/controller-manager" do
 	owner 'root'
 	group 'root'
 	variables({
-		:kubelet_addresses => node[:kubernetes][:kubelet_addresses]
+		:kubelet_addresses => node[:kubernetes][:kube_minions]
 	})
 end
 

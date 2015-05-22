@@ -1,0 +1,35 @@
+{
+	"kind": "ReplicationController",
+	"apiVersion": "v1beta3",
+	"metadata": {
+		"name": "<%= @rc_metadata_name %>",
+		"labels": {
+			"name": "<%= @rc_metadata_label_name %>"
+		}
+	},
+	"spec": {
+		"replicas": <%= @rc_spec_replicas %>,
+		"selector": {
+			"name": "<%= @rc_spec_selector_name %>"
+		},
+		"template": {
+			"metadata": {
+				"labels": {
+					"name": "<%= @rc_spec_template_metadata_label_name %>"
+				}
+			},
+			"spec": {
+				"restartPolicy": "<%= @rc_spec_template_spec_restartpolicy %>",
+				"containers": [
+					<% for @rc_spec_template_spec_containers.each do |container| %>
+					<% if container == @rc_spec_template_spec_containers.last %>
+					 	container
+					<% else %>
+						container,
+					<% end %>
+					<% end %>
+				]
+			}
+		}
+	}
+}
