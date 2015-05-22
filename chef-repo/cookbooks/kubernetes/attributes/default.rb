@@ -32,11 +32,6 @@ default['kubernetes']['kube_api_args'] = ""# Not sure yet
 default['kubernetes']['kubelet_address'] = "0.0.0.0"
 default['kubernetes']['kubelet_args'] = ""# Not sure yet
 
-# environment variables 
-default['kubernetes']['env']['chef_driver'] = "docker"
-
-# General pod attributes
-default["kubernetes"]["pods"]["definitions"] = []
 
 #include_attribute "kubernetes::pods"
 #include_attributes "kubernetes::containers"

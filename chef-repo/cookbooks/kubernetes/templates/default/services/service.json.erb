@@ -10,10 +10,11 @@
 	"spec": {
 		"ports": [
 		<% @service_ports.each do |port| %>
-		<% if port == @service_ports.last %>
-		<%= port %>
-		<% else %>
-		<%= port %>,
+		{
+			"port": "<%= port[:port] %>",
+			"targetPort": "<%= port[:targetPort] %>",
+			"protocol": "<%= port[:protocol] %>"
+		}<% if port != @service_ports.last %>,<% end %>
 		<% end %>
 		],
 		"selector": {

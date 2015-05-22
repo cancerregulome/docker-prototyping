@@ -8,7 +8,7 @@
 		}
 	},
 	"spec": {
-		"replicas": <%= @rc_spec_replicas %>,
+		"replicas": "<%= @rc_spec_replicas %>",
 		"selector": {
 			"name": "<%= @rc_spec_selector_name %>"
 		},
@@ -21,21 +21,35 @@
 			"spec": {
 				"restartPolicy": "<%= @rc_spec_template_spec_restartpolicy %>",
 				"containers": [
-				<% for @rc_spec_template_spec_containers.each do |container| %>
-				<% if container == @rc_spec_template_spec_containers.last %>
-					 <%= container %>
-				<% else %>
-					<%= container %>,
-				<% end %>
+				<% @rc_spec_template_spec_containers.each do |container| %>
+				{
+					"name": "<%= container[:name] %>",
+					"image": "<%= container[:image] %>",
+					"ports": [
+					<% container[:ports].each do |port| %>
+					{
+						"name": "<%= port[:name] %>",
+						"containerPort": "<%= port[:containerPort] %>" 
+					}<% if port != container[:ports].last %>,<% end %>
+					<% end %>
+					],
+					"volumeMounts": [
+					<% container[:volumeMounts].each do |volumeMount| %>
+					{
+						"mountPath": "<%= volumeMount[:mountPath] %>",
+						"name": "<%= volumeMount[:name] %>"
+					}<% if volumeMount != container[:volumeMounts].last %>,<% end %>
+					<% end %>
+					]	
+				}<% if container != @rc_spec_template_spec_containers.last %>,<% end %>
 				<% end %>
 				], 
 				"volumes": [
-				<% for @rc_spec_template_spec_volumes.each do |volume| %>
-				<% if volume == @rc_spec_template_spec_volumes.last %>
-					<%= volume %>
-				<% else %>
-					<%= volume %>,
-				<% end %>
+				<% @rc_spec_template_spec_volumes.each do |volume| %>
+				{
+					"name": "<%= volume[:name] %>",
+					"hostDir": "<%= volume[:hostDir] %>"
+				}<% if volume != @rc_spec_template_spec_volumes.last %>,<% end %>
 				<% end %>
 				]
 			}

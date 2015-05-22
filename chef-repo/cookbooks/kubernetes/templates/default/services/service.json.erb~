@@ -2,6 +2,22 @@
 	"kind": "Service",
 	"apiVersion": "v1beta3",
 	"metadata": {
-		"name":"<%= @service_name %>",
+		"name": "<%= @service_name %>",
+		"labels": {
+			"name": "<%= @service_label_name %>"
+		}
 	},
+	"spec": {
+		"ports": [
+		<% @service_ports.each do |port| %>
+		<% if port == @service_ports.last %>
+		<%= port %>
+		<% else %>
+		<%= port %>,
+		<% end %>
+		],
+		"selector": {
+			"name": "<%= @service_selector %>"
+		}
+	}
 }

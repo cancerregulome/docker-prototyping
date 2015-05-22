@@ -1,0 +1,7 @@
+#kubernetes::start-services
+node[:kubernetes][:services][:definitions].each do |definition|
+	execute "kubernetes_service_resource" do
+		command "kubectl create -f #{definition}"
+		not_if "" #TODO
+	end
+end
