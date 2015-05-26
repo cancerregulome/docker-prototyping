@@ -1,0 +1,58 @@
+{
+	"kind": "ReplicationController",
+	"apiVersion": "v1beta3",
+	"metadata": {
+		"name": "solr-zookeeper-pod-2",
+		"labels": {
+			"name": "solr-zookeeper"
+		}
+	},
+	"spec": {
+		"replicas": 1,
+		"selector": {
+			"name": "zookeeper-pod-2"
+		},
+		"template": {
+			"metadata": {
+				"labels": {
+					"name": "solr-zookeeper"
+				}
+			},
+			"spec": {
+				"restartPolicy": "onFailure",
+				"containers": [
+					{
+						"name": "solr-zookeeper-2",
+						"image": "gcr.io/isb-cgc/solr-zookeeper", 
+						"ports": [
+							{
+								"containerPort": 2181,
+								"protocol": "TCP"
+							},
+							{
+								"containerPort": 2888,
+								"protocol": "TCP"
+							},
+							{
+								"containerPort": 3888,
+								"prototcol": "TCP"
+							}
+						],
+						"volumeMounts": [
+							{
+								"name": "data-dir",
+								"mountPath": "/var/lib/zookeeper"
+							}
+						
+						]
+					} ]
+				"volumes": [
+					{
+						"name": "data-dir",
+						"hostDir": "/var/lib/zookeeper/2"
+					}
+				]
+			}
+		}
+	}
+}
