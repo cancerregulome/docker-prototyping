@@ -19,7 +19,7 @@
 				}
 			},
 			"spec": {
-				"restartPolicy": "onFailure",
+				"restartPolicy": "Always",
 				"containers": [
 					{
 						"name": "solr-zookeeper-3",
@@ -44,8 +44,9 @@
 								"mountPath": "/var/lib/zookeeper"
 							}
 						
-						]
-					} ]
+						],
+						"command": ["java", "-cp", "zookeeper.jar:lib/slf4j-api-1.7.5.jar:lib/slf4j-log4j12-1.7.5.jar:lib/log4j-1.2.16.jar:conf", "org.apache.zookeeper.server.quorum.QuorumPeerMain", "zoo.cfg"]
+					} ],
 				"volumes": [
 					{
 						"name": "data-dir",

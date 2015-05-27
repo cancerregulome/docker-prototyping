@@ -19,7 +19,7 @@
 				}
 			},
 			"spec": {
-				"restartPolicy": "Always",
+				"restartPolicy": "onFailure",
 				"containers": [
 					{
 						"name": "solr-zookeeper-2",
