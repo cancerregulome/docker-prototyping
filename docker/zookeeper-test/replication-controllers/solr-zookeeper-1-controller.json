@@ -15,7 +15,8 @@
 		"template": {
 			"metadata": {
 				"labels": {
-					"name": "solr-zookeeper-pod-1"
+					"name": "solr-zookeeper-pod-1",
+					"app": "solr-zookeeper"
 				}
 			},
 			"spec": {

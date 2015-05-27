@@ -4,7 +4,7 @@
 	"metadata": {
 		"name": "solr-zookeeper-controller-1",
 		"labels": {
-			"name": "solr-zookeeper-controller"
+			"name": "solr-zookeeper-controller-1"
 		}
 	},
 	"spec": {
@@ -15,7 +15,8 @@
 		"template": {
 			"metadata": {
 				"labels": {
-					"name": "solr-zookeeper-pod-1"
+					"name": "solr-zookeeper-pod-1",
+					"app": "solr-zookeeper"
 				}
 			},
 			"spec": {
@@ -38,22 +39,8 @@
 								"prototcol": "TCP"
 							}
 						],
-						"volumeMounts": [
-							{
-								"name": "data-dir",
-								"mountPath": "/var/lib/zookeeper"
-							}
-						
-						],
 						"command": ["java", "-cp", "/zookeeper-3.4.6/zookeeper-3.4.6.jar:/zookeeper-3.4.6/lib/slf4j-api-1.6.1.jar:/zookeeper-3.4.6/lib/slf4j-log4j12-1.6.1.jar:/zookeeper-3.4.6/lib/log4j-1.2.16.jar:/zookeeper-3.4.6/conf", "org.apache.zookeeper.server.quorum.QuorumPeerMain", "/zookeeper-3.4.6/conf/zoo.cfg"]
-					} ],
-				"volumes": [
-					{
-						"name": "data-dir",
-						"hostDir": "/var/lib/zookeeper/1"
-					}
-				
-				]
+					} ]
 			}
 		}
 	}

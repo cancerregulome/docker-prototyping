@@ -4,26 +4,27 @@
 	"metadata": {
 		"name": "solr-zookeeper-pod-2",
 		"labels": {
-			"name": "solr-zookeeper"
+			"name": "solr-zookeeper-controller"
 		}
 	},
 	"spec": {
 		"replicas": 1,
 		"selector": {
-			"name": "zookeeper-pod-2"
+			"name": "solr-zookeeper-pod-2"
 		},
 		"template": {
 			"metadata": {
 				"labels": {
-					"name": "solr-zookeeper"
+					"name": "solr-zookeeper-pod-2",
+					"app": "solr-zookeeper"
 				}
 			},
 			"spec": {
-				"restartPolicy": "onFailure",
+				"restartPolicy": "Always",
 				"containers": [
 					{
 						"name": "solr-zookeeper-2",
-						"image": "gcr.io/isb-cgc/solr-zookeeper", 
+						"image": "gcr.io/isb-cgc/solr-zookeeper-2", 
 						"ports": [
 							{
 								"containerPort": 2181,
@@ -38,21 +39,8 @@
 								"prototcol": "TCP"
 							}
 						],
-						"volumeMounts": [
-							{
-								"name": "data-dir",
-								"mountPath": "/var/lib/zookeeper"
-							}
-						
-						],
-						"command": ["java", "-cp", "zookeeper.jar:lib/slf4j-api-1.7.5.jar:lib/slf4j-log4j12-1.7.5.jar:lib/log4j-1.2.16.jar:conf", "org.apache.zookeeper.server.quorum.QuorumPeerMain", "zoo.cfg"]
-					} ],
-				"volumes": [
-					{
-						"name": "data-dir",
-						"hostDir": "/var/lib/zookeeper/2"
-					}
-				]
+						"command": ["java", "-cp", "/zookeeper-3.4.6/zookeeper-3.4.6.jar:/zookeeper-3.4.6/lib/slf4j-api-1.6.1.jar:/zookeeper-3.4.6/lib/slf4j-log4j12-1.6.1.jar:/zookeeper-3.4.6/lib/log4j-1.2.16.jar:/zookeeper-3.4.6/conf", "org.apache.zookeeper.server.quorum.QuorumPeerMain", "/zookeeper-3.4.6/conf/zoo.cfg"]
+					} ]
 			}
 		}
 	}

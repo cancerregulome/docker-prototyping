@@ -11,3 +11,4 @@ COPY conf/1 /var/lib/zookeeper/myid
 EXPOSE 2181
 EXPOSE 2888
 EXPOSE 3888
+WORKDIR /zookeeper-3.4.6

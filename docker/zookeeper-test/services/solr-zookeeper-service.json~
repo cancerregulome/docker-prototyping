@@ -29,7 +29,7 @@
 			}
 		],
 		"selector": {
-			"app": "solr-zookeeper"
+			"name": "solr-zookeeper"
 		}
 	}
 }
