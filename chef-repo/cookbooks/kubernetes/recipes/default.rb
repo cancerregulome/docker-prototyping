@@ -21,10 +21,11 @@ when "centos", "redhat"
 		mode 0644
 	end
 	
-	execute "erase_etcd" do
-		command "yum -y erase etcd && yum -y install http://cbs.centos.org/kojifiles/packages/etcd/0.4.6/7.el7.centos/x86_64/etcd-0.4.6-7.el7.centos.x86_64.rpm"
-		not_if "etcd --version | grep 0.4.6"
-	end
+	# Code below was only needed for local testing (etcd isn't installed on newly built glados nodes)
+	#execute "erase_etcd" do
+	#	command "yum -y erase etcd && yum -y install http://cbs.centos.org/kojifiles/packages/etcd/0.4.6/7.el7.centos/x86_64/etcd-0.4.6-7.el7.centos.x86_64.rpm"
+	#	not_if "etcd --version | grep 0.4.6"
+	#end
 
 	yum_package 'kubernetes' do
 		action :install
