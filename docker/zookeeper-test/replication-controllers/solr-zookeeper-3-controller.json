@@ -10,7 +10,7 @@
 	"spec": {
 		"replicas": 1,
 		"selector": {
-			"name": "solr-zookeeper-pod-1"
+			"name": "solr-zookeeper-pod-3"
 		},
 		"template": {
 			"metadata": {
@@ -23,7 +23,7 @@
 				"restartPolicy": "Always",
 				"containers": [
 					{
-						"name": "solr-zookeeper-1",
+						"name": "solr-zookeeper-3",
 						"image": "gcr.io/isb-cgc/solr-zookeeper-3", 
 						"ports": [
 							{
