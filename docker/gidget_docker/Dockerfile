@@ -7,7 +7,6 @@ RUN pip install docopt
 
 # Set up source code and environment
 COPY gidget /gidget
-COPY input /gidget/input
 COPY setup/gidget_setup.sh /gidget_setup.sh
 RUN chmod -R 700 /gidget_setup.sh
 COPY config/gidget.config /gidget/config/gidget.config
