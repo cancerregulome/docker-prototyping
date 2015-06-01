@@ -1,4 +1,3 @@
-# BASE chef/ubuntu-12.04:latest
 # Apache Zookeeper Container
 FROM ubuntu:14.04
 COPY install/zookeeper-3.4.6.tar.gz /
