@@ -23,8 +23,27 @@
 				"restartPolicy": "Always",
 				"containers": [
 					{
+						"name": "solr-zookeeper-config-manager",
+						"image": "gcr.io/isb-cgc/solr-zookeeper-config-manager",
+						"ports": [
+							{
+								"containerPort": 8080,
+								"hostPort": 8080,
+								"protocol": "TCP
+							}
+
+						],
+						"command": ["/zookeeper-3.4.6/startup/zookeeper_config_manager_startup.sh"],
+						"volumeMounts": [
+							{
+								"name": "solr-zookeeper-test",
+								"mountPath": "/zookeeper-3.4.6/data"
+							}
+						]
+					},
+					{
 						"name": "solr-zookeeper-1",
-						"image": "gcr.io/isb-cgc/solr-zookeeper-1", 
+						"image": "gcr.io/isb-cgc/solr-zookeeper", 
 						"ports": [
 							{
 								"containerPort": 2181,
