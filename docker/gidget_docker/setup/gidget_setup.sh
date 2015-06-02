@@ -34,6 +34,7 @@ while [[ $# > 0 ]]; do
 		
 		;;
 	esac
+	shift
 done
 
 if [[ "$user_found" = false ]]; then
