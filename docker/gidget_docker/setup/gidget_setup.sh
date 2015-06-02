@@ -13,16 +13,19 @@ while [[ $# > 0 ]]; do
 	case $option in
 		-u|--user)
 		USER="$2"
+		echo $USER
 		user_found=true
 		shift
 		;;
 		-i|--maf-manifest)
 		INPUT_FILE="$2"
+		echo $INPUT_FILE
 		maf_manifest_found=true
 		shift
 		;;
 		-o|--output-dir)
 		OUTPUT_DIR="$2"
+		echo $OUTPUT_DIR
 		output_dir_found=true
 		shift
 		;;
