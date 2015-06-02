@@ -3,6 +3,55 @@ INVOKING_USER=$1
 INPUT_FILE=$2
 OUTPUT_DIR=$3
 
+user_found=false
+maf_manifest_found=false
+output_dir_found=false
+
+while [[ $# > 0 ]]; do
+	option="$1"
+	
+	case $option in
+		-u|--user)
+		USER="$2"
+		user_found=true
+		shift
+		;;
+		-i|--maf-manifest)
+		INPUT_FILE="$2"
+		maf_manifest_found=true
+		shift
+		;;
+		-o|--output-dir)
+		OUTPUT_DIR="$2"
+		output_dir_found=true
+		shift
+		;;
+		-c|--config)
+		CONFIG_FILE="$2"
+		shift
+		;;
+		*)
+		
+		;;
+	esac
+done
+
+if [[ "$user_found" = false ]]; then
+	echo "Usage: -u <username> required."
+	exit(-1)
+elif [[ "$maf_manifest_found" = false ]]; then
+	echo "Usage: -i <input-maf-manifest> required"
+	exit(-1)
+elif [[ "$output_dir_found" = false ]]; then
+	echo "Usage: -o <output-dir> required"
+fi
+
+if [ -z "$CONFIG_FILE" ]; then
+	echo "Using default configuration..."
+	cat /gidget/config/gidget.config
+	CONFIG_FILE=/gidget/config/gidget.config
+fi
+
 echo "systemsbiology.net" > /etc/defaultdomain
 echo "rpcbind: 10.0.210.5" >> /etc/hosts.allow
 echo "rpcbind: 10.0.210.6" >> /etc/hosts.allow
@@ -26,4 +75,4 @@ sudo /etc/init.d/autofs start
 
 chown -R $INVOKING_USER /gidget
 
-su -c "PYTHONPATH=/usr/local/lib/python2.7:/usr/local/lib/python3.4:/gidget/commands/maf_processing/python:/gidget/commands/maf_processing/python/archive:/gidget/commands/feature_matrix_construction/main:/gidget/commands/feature_matrix_construction/main/archive:/gidget/commands/feature_matrix_pipeline/utilpython /gidget/gidget/gidget_run_all.py --config=/gidget/config/gidget.config $INPUT_FILE $OUTPUT_DIR" $INVOKING_USER
+su -c "PYTHONPATH=/usr/local/lib/python2.7:/usr/local/lib/python3.4:/gidget/commands/maf_processing/python:/gidget/commands/maf_processing/python/archive:/gidget/commands/feature_matrix_construction/main:/gidget/commands/feature_matrix_construction/main/archive:/gidget/commands/feature_matrix_pipeline/utilpython /gidget/gidget/gidget_run_all.py --config=$CONFIG_FILE $INPUT_FILE $OUTPUT_DIR" $INVOKING_USER
