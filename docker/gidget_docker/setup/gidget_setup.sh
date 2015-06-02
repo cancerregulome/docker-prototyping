@@ -39,10 +39,10 @@ done
 
 if [[ "$user_found" = false ]]; then
 	echo "Usage: -u <username> required."
-	exit(-1)
+	exit
 elif [[ "$maf_manifest_found" = false ]]; then
 	echo "Usage: -i <input-maf-manifest> required"
-	exit(-1)
+	exit
 elif [[ "$output_dir_found" = false ]]; then
 	echo "Usage: -o <output-dir> required"
 fi
