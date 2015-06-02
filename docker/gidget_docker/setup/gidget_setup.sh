@@ -1,8 +1,4 @@
 #!/bin/bash
-INVOKING_USER=$1
-INPUT_FILE=$2
-OUTPUT_DIR=$3
-
 user_found=false
 maf_manifest_found=false
 output_dir_found=false
@@ -13,19 +9,16 @@ while [[ $# > 0 ]]; do
 	case $option in
 		-u|--user)
 		USER="$2"
-		echo $USER
 		user_found=true
 		shift
 		;;
 		-i|--maf-manifest)
 		INPUT_FILE="$2"
-		echo $INPUT_FILE
 		maf_manifest_found=true
 		shift
 		;;
 		-o|--output-dir)
 		OUTPUT_DIR="$2"
-		echo $OUTPUT_DIR
 		output_dir_found=true
 		shift
 		;;
@@ -77,6 +70,6 @@ echo "/titan /etc/auto.titan noacl,noatime,rsize=32768,wsize=32768,tcp,vers=3,ha
 sudo /etc/init.d/autofs stop
 sudo /etc/init.d/autofs start
 
-chown -R $INVOKING_USER /gidget
+chown -R $USER /gidget
 
-su -c "PYTHONPATH=/usr/local/lib/python2.7:/usr/local/lib/python3.4:/gidget/commands/maf_processing/python:/gidget/commands/maf_processing/python/archive:/gidget/commands/feature_matrix_construction/main:/gidget/commands/feature_matrix_construction/main/archive:/gidget/commands/feature_matrix_pipeline/utilpython /gidget/gidget/gidget_run_all.py --config=$CONFIG_FILE $INPUT_FILE $OUTPUT_DIR" $INVOKING_USER
+su -c "PYTHONPATH=/usr/local/lib/python2.7:/usr/local/lib/python3.4:/gidget/commands/maf_processing/python:/gidget/commands/maf_processing/python/archive:/gidget/commands/feature_matrix_construction/main:/gidget/commands/feature_matrix_construction/main/archive:/gidget/commands/feature_matrix_pipeline/utilpython /gidget/gidget/gidget_run_all.py --config=$CONFIG_FILE $INPUT_FILE $OUTPUT_DIR" $USER
