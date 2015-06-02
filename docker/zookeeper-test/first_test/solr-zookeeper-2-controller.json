@@ -1,0 +1,62 @@
+{
+	"kind": "ReplicationController",
+	"apiVersion": "v1beta3",
+	"metadata": {
+		"name": "solr-zookeeper-controller-2",
+		"labels": {
+			"name": "solr-zookeeper-controller"
+		}
+	},
+	"spec": {
+		"replicas": 1,
+		"selector": {
+			"name": "solr-zookeeper-pod-2"
+		},
+		"template": {
+			"metadata": {
+				"labels": {
+					"name": "solr-zookeeper-pod-2",
+					"app": "solr-zookeeper"
+				}
+			},
+			"spec": {
+				"restartPolicy": "Always",
+				"containers": [
+					{
+						"name": "solr-zookeeper-2",
+						"image": "gcr.io/isb-cgc/solr-zookeeper", 
+						"ports": [
+							{
+								"containerPort": 2181,
+								"protocol": "TCP"
+							},
+							{
+								"containerPort": 2888,
+								"protocol": "TCP"
+							},
+							{
+								"containerPort": 3888,
+								"prototcol": "TCP"
+							}
+						],
+						"command": ["/zookeeper-3.4.6/startup/zookeeper_startup.sh", "2"],
+						"volumeMounts": [
+							{
+								"name": "solr-zookeeper-test",
+								"mountPath": "/zookeeper-3.4.6/data"
+							}
+						]
+					} ],
+				"volumes": [
+					{
+						"name": "solr-zookeeper-test",
+						"gcePersistentDisk": {
+							"pdName": "solr-zookeeper-test",
+							"fsType": "ext4"
+						}
+					}
+				]
+			}
+		}
+	}
+}
