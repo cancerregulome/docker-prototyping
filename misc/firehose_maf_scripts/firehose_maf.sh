@@ -68,6 +68,9 @@ fi
 echo -e "tumor-short-code\tdate\tpoint-person\ttag\tinternal-path" > $firehose_maf_manifest
 
 # get the tumor types
+echo $firehose_root/$firehose_run_type__$firehose_data_date
+exit
+
 tumor_types=`ls -d "$firehose_root/$firehose_run_type__$firehose_data_date/*/" | cut -d "/" -f 7`
 
 # alternate date format
