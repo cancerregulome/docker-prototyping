@@ -51,13 +51,18 @@ if [[ "$output_dir_found" = false ]]; then
 	mkdir -p preprocessed_firehose_mafs/$firehose_data_date/$firehose_run_type/maf
 	mkdir -p preprocessed_firehose_mafs/$firehose_data_date/$firehose_run_type/maf_manifest
 	firehose_output_maf_dir=$PWD/preprocessed_firehose_mafs/$firehose_data_date/maf
-	firehose_maf_manifest=preprocessed_firehose_mafs/$firehose_data_date/$firehose_run_type/maf_manifest/firehose_$firehose_run_type_$firehose_data_date_maf_manifest.tsv
+	firehose_maf_manifest=preprocessed_firehose_mafs/"$firehose_data_date"/"$firehose_run_type"/maf_manifest/"$firehose_run_type"__"$firehose_data_date"_maf_manifest.tsv
 else
 	# create a subdirectory for mafs and maf manifests
 	mkdir -p $firehose_output_maf_dir/maf
 	mkdir -p $firehose_output_maf_dir/maf_manifest
-	firehose_maf_manifest=$firehose_output_maf_dir/maf_manifest/firehose_$firehose_run_type_$firehose_data_date_maf_manifest.tsv
+	firehose_maf_manifest="$firehose_output_maf_dir"/maf_manifest/"$firehose_run_type"__"$firehose_data_date"_maf_manifest.tsv
 fi
+
+echo "Preprocessing $firehose_run_type data from $firehose_data_date..."
+echo "Output mafs location: $firehose_output_maf_dir..."
+echo "Creating maf manifest file $firehose_maf_manifest..."
+exit
 
 #firehose_data_type="stddata" #or "analyses"
 #firehose_data_date="2015_04_02"
