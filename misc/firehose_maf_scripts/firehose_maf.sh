@@ -82,10 +82,8 @@ for tumor_type in $tumor_types; do
 	echo $tumor_type
 	temp=`mktemp`
 	
-	if [[ -d "$firehose_root"/"$firehose_data_type"__"$firehose_data_date"/"$tumor_type"/"$alternate_date"/"$firehose_input_maf_pattern" ]]; 
-then
-		files_to_cat=`ls -1 
-"$firehose_root"/"$firehose_data_type"__"$firehose_data_date"/"$tumor_type"/"$alternate_date"/"$firehose_input_maf_pattern"`
+	if [[ -d "$firehose_root"/"$firehose_data_type"__"$firehose_data_date"/"$tumor_type"/"$alternate_date"/"$firehose_input_maf_pattern" ]]; then
+		files_to_cat=`ls -1 "$firehose_root"/"$firehose_data_type"__"$firehose_data_date"/"$tumor_type"/"$alternate_date"/"$firehose_input_maf_pattern"`
 		file_count=0
 		for file in $files_to_cat; do
 			if [[ $file_count > 0 ]]; then
@@ -107,6 +105,3 @@ then
 		echo -e "$tumor_short_code\t04/02/2015\tUNKNOWN\tfirehose\t$firehose_maf_dir/$tumor_type.maf" >> $firehose_maf_manifest
 	fi
 done
-
-
-
