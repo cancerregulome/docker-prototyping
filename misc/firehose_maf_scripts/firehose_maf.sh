@@ -68,10 +68,7 @@ fi
 echo -e "tumor-short-code\tdate\tpoint-person\ttag\tinternal-path" > $firehose_maf_manifest
 
 # get the tumor types
-echo $firehose_root/$firehose_run_type__$firehose_data_date
-exit
-
-tumor_types=`ls -d "$firehose_root/$firehose_run_type__$firehose_data_date/*/" | cut -d "/" -f 7`
+tumor_types=`ls -d "$firehose_root"/"$firehose_run_type"__"$firehose_data_date"/*/ | cut -d "/" -f 7`
 
 # alternate date format
 alternate_date=`echo $firehose_date | sed 's/_//g'`
@@ -85,8 +82,10 @@ for tumor_type in $tumor_types; do
 	echo $tumor_type
 	temp=`mktemp`
 	
-	if [[ -d $firehose_root/$firehose_data_type__$firehose_data_date/$tumor_type/$alternate_date/$firehose_input_maf_pattern ]]; then
-		files_to_cat=`ls -1 $firehose_root/$firehose_data_type__$firehose_data_date/$tumor_type/$alternate_date/$firehose_input_maf_pattern`
+	if [[ -d "$firehose_root"/"$firehose_data_type"__"$firehose_data_date"/"$tumor_type"/"$alternate_date"/"$firehose_input_maf_pattern" ]]; 
+then
+		files_to_cat=`ls -1 
+"$firehose_root"/"$firehose_data_type"__"$firehose_data_date"/"$tumor_type"/"$alternate_date"/"$firehose_input_maf_pattern"`
 		file_count=0
 		for file in $files_to_cat; do
 			if [[ $file_count > 0 ]]; then
