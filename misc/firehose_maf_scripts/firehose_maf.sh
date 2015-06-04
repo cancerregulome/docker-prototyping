@@ -12,16 +12,25 @@ tumor_types=`ls -d /titan/cancerregulome9/TCGA/firehose/stddata__2015_04_02/*/ |
 for tumor_type in $tumor_types; do
 	# create maf file for the tumor type
 	echo $tumor_type
+	temp=`mktemp`
 	if [[ -d /titan/cancerregulome9/TCGA/firehose/stddata__2015_04_02/$tumor_type/20150402/gdac.broadinstitute.org_$tumor_type.Mutation_Packager_Calls.Level_3.2015040200.0.0 ]]; then
 		files_to_cat=`ls -1 /titan/cancerregulome9/TCGA/firehose/stddata__2015_04_02/$tumor_type/20150402/gdac.broadinstitute.org_$tumor_type.Mutation_Packager_Calls.Level_3.2015040200.0.0/TCGA*`
 		file_count=0
 		for file in $files_to_cat; do
 			if [[ $file_count > 0 ]]; then
-				cat $file | awk '{ if ( NR > 1 ) { print } }' >> $firehose_maf_dir/$tumor_type.maf
-			else cat $file > $firehose_maf_dir/$tumor_type.maf; fi
+				cat $file | awk '{ if ( NR > 1 ) { print } }' >> $temp
+			else cat $file > $temp; fi
 		
 			file_count=$((file_count+1))
 		done
+		
+		# Remove the last 18 columns from the resulting maf
+		while read -r line; do
+			echo "$line" | cut -d $'\t' -f1-34 >> $firehose_maf_dir/$tumor_type.maf
+		done < "$temp"
+		
+		rm $temp
+		
 		# create a line in the maf manifest file pointing to the maf that was just created
 		tumor_short_code=`echo $tumor_type | tr '[:upper:]' '[:lower:]'`
 		echo -e "$tumor_short_code\t04/02/2015\tUNKNOWN\tfirehose\t$firehose_maf_dir/$tumor_type.maf" >> $firehose_maf_manifest
