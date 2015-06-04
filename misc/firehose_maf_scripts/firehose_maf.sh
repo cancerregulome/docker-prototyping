@@ -76,7 +76,7 @@ alternate_date=`echo $firehose_date | sed 's/_//g'`
 for tumor_type in $tumor_types; do
 	if [[ $firehose_data_type == "stddata" ]]; then
 		firehose_input_maf_pattern="gdac.broadinstitute.org_$tumor_type.Mutation_Packager_Calls.Level_3.2015040200.0.0.maf.txt"
-	else firehose_input_maf_pattern="" fi
+	else firehose_input_maf_pattern=""; fi
 	
 	# create maf file for the tumor type
 	echo $tumor_type
@@ -105,3 +105,4 @@ for tumor_type in $tumor_types; do
 		echo -e "$tumor_short_code\t04/02/2015\tUNKNOWN\tfirehose\t$firehose_maf_dir/$tumor_type.maf" >> $firehose_maf_manifest
 	fi
 done
+
