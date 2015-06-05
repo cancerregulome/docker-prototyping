@@ -5,12 +5,17 @@ run_type_found=false
 date_found=false
 output_dir_found=false
 
-while [[ $# > 0 ]]; do
+# Parse command line options
+while [[ $# -gt 0 ]]; do
 	option="$1"
 	
 	case $option in
 		-r|--run-type)
 		firehose_run_type="$2"
+		if [[ "$firehose_run_type" != "stddata" ]] | [[ "$firehose_run_type" != "analyses" ]]; then
+			echo "Invalid parameter with -r (must be stddata|analyses)"
+			exit
+		fi
 		run_type_found=true
 		shift
 		;;
@@ -23,7 +28,7 @@ while [[ $# > 0 ]]; do
 		firehose_output_maf_dir="$2"
 		if [[ ! -d $firehose_output_maf_dir ]]; then
 			echo "Creating output directory $firehose_output_maf_dir..."
-			mkdir -p $firehose_output_maf_dir 
+			mkdir -p "$firehose_output_maf_dir"
 		fi
 		output_dir_found=true
 		shift
@@ -35,6 +40,7 @@ while [[ $# > 0 ]]; do
 	shift
 done
 
+# Decide what to do if some options aren't set
 if [[ "$run_type_found" = false ]]; then
 	echo "Usage: -r [ stddata | analyses ] required."
 	exit
@@ -48,16 +54,17 @@ fi
 if [[ "$output_dir_found" = false ]]; then
 	# create a subdirectory in the current working directory
 	firehose_output_maf_dir=$PWD/preprocessed_firehose_mafs/$firehose_data_date
-	firehose_maf_manifest=$firehose_output_maf_dir/maf_manifest/"$firehose_run_type"__"$firehose_data_date"_maf_manifest.tsv
-	mkdir -p $firehose_output_maf_dir/maf_manifest
-	touch $firehose_maf_manifest
+	firehose_maf_manifest=$firehose_output_maf_dir/"$firehose_run_type"__"$firehose_data_date"_maf_manifest.tsv
+	mkdir -p "$firehose_output_maf_dir"
+	touch "$firehose_maf_manifest"
 else
 	# create a subdirectory for mafs and maf manifests
-	firehose_maf_manifest=$firehose_output_maf_dir/maf_manifest/"$firehose_run_type"__"$firehose_data_date"_maf_manifest.tsv
-	mkdir -p $firehose_output_maf_dir/maf_manifest
-	touch $firehose_maf_manifest
+	firehose_maf_manifest=$firehose_output_maf_dir/"$firehose_run_type"__"$firehose_data_date"_maf_manifest.tsv
+	mkdir -p "$firehose_output_maf_dir"
+	touch "$firehose_maf_manifest"
 fi
 
+# Start preprocessing Firehose MAFs
 echo "Preprocessing $firehose_run_type data from $firehose_data_date..."
 echo "Output mafs location: $firehose_output_maf_dir..."
 echo "Creating maf manifest file $firehose_maf_manifest..."
@@ -71,20 +78,21 @@ tumor_types=`ls -d "$firehose_root"/"$firehose_run_type"__"$firehose_data_date"/
 # alternate date format
 alternate_date=`echo $firehose_data_date | sed 's/_//g'`
 
+# Create the MAF files (34 columns only)
 for tumor_type in $tumor_types; do
 	if [[ "$firehose_run_type" = "stddata" ]]; then
 		firehose_input_maf_pattern=gdac.broadinstitute.org_"$tumor_type".Mutation_Packager_Calls.Level_3."$alternate_date"00.0.0
-	else firehose_input_maf_pattern=gdac.broadinstitute.org_"tumor_type"*.?."$alternate_date"00.0.0; fi
-	
+	else firehose_input_maf_pattern=gdac.broadinstitute.org_"$tumor_type"-TP.MutSigNozzleReport2CV.Level_4."$alternate_date"00.0.0; fi
+
 	# create maf file for the tumor type
-	echo $tumor_type
+	echo "Creating $firehose_output_maf_dir/$tumor_type.maf ..."
 	temp=`mktemp`
-	echo "$firehose_root"/"$firehose_run_type"__"$firehose_data_date"/"$tumor_type"/"$alternate_date"/"$firehose_input_maf_pattern"
+	 
 	if [[ -d "$firehose_root"/"$firehose_run_type"__"$firehose_data_date"/"$tumor_type"/"$alternate_date"/"$firehose_input_maf_pattern" ]]; then
 		files_to_cat=`ls -1 "$firehose_root"/"$firehose_run_type"__"$firehose_data_date"/"$tumor_type"/"$alternate_date"/"$firehose_input_maf_pattern"/*.maf*`
 		file_count=0
 		for file in $files_to_cat; do
-			if [[ $file_count > 0 ]]; then
+			if [[ $file_count -gt 0 ]]; then
 				cat $file | awk '{ if ( NR > 1 ) { print } }' >> $temp
 			else cat $file > $temp; fi
 		
@@ -100,7 +108,6 @@ for tumor_type in $tumor_types; do
 		
 		# create a line in the maf manifest file pointing to the maf that was just created
 		tumor_short_code=`echo $tumor_type | tr '[:upper:]' '[:lower:]'`
-		echo -e "$tumor_short_code\t04/02/2015\tUNKNOWN\tfirehose\t$firehose_output_maf_dir/$tumor_type.maf" >> $firehose_maf_manifest
+		echo -e "$tumor_short_code\t04/02/2015\tUNKNOWN\tfirehose-$firehose_run_type\t$firehose_output_maf_dir/$tumor_type.maf" >> $firehose_maf_manifest
 	fi
 done
-
