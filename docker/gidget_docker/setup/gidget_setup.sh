@@ -26,6 +26,10 @@ while [[ $# > 0 ]]; do
 		CONFIG_FILE="$2"
 		shift
 		;;
+		--stop-at)
+		STOP_AT="--stop-at=$2"
+		shift
+		;;
 		*)
 		
 		;;
@@ -36,12 +40,10 @@ done
 if [[ "$user_found" = false ]]; then
 	echo "Usage: -u <username> required."
 	exit
-fi
-if [[ "$maf_manifest_found" = false ]]; then
+elif [[ "$maf_manifest_found" = false ]]; then
 	echo "Usage: -i <input-maf-manifest> required"
 	exit
-fi
-if [[ "$output_dir_found" = false ]]; then
+elif [[ "$output_dir_found" = false ]]; then
 	echo "Usage: -o <output-dir> required"
 fi
 
@@ -74,4 +76,4 @@ sudo /etc/init.d/autofs start
 
 chown -R $USER /gidget
 
-su -c "PYTHONPATH=/usr/local/lib/python2.7:/usr/local/lib/python3.4:/gidget/commands/maf_processing/python:/gidget/commands/maf_processing/python/archive:/gidget/commands/feature_matrix_construction/main:/gidget/commands/feature_matrix_construction/main/archive:/gidget/commands/feature_matrix_pipeline/utilpython /gidget/gidget/gidget_run_all.py --config=$CONFIG_FILE $INPUT_FILE $OUTPUT_DIR" $USER
+su -c "PYTHONPATH=/usr/local/lib/python2.7:/usr/local/lib/python3.4:/gidget/commands/maf_processing/python:/gidget/commands/maf_processing/python/archive:/gidget/commands/feature_matrix_construction/main:/gidget/commands/feature_matrix_construction/main/archive:/gidget/commands/feature_matrix_pipeline/utilpython /gidget/gidget/gidget_run_all.py $STOP_AT --config=$CONFIG_FILE $INPUT_FILE $OUTPUT_DIR" $USER

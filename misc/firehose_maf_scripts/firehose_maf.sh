@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# every TCGA MAF script should start with these lines:
+: ${TCGAMAF_ROOT_DIR:?" environment variable must be set and non-empty; defines the path to the TCGA MAF directory"}
+source ${TCGAMAF_ROOT_DIR}/../../gidget/util/env.sh
+
+
 firehose_root=/titan/cancerregulome9/TCGA/firehose
 run_type_found=false
 date_found=false
@@ -81,15 +86,19 @@ alternate_date=`echo $firehose_data_date | sed 's/_//g'`
 # Create the MAF files (34 columns only)
 for tumor_type in $tumor_types; do
 	if [[ "$firehose_run_type" = "stddata" ]]; then
-		firehose_input_maf_pattern=gdac.broadinstitute.org_"$tumor_type".Mutation_Packager_Calls.Level_3."$alternate_date"00.0.0
-	else firehose_input_maf_pattern=gdac.broadinstitute.org_"$tumor_type"-TP.MutSigNozzleReport2CV.Level_4."$alternate_date"00.0.0; fi
+		firehose_input_maf_dir_pattern=gdac.broadinstitute.org_"$tumor_type".Mutation_Packager_Calls.Level_3."$alternate_date"00.0.0
+		firehose_input_maf_file_pattern=*.maf.txt
+	else 
+		firehose_input_maf_dir_pattern=gdac.broadinstitute.org_"$tumor_type"-TP.MutSigNozzleReport2CV.Level_4."$alternate_date"00.0.0
+		firehose_input_maf_file_pattern=*.maf
+	fi
 
 	# create maf file for the tumor type
 	echo "Creating $firehose_output_maf_dir/$tumor_type.maf ..."
 	temp=`mktemp`
 	 
-	if [[ -d "$firehose_root"/"$firehose_run_type"__"$firehose_data_date"/"$tumor_type"/"$alternate_date"/"$firehose_input_maf_pattern" ]]; then
-		files_to_cat=`ls -1 "$firehose_root"/"$firehose_run_type"__"$firehose_data_date"/"$tumor_type"/"$alternate_date"/"$firehose_input_maf_pattern"/*.maf*`
+	if [[ -d "$firehose_root"/"$firehose_run_type"__"$firehose_data_date"/"$tumor_type"/"$alternate_date"/"$firehose_input_maf_dir_pattern" ]]; then
+		files_to_cat=$(ls -1 "$firehose_root"/"$firehose_run_type"__"$firehose_data_date"/"$tumor_type"/"$alternate_date"/"$firehose_input_maf_dir_pattern"/$firehose_input_maf_file_pattern)
 		file_count=0
 		for file in $files_to_cat; do
 			if [[ $file_count -gt 0 ]]; then
