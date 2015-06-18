@@ -22,6 +22,6 @@ sudo /etc/init.d/autofs stop
 sudo /etc/init.d/autofs start
 
 while true; do
-	sleep(1)
+	sleep 1
 done
 
