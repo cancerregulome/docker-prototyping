@@ -1,9 +1,8 @@
 FROM ubuntu:14.04
 RUN apt-get -qq update && apt-get install <java stuff> && apt-get -qq clean
 COPY install/solr-5.2.1.tgz /solr-5.2.1.tgz
-RUN tar -xfz solr-5.2.1.tgz solr-5.2.1/bin/install_solr_service.sh 
-COPY data/* /var/solr/data
+RUN tar -xfz solr-5.2.1.tgz solr-5.2.1/bin/install_solr_service.sh && solr-5.2.1/bin/install_solr_service.sh solr-5.2.1.tgz
 EXPOSE 8983
-CMD ["solr", "restart", "-f", "-c", "-V", "-d", "/var/solr/data", "-s", "/var/solr", "-h", "<hostname>", "-z", "<zookeeper hosts>", "-DnumShards=2"]
+CMD ["solr", "start", "-f", "-c", "-V", "-d", "/var/solr/data", "-s", "/var/solr", "-h", "core0", "-z", "zookeeper1,zookeeper2,zookeeper3", "-DnumShards=2"]
 
-# Run instructions:  docker run -d -p 8983:8983 -v <host index dir>:/var/solr/data/core0/data solr-shard-0
+# Run instructions:  docker run -d -P -v /titan/cancerregulome9/workspaces/users/ahahn/solrcloud-prototype/data:/var/solr/data -h core0 solr-shard-0
