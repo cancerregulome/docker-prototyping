@@ -7,9 +7,9 @@ RUN apt-get -qq update && apt-get -qq install openjdk-7-jdk openjdk-7-jre && apt
 COPY install/zookeeper-3.4.6.tar.gz /zookeeper-3.4.6.tar.gz
 RUN mkdir -p /zookeeper-3.4.6
 RUN tar -xzf zookeeper-3.4.6.tar.gz -C /zookeeper-3.4.6 && rm /zookeeper-3.4.6.tar.gz
+RUN mkdir -p /zookeeper-3.4.6/data
 COPY conf/zoo.cfg /zookeeper-3.4.6/conf/zoo.cfg
 COPY conf/myid /zookeeper-3.4.6/data/myid
-RUN mkdir -p /zookeeper-3.4.6/data
 EXPOSE 2183
 EXPOSE 2890
 EXPOSE 3890

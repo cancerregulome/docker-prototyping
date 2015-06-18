@@ -8,7 +8,6 @@ COPY install/zookeeper-3.4.6.tar.gz /zookeeper-3.4.6.tar.gz
 RUN mkdir -p /zookeeper-3.4.6
 RUN tar -xzf zookeeper-3.4.6.tar.gz -C /zookeeper-3.4.6 && rm /zookeeper-3.4.6.tar.gz
 RUN mkdir -p /zookeeper-3.4.6/data
-RUN mkdir -p /zookeeper-3.4.6/startup
 COPY conf/zoo.cfg /zookeeper-3.4.6/conf/zoo.cfg
 COPY conf/myid /zookeeper-3.4.6/data/myid
 EXPOSE 2181
