@@ -15,3 +15,4 @@ chef-repo/cookbooks/pods/files/default/solr/tomcat/chef/secure/trusted_certs/**
 chef-repo/cookbooks/pods/files/default/zookeeper/chef/secure/validation.pem
 chef-repo/cookbooks/pods/files/default/zookeeper/chef/secure/trusted_certs/**
 chef-repo/dockerfiles/**
+docker/solrcloud-prototype/docker_contexts/solr-shard-0/install/**
