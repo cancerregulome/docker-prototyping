@@ -81,9 +81,9 @@ echo " *******************"
 
         ## the patients.counts_and_rates files do not differ across multiple subsets
         ## so we can concatenate all of these ...
-        rm -fr ../aux/MutSigCV.patients.counts_and_rates.forXmlMerge.tsv
+        rm -fr $TCGAFMP_DATA_DIR/$tumor/aux/MutSigCV.patients.counts_and_rates.forXmlMerge.tsv
         cat gdac.broadinstitute.org_*counts*rates*tsv | sort | uniq >& \
-            ../aux/MutSigCV.patients.counts_and_rates.forXmlMerge.tsv
+            $TCGAFMP_DATA_DIR/$tumor/aux/MutSigCV.patients.counts_and_rates.forXmlMerge.tsv
         rm -fr gdac.broadinstitute.org_*counts*rates*tsv
 
 	## ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -133,7 +133,7 @@ echo " *******************"
 	## now we're going to merge in any 'extra' files that contain 'forXmlMerge' in the 
 	## filename ...
 	rm -fr forXmlMerge.log
-	for f in `ls ../aux/*.forXmlMerge.tsv`
+	for f in `ls $TCGAFMP_DATA_DIR/$tumor/aux/*.forXmlMerge.tsv`
 	    do
 		echo "    " $f 
 		echo "    " >> forXmlMerge.log
@@ -190,9 +190,9 @@ echo " *******************"
 	python $TCGAFMP_ROOT_DIR/main/filterTSVbySampList.py \
 		cTmp.tsv finalClin.$tumor.$curDate.tsv \
 		$tumor.blacklist.samples.tsv black loose \
-                ../aux/$tumor.blacklist.loose.tsv black loose \
-                ../aux/$tumor.whitelist.loose.tsv white loose \
-                ../aux/$tumor.whitelist.strict.tsv white strict \
+                $TCGAFMP_DATA_DIR/$tumor/aux/$tumor.blacklist.loose.tsv black loose \
+                $TCGAFMP_DATA_DIR/$tumor/aux/$tumor.whitelist.loose.tsv white loose \
+                $TCGAFMP_DATA_DIR/$tumor/aux/$tumor.whitelist.strict.tsv white strict \
                 >& filterSamp.clin.$curDate.log
 
         ## and now run pairwise on this finalClin feature matrix ...

@@ -91,6 +91,6 @@ else
 fi
 
 #Run pairwise analysis
-${TCGAFMP_ROOT_DIR}/shscript/PairProcess-v2.sh $date $tumorType seq $fmxSuffix REflag=RE
+${TCGAFMP_ROOT_DIR}/shscript/PairProcess-v2.sh $date $tumorType seq $fmxSuffix RE
 
 #TODO edit META file and fill in places like "DESCRIPTION_TEXT_HERE"

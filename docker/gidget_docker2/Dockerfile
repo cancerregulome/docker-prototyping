@@ -17,6 +17,7 @@ COPY entrypoints/gidget_run_all.sh /entrypoints/gidget_run_all.sh
 RUN chmod -R 700 /entrypoints/*
 COPY config/gidget.config /gidget/config/gidget.config
 RUN chmod -R 700 /gidget
+RUN umask 002
 # Set up dependent files
 COPY config/auto.proj /etc/auto.proj
 

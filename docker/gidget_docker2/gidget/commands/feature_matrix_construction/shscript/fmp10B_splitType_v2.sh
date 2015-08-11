@@ -50,7 +50,7 @@ echo " *******************"
         s=''
         if [ "$ppString" = 'private' ]
             then
-        	s=$(<../$auxName/splitType.txt)
+        	s=$(<$TCGAFMP_DATA_DIR/$tumor/$auxName/splitType.txt)
         	if [ -z "$s" ]
         	    then
         	        echo " no splitType specified "
@@ -78,7 +78,7 @@ echo " *******************"
                 if [ "$ppString" = 'private' ]
                     then
                         echo " adding discrete features ... "
-                        python $TCGAFMP_ROOT_DIR/main/addDiscreteFeat.py $f tmpf1.tsv ../$auxName/$tumor.addDiscreteFeat_List.txt >> final.addI.log
+                        python $TCGAFMP_ROOT_DIR/main/addDiscreteFeat.py $f tmpf1.tsv $TCGAFMP_DATA_DIR/$tumor/$auxName/$tumor.addDiscreteFeat_List.txt >> final.addI.log
                     else
                         cp $f tmpf1.tsv
                 fi
@@ -86,10 +86,10 @@ echo " *******************"
                 echo " filtering according to feature black and white lists ... "
                 python $TCGAFMP_ROOT_DIR/main/filterTSVbyFeatList.py \
                             tmpf1.tsv tmpf2.tsv \
-                            ../$auxName/$tumor.features.blacklist.loose.tsv  black loose \
-                            ../$auxName/$tumor.features.blacklist.strict.tsv black strict \
-                            ../$auxName/$tumor.features.whitelist.loose.tsv  white loose \
-                            ../$auxName/$tumor.features.whitelist.strict.tsv white strict \
+                            $TCGAFMP_DATA_DIR/$tumor/$auxName/$tumor.features.blacklist.loose.tsv  black loose \
+                            $TCGAFMP_DATA_DIR/$tumor/$auxName/$tumor.features.blacklist.strict.tsv black strict \
+                            $TCGAFMP_DATA_DIR/$tumor/$auxName/$tumor.features.whitelist.loose.tsv  white loose \
+                            $TCGAFMP_DATA_DIR/$tumor/$auxName/$tumor.features.whitelist.strict.tsv white strict \
                             >> filterFeat.log
 
                 echo " log-transform all GEXP and MIRN features "
@@ -99,10 +99,10 @@ echo " *******************"
                 python $TCGAFMP_ROOT_DIR/main/filterTSVbySampList.py \
                             tmpf3.tsv tmpf4.tsv \
                             $tumor.blacklist.samples.tsv black loose \
-                            ../$auxName/$tumor.blacklist.loose.tsv  black loose \
-                            ../$auxName/$tumor.blacklist.strict.tsv black strict \
-                            ../$auxName/$tumor.whitelist.loose.tsv  white loose \
-                            ../$auxName/$tumor.whitelist.strict.tsv white strict \
+                            $TCGAFMP_DATA_DIR/$tumor/$auxName/$tumor.blacklist.loose.tsv  black loose \
+                            $TCGAFMP_DATA_DIR/$tumor/$auxName/$tumor.blacklist.strict.tsv black strict \
+                            $TCGAFMP_DATA_DIR/$tumor/$auxName/$tumor.whitelist.loose.tsv  white loose \
+                            $TCGAFMP_DATA_DIR/$tumor/$auxName/$tumor.whitelist.strict.tsv white strict \
                             >> filterFeat.log
 
                 echo " adding indicator features ... "
@@ -111,10 +111,10 @@ echo " *******************"
                 echo " filtering AGAIN according to feature black and white lists ... "
                 python $TCGAFMP_ROOT_DIR/main/filterTSVbyFeatList.py \
                             tmpf5.tsv tmpf6.tsv \
-                            ../$auxName/$tumor.features.blacklist.loose.tsv  black loose \
-                            ../$auxName/$tumor.features.blacklist.strict.tsv black strict \
-                            ../$auxName/$tumor.features.whitelist.loose.tsv  white loose \
-                            ../$auxName/$tumor.features.whitelist.strict.tsv white strict \
+                            $TCGAFMP_DATA_DIR/$tumor/$auxName/$tumor.features.blacklist.loose.tsv  black loose \
+                            $TCGAFMP_DATA_DIR/$tumor/$auxName/$tumor.features.blacklist.strict.tsv black strict \
+                            $TCGAFMP_DATA_DIR/$tumor/$auxName/$tumor.features.whitelist.loose.tsv  white loose \
+                            $TCGAFMP_DATA_DIR/$tumor/$auxName/$tumor.features.whitelist.strict.tsv white strict \
                             >> filterFeat.log
 
                 ## we should end up here with file called $k

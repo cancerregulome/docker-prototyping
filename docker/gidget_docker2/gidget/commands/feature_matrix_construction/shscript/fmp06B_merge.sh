@@ -63,7 +63,7 @@ echo " *******************"
         auxFiles=''
         if [ "$ppString" = 'private' ]
             then
-                auxFiles=`ls ../$auxName/*.forTSVmerge.tsv`
+                auxFiles=`ls $TCGAFMP_DATA_DIR/$tumor/$auxName/*.forTSVmerge.tsv`
             fi
 
         echo " "

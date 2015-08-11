@@ -47,7 +47,7 @@ echo " *******************"
 
 	cd $curDate
 
-	s=$(<../$auxName/splitType.txt)
+	s=$(<$TCGAFMP_DATA_DIR/$tumor/$auxName/splitType.txt)
 	if [ -z "$s" ]
 	    then
 	        echo " no splitType specified "
@@ -75,15 +75,15 @@ echo " *******************"
                 python $TCGAFMP_ROOT_DIR/main/addIndicators.py $f tmpf1a.tsv >> final.addI.log
 
                 echo " adding discrete features ... "
-                python $TCGAFMP_ROOT_DIR/main/addDiscreteFeat.py tmpf1a.tsv tmpf1.tsv ../$auxName/$tumor.addDiscreteFeat_List.txt
+                python $TCGAFMP_ROOT_DIR/main/addDiscreteFeat.py tmpf1a.tsv tmpf1.tsv $TCGAFMP_DATA_DIR/$tumor/$auxName/$tumor.addDiscreteFeat_List.txt
 
                 echo " filtering features and samples ... "
                 python $TCGAFMP_ROOT_DIR/main/filterTSVbyFeatList.py \
                             tmpf1.tsv tmpf2.tsv \
-                            ../$auxName/$tumor.features.blacklist.loose.tsv  black loose \
-                            ../$auxName/$tumor.features.blacklist.strict.tsv black strict \
-                            ../$auxName/$tumor.features.whitelist.loose.tsv  white loose \
-                            ../$auxName/$tumor.features.whitelist.strict.tsv white strict \
+                            $TCGAFMP_DATA_DIR/$tumor/$auxName/$tumor.features.blacklist.loose.tsv  black loose \
+                            $TCGAFMP_DATA_DIR/$tumor/$auxName/$tumor.features.blacklist.strict.tsv black strict \
+                            $TCGAFMP_DATA_DIR/$tumor/$auxName/$tumor.features.whitelist.loose.tsv  white loose \
+                            $TCGAFMP_DATA_DIR/$tumor/$auxName/$tumor.features.whitelist.strict.tsv white strict \
                             >> filterFeat.log
 
                 echo " log-transform all GEXP but not MIRN features "
@@ -92,10 +92,10 @@ echo " *******************"
                 python $TCGAFMP_ROOT_DIR/main/filterTSVbySampList.py \
                             tmpf2b.tsv $k \
                             $tumor.blacklist.samples.tsv black loose \
-                            ../$auxName/$tumor.blacklist.loose.tsv  black loose \
-                            ../$auxName/$tumor.blacklist.strict.tsv black strict \
-                            ../$auxName/$tumor.whitelist.loose.tsv  white loose \
-                            ../$auxName/$tumor.whitelist.strict.tsv white strict \
+                            $TCGAFMP_DATA_DIR/$tumor/$auxName/$tumor.blacklist.loose.tsv  black loose \
+                            $TCGAFMP_DATA_DIR/$tumor/$auxName/$tumor.blacklist.strict.tsv black strict \
+                            $TCGAFMP_DATA_DIR/$tumor/$auxName/$tumor.whitelist.loose.tsv  white loose \
+                            $TCGAFMP_DATA_DIR/$tumor/$auxName/$tumor.whitelist.strict.tsv white strict \
                             >> filterFeat.log
 
                 echo " and finally split according to sampleType ... "

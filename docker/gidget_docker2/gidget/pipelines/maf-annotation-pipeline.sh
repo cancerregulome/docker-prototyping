@@ -38,12 +38,14 @@ echo using tumor code: $tumorType and input file: $pathToOriginalMAF
 thisDir=`pwd`
 mafDirectory=$thisDir/$tumorType
 
-
-
 echo `date`
 echo creating maf directory $mafDirectory
 mkdir $mafDirectory
 echo setting up maf directory $mafDirectory
+
+echo creating aux directory $mafDirectory/aux
+echo $TCGAFMP_DATA_DIR
+cp -R /titan/cancerregulome14/TCGAfmp_outputs/$tumorType/aux $mafDirectory
 
 cd $mafDirectory
 echo $tumorType > tumorCode.txt

@@ -97,10 +97,10 @@ for tumor in $tumors
         ## the patients.counts_and_rates files do not differ across multiple subsets
         ## so we can concatenate all of these ...
         echo " creating new MutSig counts and rates file in aux directory "
-        rm -fr ../$auxName/MutSigCV.patients.counts_and_rates.forXmlMerge.tsv
-        rm -fr ../$auxName/MutSig.patients.counts_and_rates.forXmlMerge.tsv
+        rm -fr $TCGAFMP_DATA_DIR/$tumor/$auxName/MutSigCV.patients.counts_and_rates.forXmlMerge.tsv
+        rm -fr $TCGAFMP_DATA_DIR/$tumor/$auxName/MutSig.patients.counts_and_rates.forXmlMerge.tsv
         cat gdac.broadinstitute.org_*counts*rates*tsv | sort | uniq >& \
-            ../$auxName/MutSig.patients.counts_and_rates.forXmlMerge.tsv
+            $TCGAFMP_DATA_DIR/$tumor/$auxName/MutSig.patients.counts_and_rates.forXmlMerge.tsv
         rm -fr gdac.broadinstitute.org_*counts*rates*tsv
 
 	## ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -154,7 +154,7 @@ for tumor in $tumors
         if [ "$ppString" = 'private' ]
             then
                 echo " incorporating forXmlMerge files from specified aux directory ... " $auxName
-        	for f in `ls ../$auxName/*.forXmlMerge.tsv`
+        	for f in `ls $TCGAFMP_DATA_DIR/$tumor/$auxName/*.forXmlMerge.tsv`
         	    do
         		echo "    " $f 
         		echo "    " >> forXmlMerge.log
@@ -190,7 +190,7 @@ for tumor in $tumors
         if [ "$tumor" == "cesc" ]
             then
                 echo " calling special CESC-specific reParseClin_CESC.py ... "
-                python $TCGAFMP_ROOT_DIR/main/reParseClin_CESC.py $tumor $curDate ../$auxName/reParse-feature-list.txt
+                python $TCGAFMP_ROOT_DIR/main/reParseClin_CESC.py $tumor $curDate $TCGAFMP_DATA_DIR/$tumor/$auxName/reParse-feature-list.txt
                 mv $tumor.clinical.$curDate.tsv $tumor.clinical.$curDate.old.tsv
                 cp $tumor.clinical.$curDate.cesc.tsv $tumor.clinical.$curDate.tsv
                 cp $tumor.clinical.$curDate.tsv clinical.temp.tsv
@@ -233,9 +233,9 @@ for tumor in $tumors
 	python $TCGAFMP_ROOT_DIR/main/filterTSVbySampList.py \
 		cTmp.tsv finalClin.$tumor.$curDate.tsv \
 		$tumor.blacklist.samples.tsv black loose \
-                ../$auxName/$tumor.blacklist.loose.tsv black loose \
-                ../$auxName/$tumor.whitelist.loose.tsv white loose \
-                ../$auxName/$tumor.whitelist.strict.tsv white strict \
+                $TCGAFMP_DATA_DIR/$tumor/$auxName/$tumor.blacklist.loose.tsv black loose \
+                $TCGAFMP_DATA_DIR/$tumor/$auxName/$tumor.whitelist.loose.tsv white loose \
+                $TCGAFMP_DATA_DIR/$tumor/$auxName/$tumor.whitelist.strict.tsv white strict \
                 >& filterSamp.clin.$curDate.log
 
         ## and now run pairwise on this finalClin feature matrix ...

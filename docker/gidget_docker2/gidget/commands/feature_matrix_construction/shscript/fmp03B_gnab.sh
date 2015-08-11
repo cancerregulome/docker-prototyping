@@ -111,9 +111,9 @@ fi
 	python $TCGAFMP_ROOT_DIR/main/filterTSVbySampList.py \
 		$tumor.gnab.tmpData2.tsv \
 		$tumor.gnab.tmpData3.tsv \
-		../$auxName/$tumor.blacklist.loose.tsv black loose \
-		../$auxName/$tumor.whitelist.loose.tsv white loose \
-                ../$auxName/$tumor.whitelist.strict.tsv white strict \
+		$TCGAFMP_DATA_DIR/$tumor/$auxName/$tumor.blacklist.loose.tsv black loose \
+		$TCGAFMP_DATA_DIR/$tumor/$auxName/$tumor.whitelist.loose.tsv white loose \
+                $TCGAFMP_DATA_DIR/$tumor/$auxName/$tumor.whitelist.strict.tsv white strict \
 		>& filterSamp.gnab.tmpA.log
 
 	## ----------------------------------------------------------------------------
